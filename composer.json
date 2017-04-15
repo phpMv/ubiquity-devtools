@@ -16,5 +16,8 @@
 			"email": "myaddressmail@gmail.com",
 			"role": "Developer"
 		}
-	]
+	],
+	 "bin": [
+        "Micro"
+    ]
 }
