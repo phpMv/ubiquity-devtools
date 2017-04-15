@@ -18,6 +18,6 @@
 		}
 	],
 	 "bin": [
-        "Micro"
+        "Micro.php"
     ]
 }

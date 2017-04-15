@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 use micro\controllers\Autoloader;
 use micro\utils\StrUtils;
