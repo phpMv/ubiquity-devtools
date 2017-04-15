@@ -1,0 +1,20 @@
+{
+	"name": "phpmv/micro-devtools",
+	"description": "Command line tools for micro-framework",
+	"type": "micro",
+	"keywords": [
+		"php",
+		"framework"
+	],
+	"require": {
+		"php": ">5.3.9"
+	},
+	"license": "Apache-2.0",
+	"authors": [
+		{
+			"name": "Jean-Christophe HERON",
+			"email": "myaddressmail@gmail.com",
+			"role": "Developer"
+		}
+	]
+}
