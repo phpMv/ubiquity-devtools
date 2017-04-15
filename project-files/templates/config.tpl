@@ -1,0 +1,20 @@
+<?php
+return array(
+		"siteUrl"=>"%siteUrl%",
+		"database"=>[
+				"dbName"=>"%dbName%",
+				"serverName"=>"%serverName%",
+				"port"=>"%port%",
+				"user"=>"%user%",
+				"password"=>"%password%"
+		],
+		"sessionToken"=>"%temporaryToken%",
+		"namespaces"=>[],
+		"templateEngine"=>'micro\views\engine\Twig',
+		"templateEngineOptions"=>array("cache"=>false),
+		"test"=>false,
+		"debug"=>false,
+		"di"=>[%injections%],
+		"cacheDirectory"=>"cache/",
+		"mvcNS"=>["models"=>"models","controllers"=>"controllers"]
+);
