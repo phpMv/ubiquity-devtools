@@ -8,10 +8,10 @@ use micro\orm\DAO;
  $config["siteUrl"]="http://127.0.0.1:8090/";
  }*/
 
+CacheManager::startProd($config);
 $db=$config["database"];
 if($db["dbName"]!==""){
-	DAO::connect($db["dbName"],@$db["serverName"],@$db["port"],@$db["user"],@$db["password"]);
+	DAO::connect($db["dbName"],@$db["serverName"],@$db["port"],@$db["user"],@$db["password"],@$db["cache"]);
 }
-CacheManager::startProd($config);
 Router::start();
 Router::addRoute("_default", "controllers\Main");

@@ -6,7 +6,8 @@ return array(
 				"serverName"=>"%serverName%",
 				"port"=>"%port%",
 				"user"=>"%user%",
-				"password"=>"%password%"
+				"password"=>"%password%",
+				"cache"=>false
 		],
 		"sessionToken"=>"%temporaryToken%",
 		"namespaces"=>[],
