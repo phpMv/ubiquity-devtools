@@ -15,7 +15,7 @@ class Micro {
 	private static $toolsConfig;
 	private static $indexContent="\n\t\$this->loadView('index.html');\n";
 	private static $mainViewTemplate="index.html";
-	private static $commands=["new"=>["Creates a new project"]];
+	private static $activeDir;
 
 	public static function downloadZip($url,$zipFile="tmp/tmp.zip"){
 		$f = file_put_contents($zipFile, fopen($url, 'r'), LOCK_EX);
@@ -70,7 +70,7 @@ class Micro {
 	}
 
 	public static function create($projectName,$options,$force=false){
-		$activeDir=dirname(__FILE__);
+		self::$activeDir=dirname(__FILE__);
 		self::$toolsConfig=include("tools/toolsConfig.php");
 		$arguments=[
 				["b","dbName",$projectName],
@@ -99,11 +99,11 @@ class Micro {
 			echo "Files copy...\n";
 			FileUtils::xcopy("tmp/micro-master/micro/","app/micro");
 			//FileUtils::xcopy($activeDir."/project-files/templates", "app/micro/tools/templates");
-			FileUtils::xcopy($activeDir."/project-files/app/controllers/ControllerBase.php", "app/controllers/ControllerBase.php");
+			FileUtils::xcopy(self::$activeDir."/project-files/app/controllers/ControllerBase.php", "app/controllers/ControllerBase.php");
 
 
 			echo "Config files creation...\n";
-			self::openReplaceWrite($activeDir."/project-files/.htaccess", getcwd()."/.htaccess", array("%rewriteBase%"=>$projectName));
+			self::openReplaceWrite(self::$activeDir."/project-files/.htaccess", getcwd()."/.htaccess", array("%rewriteBase%"=>$projectName));
 			self::$configOptions=["%siteUrl%"=>"http://127.0.0.1/".$projectName."/"];
 			self::$configOptions["%projectName%"]=$projectName;
 			self::$configOptions["%injections%"]="";
@@ -116,11 +116,11 @@ class Micro {
 
 			self::includePhpmv();
 
-			self::openReplaceWrite($activeDir."/project-files/templates/config.tpl", "app/config/config.php", self::$configOptions);
-			FileUtils::xcopy($activeDir."/project-files/templates/services.tpl", "app/config/services.php");
-			FileUtils::xcopy($activeDir."/project-files/index.php", "index.php");
-			self::openReplaceWrite($activeDir."/project-files/templates/vHeader.tpl", "app/views/main/vHeader.html", self::$configOptions);
-			self::openReplaceWrite($activeDir."/project-files/templates/vFooter.tpl", "app/views/main/vFooter.html", self::$configOptions);
+			self::openReplaceWrite(self::$activeDir."/project-files/templates/config.tpl", "app/config/config.php", self::$configOptions);
+			FileUtils::xcopy(self::$activeDir."/project-files/templates/services.tpl", "app/config/services.php");
+			FileUtils::xcopy(self::$activeDir."/project-files/index.php", "index.php");
+			self::openReplaceWrite(self::$activeDir."/project-files/templates/vHeader.tpl", "app/views/main/vHeader.html", self::$configOptions);
+			self::openReplaceWrite(self::$activeDir."/project-files/templates/vFooter.tpl", "app/views/main/vFooter.html", self::$configOptions);
 
 			self::createComposerFile();
 			$answer=Console::question("Do you want to run composer install ?",["y","n"]);
@@ -133,7 +133,7 @@ class Micro {
 			Autoloader::register($config);
 
 			self::createController($config,"Main",self::$indexContent);
-			FileUtils::xcopy($activeDir."/project-files/app/views/".self::$mainViewTemplate, "app/views/index.html");
+			FileUtils::xcopy(self::$activeDir."/project-files/app/views/".self::$mainViewTemplate, "app/views/index.html");
 			echo "deleting temporary files...\n";
 			FileUtils::delTree("tmp");
 
@@ -208,7 +208,6 @@ class Micro {
 	}
 
 	public static function createController($config,$controllerName,$indexContent=null,$force=false){
-		$activeDir=dirname(__FILE__);
 		$controllerName=ucfirst($controllerName);
 		FileUtils::safeMkdir("app/controllers");
 		$filename="app/controllers/{$controllerName}.php";
@@ -221,7 +220,7 @@ class Micro {
 			$namespace="";
 			if(isset($config["mvcNS"]["controllers"]) && $config["mvcNS"]["controllers"]!=="")
 				$namespace="namespace ".$config["mvcNS"]["controllers"].";";
-			self::openReplaceWrite($activeDir."/tools/templates/controller.tpl", $filename, ["%controllerName%"=>$controllerName,"%indexContent%"=>$indexContent,"%namespace%"=>$namespace]);
+			self::openReplaceWrite(self::$activeDir."/tools/templates/controller.tpl", $filename, ["%controllerName%"=>$controllerName,"%indexContent%"=>$indexContent,"%namespace%"=>$namespace]);
 		}
 	}
 
@@ -324,6 +323,7 @@ class Micro {
 		}
 	}
 	private static function _init(){
+		self::$activeDir=dirname(__FILE__);
 		if(!self::setDir(getcwd())){
 			echo "Failed to locate project root folder\n";
 			echo "A Micro project must contain the .micro empty folder.\n";
