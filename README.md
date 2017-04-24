@@ -12,5 +12,5 @@ curl -s http://getcomposer.org/installer | php
 Run the composer installer :
 
 ```bash
-composer global require "phpMv/micro-devtools"
+composer global require "phpmv/micro-devtools"
 ```
