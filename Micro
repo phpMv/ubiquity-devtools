@@ -220,7 +220,7 @@ class Micro {
 			$namespace="";
 			if(isset($config["mvcNS"]["controllers"]) && $config["mvcNS"]["controllers"]!=="")
 				$namespace="namespace ".$config["mvcNS"]["controllers"].";";
-			self::openReplaceWrite(self::$activeDir."/tools/templates/controller.tpl", $filename, ["%controllerName%"=>$controllerName,"%indexContent%"=>$indexContent,"%namespace%"=>$namespace]);
+			self::openReplaceWrite(self::$activeDir."/project-files/templates/controller.tpl", $filename, ["%controllerName%"=>$controllerName,"%indexContent%"=>$indexContent,"%namespace%"=>$namespace]);
 		}
 	}
 
