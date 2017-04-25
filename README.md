@@ -23,3 +23,9 @@ Run in a console :
 ```bash
 Micro
 ```
+### Project creation
+Once installed, the simple `Micro new` command will create a fresh micro installation in the directory you specify. For instance, `Micro new blog` would create a directory named blog containing a Micro project:
+```bash
+Micro new blog
+```
+You can see more options about installation by reading the [Project creation section](http://micro-framework.readthedocs.io/en/latest/install.html).
