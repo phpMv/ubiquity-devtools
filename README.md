@@ -18,11 +18,71 @@ Make sure to place the `~/.composer/vendor/bin` directory in your PATH so the **
 
 ## II Devtools commands
 ### Information
-Run in a console :
-
+To get a list of available commands just run in console:
 ```bash
 Micro
 ```
+This command should display something similar to:
+
+```bash
+#micro devtools (1.0.3)
+
+project [projectName] =>
+        * Creates a new #micro project.
+        * Aliases : new,create-project
+        * Parameters :
+                -b      shortcut of --dbName
+                        Sets the database name.
+
+                -s      shortcut of --serverName
+                        Defines the db server address.
+                        Default : [127.0.0.1]
+
+                -p      shortcut of --port
+                        Defines the db server port.
+                        Default : [3306]
+
+                -u      shortcut of --user
+                        Defines the db server user.
+                        Default : [root]
+
+                -w      shortcut of --password
+                        Defines the db server password.
+
+                -q      shortcut of --phpmv
+                        Integrates phpmv-UI Toolkit.
+                        Possibles values :
+                        semantic,bootstrap,ui
+
+                -m      shortcut of --all-models
+                        Creates all models from database.
+
+
+controller [controllerName] =>
+        * Creates a new controller.
+        * Aliases : create-controller
+
+model [tableName] =>
+        * Generates a new model.
+        * Aliases : create-model
+
+all-models [] =>
+        * Generates all models from database.
+        * Aliases : create-all-models
+
+clear-cache [] =>
+        * Clear models cache.
+        * Parameters :
+                -a      shortcut of --all
+                        Clear annotations and models cache.
+                        Possibles values :
+                        true,false
+
+
+init-cache [] =>
+        * Creates the cache for models.
+```
+
 ### Project creation
 Once installed, the simple `Micro new` command will create a fresh micro installation in the directory you specify. For instance, `Micro new blog` would create a directory named blog containing a Micro project:
 ```bash
