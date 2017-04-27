@@ -89,3 +89,25 @@ Once installed, the simple `Micro new` command will create a fresh micro install
 Micro new blog
 ```
 You can see more options about installation by reading the [Project creation section](http://micro-framework.readthedocs.io/en/latest/install.html).
+
+### Models creation
+make sure that the database is configured properly in app/config/config.php file :
+```php
+<?php
+return array(
+		"siteUrl"=>"http://127.0.0.1/blog/",
+		"database"=>[
+				"dbName"=>"blog",
+				"serverName"=>"127.0.0.1",
+				"port"=>"3306",
+				"user"=>"root",
+				"password"=>"",
+				"cache"=>false
+		],
+...
+);
+```
+Execute the command, make sure you are also in the project folder or one of its subfolders :
+```bash
+Micro all-models
+```
