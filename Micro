@@ -291,7 +291,7 @@ class Micro {
 				ModelsCreator::create($config);
 				break;
 			case "model":case "create-model":
-				self::_init();
+				$config=self::_init();
 				ModelsCreator::create($config,$what);
 				break;
 			case "controller":case "create-controller":
