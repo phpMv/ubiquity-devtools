@@ -1,6 +1,6 @@
 {
-	"name": "phpmv/micro-devtools",
-	"description": "Command line tools for micro-framework",
+	"name": "phpmv/ubiquity-devtools",
+	"description": "Command line tools for ubiquity-framework",
 	"type": "micro",
 	"keywords": [
 		"php",
