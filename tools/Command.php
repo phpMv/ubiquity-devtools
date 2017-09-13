@@ -41,7 +41,7 @@ class Command {
 	}
 
 	public static function project(){
-		return new Command("project","projectName" ,"Creates a new #micro project.",["new","create-project"],[
+		return new Command("project","projectName" ,"Creates a new #ubiquity project.",["new","create-project"],[
 				"b"=>Parameter::create("dbName", "Sets the database name.", []),
 				"s"=>Parameter::create("serverName", "Defines the db server address.", [],"127.0.0.1"),
 				"p"=>Parameter::create("port", "Defines the db server port.", [],"3306"),
