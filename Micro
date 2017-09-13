@@ -10,7 +10,7 @@ include 'tools/utils/FileUtils.php';
 
 class Micro {
 	private static $version="1.0.3";
-	private static $appName="#micro devtools";
+	private static $appName="#ubiquity devtools";
 	private static $configOptions;
 	private static $toolsConfig;
 	private static $indexContent="\n\t\$this->loadView('index.html');\n";
