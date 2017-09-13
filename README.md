@@ -1,4 +1,4 @@
-# micro-devtools
+# ubiquity-devtools
 Command line tools for micro-framework
 ## I - Installation
 
@@ -12,7 +12,7 @@ curl -s http://getcomposer.org/installer | php
 Run the composer installer :
 
 ```bash
-composer global require phpmv/micro-devtools 1.0.x-dev
+composer global require phpmv/ubiquity-devtools 1.0.x-dev
 ```
 Make sure to place the `~/.composer/vendor/bin` directory in your PATH so the **Micro** executable can be located by your system.
 
@@ -25,10 +25,10 @@ Micro
 This command should display something similar to:
 
 ```bash
-#micro devtools (1.0.3)
+#ubiquity devtools (1.0.3)
 
 project [projectName] =>
-        * Creates a new #micro project.
+        * Creates a new #ubiquity project.
         * Aliases : new,create-project
         * Parameters :
                 -b      shortcut of --dbName
@@ -84,7 +84,7 @@ init-cache [] =>
 ```
 
 ### Project creation
-Once installed, the simple `Micro new` command will create a fresh micro installation in the directory you specify. For instance, `Micro new blog` would create a directory named blog containing a Micro project:
+Once installed, the simple `Micro new` command will create a fresh micro installation in the directory you specify. For instance, `Micro new blog` would create a directory named blog containing an Ubiquity project:
 ```bash
 Micro new blog
 ```
