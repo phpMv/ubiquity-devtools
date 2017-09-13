@@ -87,7 +87,7 @@ class Micro {
 			chdir($projectName);
 			echo "Downloading micro.git from https://github.com/phpMv/...\n";
 			FileUtils::safeMkdir("tmp");FileUtils::safeMkdir(".micro");
-			self::downloadZip("https://github.com/phpMv/micro/archive/master.zip","tmp/tmp.zip");
+			self::downloadZip("https://github.com/phpMv/ubiquity/archive/master.zip","tmp/tmp.zip");
 			echo "Files extraction...\n";
 			self::unzip("tmp/tmp.zip","tmp/");
 			FileUtils::safeMkdir("app");
@@ -97,7 +97,7 @@ class Micro {
 			FileUtils::safeMkdir("app/config");
 			define('ROOT', realpath('./app').DS);
 			echo "Files copy...\n";
-			FileUtils::xcopy("tmp/micro-master/micro/","app/micro");
+			FileUtils::xcopy("tmp/ubiquity-master/micro/","app/micro");
 			//FileUtils::xcopy($activeDir."/project-files/templates", "app/micro/tools/templates");
 			FileUtils::xcopy(self::$activeDir."/project-files/app/controllers/ControllerBase.php", "app/controllers/ControllerBase.php");
 

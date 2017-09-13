@@ -122,7 +122,7 @@ class ModelsCreator {
 		}
 	}
 
-	private function getJoinTableArray(Model $class,JoinColumnAnnotation $joinColumn){
+	private static function getJoinTableArray(Model $class,JoinColumnAnnotation $joinColumn){
 		$pk=$class->getPrimaryKey();
 		$fk=$joinColumn->name;
 		$dFk=$class->getDefaultFk();
