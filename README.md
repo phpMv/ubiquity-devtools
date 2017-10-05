@@ -1,5 +1,5 @@
 # ubiquity-devtools
-Command line tools for micro-framework
+Command line tools for Ubiquity framework
 ## I - Installation
 
 ### Installing via Composer
