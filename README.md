@@ -57,6 +57,8 @@ project [projectName] =>
                 -m      shortcut of --all-models
                         Creates all models from database.
 
+                -a      shortcut of --admin
+                        Adds UbiquityMyAdmin tool.
 
 controller [controllerName] =>
         * Creates a new controller.
