@@ -1,7 +1,6 @@
 #!/usr/bin/env php
 <?php
 use micro\controllers\Autoloader;
-use micro\utils\StrUtils;
 use micro\cache\CacheManager;
 include 'tools/ModelsCreator.php';
 include 'tools/Console.php';
@@ -136,7 +135,7 @@ class Micro {
 			self::createController($config,"Main",self::$indexContent);
 			FileUtils::xcopy(self::$activeDir."/project-files/app/views/".self::$mainViewTemplate, "app/views/index.html");
 
-			if(StrUtils::isBooleanTrue(self::$configOptions["%admin%"])){
+			if(self::isBooleanTrue(self::$configOptions["%admin%"])){
 				if(self::hasSemantic()){
 					FileUtils::xcopy(self::$activeDir."/project-files/app/views/Admin","app/views/Admin");
 					FileUtils::xcopy(self::$activeDir."/project-files/app/controllers/Admin.php","app/controllers/Admin.php");
@@ -149,7 +148,7 @@ class Micro {
 			echo "deleting temporary files...\n";
 			FileUtils::delTree("tmp");
 
-			if(StrUtils::isBooleanTrue(self::$configOptions["%all-models%"]))
+			if(self::isBooleanTrue(self::$configOptions["%all-models%"]))
 				ModelsCreator::create($config);
 			echo "project `{$projectName}` successfully created.\n";
 		}else{
@@ -222,7 +221,7 @@ class Micro {
 		));
 		echo "command line arguments :\n";
 		echo $output."\n";
-		if(StrUtils::isBooleanTrue(self::$configOptions["%admin%"]) && !self::hasSemantic()){
+		if(self::isBooleanTrue(self::$configOptions["%admin%"]) && !self::hasSemantic()){
 			throw new Exception("UbiquityMyAdmin require phpmv=semantic option.");
 		}
 		$phpmv=self::$configOptions["%phpmv%"];
@@ -361,6 +360,10 @@ class Micro {
 		require_once ROOT.'./../vendor/autoload.php';
 		Autoloader::register($config);
 		return $config;
+	}
+
+	private static function isBooleanTrue($s) {
+		return $s === true || $s === "true" || $s === 1 || $s === "1";
 	}
 
 	public static function error(){
