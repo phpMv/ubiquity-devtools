@@ -48,7 +48,8 @@ class Command {
 				"u"=>Parameter::create("user", "Defines the db server user.", [],"root"),
 				"w"=>Parameter::create("password", "Defines the db server password.", [],""),
 				"q"=>Parameter::create("phpmv", "Integrates phpmv-UI Toolkit.", ["semantic","bootstrap","ui"],""),
-				"m"=>Parameter::create("all-models", "Creates all models from database.", [],"")
+				"m"=>Parameter::create("all-models", "Creates all models from database.", [],""),
+				"a"=>Parameter::create("admin", "Adds UbiquityMyAdmin tool.", [],""),
 		]);
 	}
 

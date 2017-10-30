@@ -80,6 +80,7 @@ class Micro {
 				["w","password",""],
 				["m","all-models",false],
 				["q","phpmv",false],
+				["a","admin",false],
 		];
 		if(!is_dir($projectName) || $force){
 			if(!$force)
@@ -134,6 +135,16 @@ class Micro {
 
 			self::createController($config,"Main",self::$indexContent);
 			FileUtils::xcopy(self::$activeDir."/project-files/app/views/".self::$mainViewTemplate, "app/views/index.html");
+
+			if(StrUtils::isBooleanTrue(self::$configOptions["%admin%"])){
+				if(self::hasSemantic()){
+					FileUtils::xcopy(self::$activeDir."/project-files/app/views/Admin","app/views");
+					FileUtils::xcopy(self::$activeDir."/project-files/app/controllers/Admin.php","app/controllers/Admin.php");
+				}else{
+					throw new Exception("UbiquityMyAdmin require phpmv=semantic option.");
+				}
+			}
+
 			echo "deleting temporary files...\n";
 			FileUtils::delTree("tmp");
 
@@ -149,6 +160,11 @@ class Micro {
 				die();
 		}
 	}
+
+	private static function hasSemantic(){
+		return @self::$configOptions["%phpmv%"]==="semantic";
+	}
+
 	private static function includePhpmv(){
 		if(self::$configOptions["%phpmv%"]!==false){
 			$phpmv=self::$configOptions["%phpmv%"];
