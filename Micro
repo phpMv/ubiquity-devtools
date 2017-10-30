@@ -138,8 +138,9 @@ class Micro {
 
 			if(StrUtils::isBooleanTrue(self::$configOptions["%admin%"])){
 				if(self::hasSemantic()){
-					FileUtils::xcopy(self::$activeDir."/project-files/app/views/Admin","app/views");
+					FileUtils::xcopy(self::$activeDir."/project-files/app/views/Admin","app/views/Admin");
 					FileUtils::xcopy(self::$activeDir."/project-files/app/controllers/Admin.php","app/controllers/Admin.php");
+					echo "Creating the Controller Admin at the location app/controllers/Admin.php\n";
 				}else{
 					throw new Exception("UbiquityMyAdmin require phpmv=semantic option.");
 				}
@@ -221,6 +222,15 @@ class Micro {
 		));
 		echo "command line arguments :\n";
 		echo $output."\n";
+		if(StrUtils::isBooleanTrue(self::$configOptions["%admin%"]) && !self::hasSemantic()){
+			throw new Exception("UbiquityMyAdmin require phpmv=semantic option.");
+		}
+		$phpmv=self::$configOptions["%phpmv%"];
+		if($phpmv!==false){
+			if($phpmv!=="bootstrap" && $phpmv!=="semantic"){
+				throw new Exception($phpmv." is not a valid option for phpMv-UI.");
+			}
+		}
 	}
 
 	public static function createController($config,$controllerName,$indexContent=null,$force=false){
