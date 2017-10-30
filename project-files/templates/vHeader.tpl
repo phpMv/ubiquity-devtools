@@ -7,3 +7,4 @@
 %cssFiles%
 </head>
 <body>
+<div class="ui container">
