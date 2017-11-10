@@ -21,7 +21,7 @@ class ModelsCreator {
 	private static function connect($config) {
 		try {
 			self::$pdoObject = new \PDO(
-					'mysql:host=' . $config["serverName"] . ';dbname='
+					$config["type"].':host=' . $config["serverName"] . ';dbname='
 					. $config["dbName"] . ';port:' . $config["port"],
 					$config["user"], $config["password"]);
 			self::$pdoObject->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);

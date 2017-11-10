@@ -8,7 +8,7 @@ include 'tools/Command.php';
 include 'tools/utils/FileUtils.php';
 
 class Micro {
-	private static $version="1.0.3";
+	private static $version="1.0.4";
 	private static $appName="#ubiquity devtools";
 	private static $configOptions;
 	private static $toolsConfig;
@@ -73,6 +73,7 @@ class Micro {
 		self::$toolsConfig=include("tools/toolsConfig.php");
 		$arguments=[
 				["b","dbName",$projectName],
+				["t","dbType","mysql"],
 				["s","serverName","127.0.0.1"],
 				["p","port","3306"],
 				["u","user","root"],
