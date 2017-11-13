@@ -98,7 +98,6 @@ class Micro {
 			define('ROOT', realpath('./app').DS);
 			echo "Files copy...\n";
 			FileUtils::xcopy("tmp/ubiquity-master/micro/","app/micro");
-			//FileUtils::xcopy($activeDir."/project-files/templates", "app/micro/tools/templates");
 			FileUtils::xcopy(self::$activeDir."/project-files/app/controllers/ControllerBase.php", "app/controllers/ControllerBase.php");
 
 
@@ -131,7 +130,7 @@ class Micro {
 			require_once 'app/micro/controllers/Autoloader.php';
 			$config=require_once 'app/config/config.php';
 			Autoloader::register($config);
-			micro\controllers\Startup::$config=$config;
+			micro\controllers\Startup::setConfig($config);
 
 			self::createController($config,"Main",self::$indexContent);
 			FileUtils::xcopy(self::$activeDir."/project-files/app/views/".self::$mainViewTemplate, "app/views/index.html");
@@ -360,7 +359,7 @@ class Micro {
 		require_once ROOT.'micro/controllers/Autoloader.php';
 		require_once ROOT.'./../vendor/autoload.php';
 		Autoloader::register($config);
-		micro\controllers\Startup::$config=$config;
+		micro\controllers\Startup::setConfig($config);
 		return $config;
 	}
 
