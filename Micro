@@ -2,7 +2,6 @@
 <?php
 use micro\controllers\Autoloader;
 use micro\cache\CacheManager;
-include 'tools/ModelsCreator.php';
 include 'tools/Console.php';
 include 'tools/Command.php';
 include 'tools/utils/FileUtils.php';
@@ -150,7 +149,7 @@ class Micro {
 			FileUtils::delTree("tmp");
 
 			if(self::isBooleanTrue(self::$configOptions["%all-models%"]))
-				ModelsCreator::create($config);
+				micro\orm\creator\ModelsCreator::create($config);
 			echo "project `{$projectName}` successfully created.\n";
 		}else{
 			echo "The {$projectName} folder already exists !\n";
@@ -314,11 +313,11 @@ class Micro {
 			break;
 			case "all-models":case "create-all-models":
 				$config=self::_init();
-				ModelsCreator::create($config);
+				micro\orm\creator\ModelsCreator::create($config);
 				break;
 			case "model":case "create-model":
 				$config=self::_init();
-				ModelsCreator::create($config,$what);
+				micro\orm\creator\ModelsCreator::create($config,true,$what);
 				break;
 			case "controller":case "create-controller":
 				$config=self::_init();
