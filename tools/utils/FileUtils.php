@@ -52,4 +52,18 @@ class FileUtils {
 		if(!is_dir($dir))
 			return mkdir($dir,0777,true);
 	}
+
+	public static function cleanPathname($path){
+		if($path!==null & $path!==""){
+			if(DS==="/")
+				$path=\str_replace("\\", DS, $path);
+				else
+					$path=\str_replace("/", DS, $path);
+					$path=\str_replace(DS.DS, DS, $path);
+					if(!substr($path, -1)=== DS){
+						$path=$path.DS;
+					}
+		}
+		return $path;
+	}
 }

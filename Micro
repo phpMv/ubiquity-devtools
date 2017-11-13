@@ -7,7 +7,7 @@ include 'tools/Command.php';
 include 'tools/utils/FileUtils.php';
 
 class Micro {
-	private static $version="1.0.4";
+	private static $version="1.0.5";
 	private static $appName="#ubiquity devtools";
 	private static $configOptions;
 	private static $toolsConfig;
@@ -131,6 +131,7 @@ class Micro {
 			require_once 'app/micro/controllers/Autoloader.php';
 			$config=require_once 'app/config/config.php';
 			Autoloader::register($config);
+			micro\controllers\Startup::$config=$config;
 
 			self::createController($config,"Main",self::$indexContent);
 			FileUtils::xcopy(self::$activeDir."/project-files/app/views/".self::$mainViewTemplate, "app/views/index.html");
@@ -254,7 +255,7 @@ class Micro {
 			$microDir=$dir.DIRECTORY_SEPARATOR.".micro";
 			if(file_exists($microDir) && is_dir($microDir)){
 				chdir($dir);
-				echo "The project folder is {$dir}\n";
+				echo "The project folder is ".FileUtils::cleanPathname($dir)."\n";
 				return true;
 			}
 		}
@@ -359,6 +360,7 @@ class Micro {
 		require_once ROOT.'micro/controllers/Autoloader.php';
 		require_once ROOT.'./../vendor/autoload.php';
 		Autoloader::register($config);
+		micro\controllers\Startup::$config=$config;
 		return $config;
 	}
 
