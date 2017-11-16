@@ -263,7 +263,7 @@ class Micro {
 		}
 	}
 
-	public static function createController($config,$controllerName,$indexContent=null,$force=false){
+	public static function createController($config,$controllerName,$indexContent=null,$view=false,$force=false){
 		$controllerName=ucfirst($controllerName);
 		FileUtils::safeMkdir("app/controllers");
 		$filename="app/controllers/{$controllerName}.php";
@@ -277,6 +277,11 @@ class Micro {
 			if(isset($config["mvcNS"]["controllers"]) && $config["mvcNS"]["controllers"]!=="")
 				$namespace="namespace ".$config["mvcNS"]["controllers"].";";
 			self::openReplaceWrite(self::$activeDir."/project-files/templates/controller.tpl", $filename, ["%controllerName%"=>$controllerName,"%indexContent%"=>$indexContent,"%namespace%"=>$namespace]);
+			if($view){
+				$viewFolder="app/views/".$controllerName;
+				FileUtils::safeMkdir($viewFolder);
+				self::openReplaceWrite(self::$activeDir."/project-files/templates/view.tpl", $viewFolder."/index.html", ["%controllerName%"=>$controllerName]);
+			}
 		}
 	}
 
@@ -374,7 +379,8 @@ class Micro {
 				break;
 			case "controller":case "create-controller":
 				$config=self::_init();
-				self::createController($config,$what);
+				$view=self::getOption($options, "v", "views",false);
+				self::createController($config,$what,$view);
 				break;
 			case "clear-cache":
 				$type=self::getOption($options, "t", "type","all");

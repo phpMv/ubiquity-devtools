@@ -54,7 +54,7 @@ class Command {
 	}
 
 	public static function controller(){
-		return new Command("controller","controllerName", "Creates a new controller.",["create-controller"]);
+		return new Command("controller","controllerName", "Creates a new controller.",["create-controller"],["v"=>Parameter::create("views", "creates an associated view folder", ["true","false"])]);
 	}
 
 	public static function model(){
