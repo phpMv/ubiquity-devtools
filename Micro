@@ -7,13 +7,18 @@ include 'tools/Command.php';
 include 'tools/utils/FileUtils.php';
 
 class Micro {
-	private static $version="1.0.5";
+	private static $version="1.0.6";
 	private static $appName="#ubiquity devtools";
 	private static $configOptions;
 	private static $toolsConfig;
 	private static $indexContent="\n\t\$this->loadView('index.html');\n";
 	private static $mainViewTemplate="index.html";
 	private static $activeDir;
+	private static $tmpDir;
+	private static $githubUrl="https://github.com/phpMv/ubiquity/archive/master.zip";
+	private static $githubRepo="ubiquity-master";
+	private static $checkProjectDir=".micro";
+	private static $frameworkDir="micro";
 
 	public static function downloadZip($url,$zipFile="tmp/tmp.zip"){
 		$f = file_put_contents($zipFile, fopen($url, 'r'), LOCK_EX);
@@ -67,6 +72,15 @@ class Micro {
 		return $option;
 	}
 
+	private static function downloadAndExtract(){
+		echo "Downloading ubiquity.git from https://github.com/phpMv/...\n";
+		self::$tmpDir=uniqid("tmp");
+		FileUtils::safeMkdir(self::$tmpDir);
+		self::downloadZip(self::$githubUrl,self::$tmpDir."/tmp.zip");
+		echo "Files extraction...\n";
+		self::unzip(self::$tmpDir."/tmp.zip",self::$tmpDir."/");
+	}
+
 	public static function create($projectName,$options,$force=false){
 		self::$activeDir=dirname(__FILE__);
 		self::$toolsConfig=include("tools/toolsConfig.php");
@@ -85,11 +99,9 @@ class Micro {
 			if(!$force)
 				FileUtils::safeMkdir($projectName);
 			chdir($projectName);
-			echo "Downloading micro.git from https://github.com/phpMv/...\n";
-			FileUtils::safeMkdir("tmp");FileUtils::safeMkdir(".micro");
-			self::downloadZip("https://github.com/phpMv/ubiquity/archive/master.zip","tmp/tmp.zip");
-			echo "Files extraction...\n";
-			self::unzip("tmp/tmp.zip","tmp/");
+			FileUtils::safeMkdir(self::$checkProjectDir);
+
+			$tmpDir=self::downloadAndExtract();
 			FileUtils::safeMkdir("app");
 			FileUtils::safeMkdir("app/views/main");
 			FileUtils::safeMkdir("app/controllers");
@@ -97,7 +109,7 @@ class Micro {
 			FileUtils::safeMkdir("app/config");
 			define('ROOT', realpath('./app').DS);
 			echo "Files copy...\n";
-			FileUtils::xcopy("tmp/ubiquity-master/micro/","app/micro");
+			FileUtils::xcopy($tmpDir."/".self::$githubRepo."/".self::$frameworkDir."/","app/".self::$frameworkDir);
 			FileUtils::xcopy(self::$activeDir."/project-files/app/controllers/ControllerBase.php", "app/controllers/ControllerBase.php");
 
 
@@ -127,7 +139,7 @@ class Micro {
 				system("composer install");
 				require_once ROOT.'./../vendor/autoload.php';
 			}
-			require_once 'app/micro/controllers/Autoloader.php';
+			require_once 'app/'.self::$frameworkDir.'/controllers/Autoloader.php';
 			$config=require_once 'app/config/config.php';
 			Autoloader::register($config);
 			micro\controllers\Startup::setConfig($config);
@@ -136,17 +148,11 @@ class Micro {
 			FileUtils::xcopy(self::$activeDir."/project-files/app/views/".self::$mainViewTemplate, "app/views/index.html");
 
 			if(self::isBooleanTrue(self::$configOptions["%admin%"])){
-				if(self::hasSemantic()){
-					FileUtils::xcopy(self::$activeDir."/project-files/app/views/Admin","app/views/Admin");
-					FileUtils::xcopy(self::$activeDir."/project-files/app/controllers/Admin.php","app/controllers/Admin.php");
-					echo "Creating the Controller Admin at the location app/controllers/Admin.php\n";
-				}else{
-					throw new Exception("UbiquityMyAdmin require phpmv=semantic option.");
-				}
+				$this->adminInstall();
 			}
 
 			echo "deleting temporary files...\n";
-			FileUtils::delTree("tmp");
+			FileUtils::delTree($tmpDir);
 
 			if(self::isBooleanTrue(self::$configOptions["%all-models%"]))
 				micro\orm\creator\ModelsCreator::create($config);
@@ -161,8 +167,33 @@ class Micro {
 		}
 	}
 
-	private static function hasSemantic(){
-		return @self::$configOptions["%phpmv%"]==="semantic";
+	private static function adminInstall($config=null){
+		if(self::hasSemantic($config)){
+			FileUtils::xcopy(self::$activeDir."/project-files/app/views/Admin","app/views/Admin");
+			FileUtils::xcopy(self::$activeDir."/project-files/app/controllers/Admin.php","app/controllers/Admin.php");
+			echo "Creating the Controller Admin at the location app/controllers/Admin.php\n";
+		}else{
+			throw new Exception("UbiquityMyAdmin require phpmv=semantic option.");
+		}
+	}
+
+	private static function hasSemantic($config=null){
+		if(isset($config))
+			return @self::$configOptions["%phpmv%"]==="semantic";
+		else{
+			if(isset($config["di"])){
+				$di=$config["di"];
+				if(isset($di["jquery"])){
+					$jquery=$di["jquery"];
+					if($jquery instanceof Ajax\php\micro\JsUtils){
+						return $jquery->semantic()!==null;
+					}else
+						return false;
+				}else
+					return false;
+			}else
+				return false;
+		}
 	}
 
 	private static function includePhpmv(){
@@ -251,7 +282,7 @@ class Micro {
 
 	private static function setDir($dir=null){
 		if(file_exists($dir) && is_dir($dir)){
-			$microDir=$dir.DIRECTORY_SEPARATOR.".micro";
+			$microDir=$dir.DIRECTORY_SEPARATOR.self::$checkProjectDir;
 			if(file_exists($microDir) && is_dir($microDir)){
 				chdir($dir);
 				echo "The project folder is ".FileUtils::cleanPathname($dir)."\n";
@@ -302,6 +333,28 @@ class Micro {
 		}
 		return $out;
 	}
+
+	private static function selfUpdate(){
+		$config=self::_init();
+		$tmpDir=self::downloadAndExtract();
+
+		define('ROOT', realpath('./app').DS);
+		echo "Files copy...\n";
+		FileUtils::xcopy($tmpDir."/ubiquity-master/".self::$frameworkDir."/","app/".self::$frameworkDir);
+
+		$filename="app/controllers/Admin.php";
+		if(file_exists($filename) && self::hasSemantic($config)){
+			FileUtils::xcopy(self::$activeDir."/project-files/app/views/Admin","app/views/Admin");
+		}
+		echo "deleting temporary files...\n";
+		FileUtils::delTree($tmpDir);
+		$answer=Console::question("Do you want to run composer update ?",["y","n"]);
+		if(Console::isYes($answer)){
+			system("composer update");
+		}
+		echo "project in `".self::$activeDir."` successfully updated.\n";
+	}
+
 	public static function init($command){
 		global $argv;
 		register_shutdown_function(array("Micro","error"));
@@ -333,6 +386,13 @@ class Micro {
 				$config=self::_init();
 				CacheManager::initCache($config,$type);
 				break;
+			case "self-update":
+				self::selfUpdate();
+				break;
+			case "admin":
+				$config=self::_init();
+				self::adminInstall($config);
+				break;
 			default:
 				self::info();
 			break;
@@ -351,12 +411,12 @@ class Micro {
 		self::$activeDir=dirname(__FILE__);
 		if(!self::setDir(getcwd())){
 			echo "Failed to locate project root folder\n";
-			echo "A Micro project must contain the .micro empty folder.\n";
+			echo "An Ubiquity project must contain the ".self::$checkProjectDir." folder.\n";
 			die();
 		}
 		define('ROOT', realpath('./app').DS);
 		$config=require_once 'app/config/config.php';
-		require_once ROOT.'micro/controllers/Autoloader.php';
+		require_once ROOT.self::$frameworkDir.'/controllers/Autoloader.php';
 		require_once ROOT.'./../vendor/autoload.php';
 		Autoloader::register($config);
 		micro\controllers\Startup::setConfig($config);

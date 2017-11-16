@@ -73,7 +73,15 @@ class Command {
 		return new Command("init-cache", "","Creates the cache for models.",[],[]);
 	}
 
+	public static function selfUpdate(){
+		return new Command("self-update", "","Updates Ubiquity framework for the current project.",[],[]);
+	}
+
+	public static function admin(){
+		return new Command("admin", "","Adds UbiquityMyAdmin webtools to the current project .",[],[]);
+	}
+
 	public static function getCommands(){
-		return [self::project(),self::controller(),self::model(),self::allModels(),self::clearCache(),self::initCache()];
+		return [self::project(),self::controller(),self::model(),self::allModels(),self::clearCache(),self::initCache(),self::selfUpdate(),self::admin()];
 	}
 }
