@@ -79,6 +79,7 @@ class Micro {
 		self::downloadZip(self::$githubUrl,self::$tmpDir."/tmp.zip");
 		echo "Files extraction...\n";
 		self::unzip(self::$tmpDir."/tmp.zip",self::$tmpDir."/");
+		return self::$tmpDir;
 	}
 
 	public static function create($projectName,$options,$force=false){

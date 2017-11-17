@@ -1,5 +1,6 @@
 <?php
 include_once 'Parameter.php';
+
 class Command {
 	protected $name;
 	protected $description;
