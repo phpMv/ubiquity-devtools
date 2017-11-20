@@ -179,7 +179,7 @@ class Micro {
 	}
 
 	private static function hasSemantic($config=null){
-		if(isset($config))
+		if(!isset($config))
 			return @self::$configOptions["%phpmv%"]==="semantic";
 		else{
 			if(isset($config["di"])){
