@@ -149,7 +149,7 @@ class Micro {
 			FileUtils::xcopy(self::$activeDir."/project-files/app/views/".self::$mainViewTemplate, "app/views/index.html");
 
 			if(self::isBooleanTrue(self::$configOptions["%admin%"])){
-				$this->adminInstall();
+				self::adminInstall();
 			}
 
 			echo "deleting temporary files...\n";
