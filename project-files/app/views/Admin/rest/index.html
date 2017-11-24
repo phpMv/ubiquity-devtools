@@ -1,0 +1,15 @@
+{{ q["header"] | raw }}
+{{ q["msgRest"] | raw }}
+<button id="bt-init-cache" class="ui button orange">
+  <i class="icon refresh"></i>
+  (Re-)Init router cache
+</button>
+<button id="bt-init-rest-cache" class="ui button brown">
+  <i class="icon refresh"></i>
+  (Re-)Init Rest cache
+</button>
+<p></p>
+<div id="divRest" class="ui container">
+{{ q["tabsRest"] | raw }}
+</div>
+{{ script_foot | raw }}

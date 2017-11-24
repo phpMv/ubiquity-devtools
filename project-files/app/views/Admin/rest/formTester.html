@@ -1,0 +1,30 @@
+<div class="ui segment orange">
+{{ frmTester | raw }}
+</div>
+<div class="ui grid">
+  <div class="six wide column">
+  	<div>
+		<h5 class="ui top block attached header">
+			Request headers
+		</h5>
+		<div class="ui attached segment _requestHeaders">
+			 {{ frmHeaders | raw }}
+		</div>
+  	</div>
+  	<p></p>
+  	<div>
+		<h5 class="ui top block attached header">
+			Request parameters
+		</h5>
+		<div class="ui attached segment _requestParameters">
+			 {{ frmParameters | raw }}
+		</div>
+  	</div>
+  	<div class="_runRestMethod">
+  	</div>
+  </div>
+  <div class="ten wide column">
+  	<div class="ui inverted segment"><pre class="_restResponse"></pre></div>
+  </div>
+</div>
+{{ script_foot | raw }}
