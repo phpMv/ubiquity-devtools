@@ -10,7 +10,6 @@ return array(
 				"password"=>"%password%",
 				"cache"=>false
 		],
-		"sessionToken"=>"%temporaryToken%",
 		"namespaces"=>[],
 		"templateEngine"=>'micro\views\engine\Twig',
 		"templateEngineOptions"=>array("cache"=>false),
@@ -18,5 +17,8 @@ return array(
 		"debug"=>false,
 		"di"=>[%injections%],
 		"cacheDirectory"=>"cache/",
-		"mvcNS"=>["models"=>"models","controllers"=>"controllers"]
+		"mvcNS"=>["models"=>"models","controllers"=>"controllers","rest"=>"rest"],
+		"isRest"=>function(){
+			return micro\utils\RequestUtils::getUrlParts()[0]==="rest";
+		}
 );
