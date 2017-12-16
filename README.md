@@ -14,13 +14,13 @@ Run the composer installer :
 ```bash
 composer global require phpmv/ubiquity-devtools 1.0.x-dev
 ```
-Make sure to place the `~/.composer/vendor/bin` directory in your PATH so the **Micro** executable can be located by your system.
+Make sure to place the `~/.composer/vendor/bin` directory in your PATH so the **Ubiquity** executable can be located by your system.
 
 ## II Devtools commands
 ### Information
 To get a list of available commands just run in console:
 ```bash
-Micro
+Ubiquity
 ```
 This command should display something similar to:
 
@@ -86,9 +86,9 @@ init-cache [] =>
 ```
 
 ### Project creation
-Once installed, the simple `Micro new` command will create a fresh micro installation in the directory you specify. For instance, `Micro new blog` would create a directory named blog containing an Ubiquity project:
+Once installed, the simple `Ubiquity new` command will create a fresh micro installation in the directory you specify. For instance, `Micro new blog` would create a directory named blog containing an Ubiquity project:
 ```bash
-Micro new blog
+Ubiquity new blog
 ```
 You can see more options about installation by reading the [Project creation section](http://micro-framework.readthedocs.io/en/latest/install.html).
 
@@ -111,5 +111,5 @@ return array(
 ```
 Execute the command, make sure you are also in the project folder or one of its subfolders :
 ```bash
-Micro all-models
+Ubiquity all-models
 ```

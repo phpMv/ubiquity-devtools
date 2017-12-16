@@ -142,7 +142,7 @@ class Ubiquity {
 				$di=$config["di"];
 				if(isset($di["jquery"])){
 					$jquery=$di["jquery"];
-					if($jquery instanceof Ajax\php\micro\JsUtils){
+					if($jquery instanceof Ajax\php\ubiquity\JsUtils){
 						return $jquery->semantic()!==null;
 					}else
 						return false;
@@ -159,7 +159,7 @@ class Ubiquity {
 			switch ($phpmv){
 				case "bootstrap":case "semantic":
 					self::$configOptions["%injections%"]="\"jquery\"=>function(){
-					\t\t\$jquery=new Ajax\php\micro\JsUtils([\"defer\"=>true]);
+					\t\t\$jquery=new Ajax\php\ubiquity\JsUtils([\"defer\"=>true]);
 					\t\t\$jquery->{$phpmv}(new Ajax\\".ucfirst($phpmv)."());
 					\t\treturn \$jquery;
 					\t}";
