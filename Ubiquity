@@ -1,12 +1,12 @@
 #!/usr/bin/env php
 <?php
-use micro\controllers\Autoloader;
-use micro\cache\CacheManager;
+use Ubiquity\controllers\Autoloader;
+use Ubiquity\cache\CacheManager;
 include 'tools/Console.php';
 include 'tools/Command.php';
 include 'tools/utils/FileUtils.php';
 
-class Micro {
+class Ubiquity {
 	private static $version="1.0.6";
 	private static $appName="#ubiquity devtools";
 	private static $configOptions;
@@ -14,38 +14,12 @@ class Micro {
 	private static $indexContent="\n\t\$this->loadView('index.html');\n";
 	private static $mainViewTemplate="index.html";
 	private static $activeDir;
-	private static $tmpDir;
-	private static $githubUrl="https://github.com/phpMv/ubiquity/archive/master.zip";
-	private static $githubRepo="ubiquity-master";
-	private static $checkProjectDir=".micro";
-	private static $frameworkDir="micro";
-
-	public static function downloadZip($url,$zipFile="tmp/tmp.zip"){
-		$f = file_put_contents($zipFile, fopen($url, 'r'), LOCK_EX);
-		if(FALSE === $f)
-			die("Couldn't write to file.");
-		else{
-			echo $f." downloaded.\n";
-		}
-	}
+	private static $checkProjectDir=".ubiquity";
 
 	public static function createComposerFile(){
 		$composer=json_encode(self::$toolsConfig["composer"]);
 		echo "Composer file creation...\n";
 		FileUtils::writeFile("composer.json", $composer);
-	}
-
-	public static function unzip($zipFile,$extractPath="."){
-		$zip = new \ZipArchive();
-		if (! $zip) {
-			echo "<br>Could not make ZipArchive object.";
-			exit;
-		}
-		if($zip->open($zipFile) !== TRUE){
-			echo "Error :- Unable to open the Zip File";
-		}
-		$zip->extractTo($extractPath);
-		$zip->close();
 	}
 
 	public static function replaceAll($array,$subject){
@@ -72,16 +46,6 @@ class Micro {
 		return $option;
 	}
 
-	private static function downloadAndExtract(){
-		echo "Downloading ubiquity.git from https://github.com/phpMv/...\n";
-		self::$tmpDir=uniqid("tmp");
-		FileUtils::safeMkdir(self::$tmpDir);
-		self::downloadZip(self::$githubUrl,self::$tmpDir."/tmp.zip");
-		echo "Files extraction...\n";
-		self::unzip(self::$tmpDir."/tmp.zip",self::$tmpDir."/");
-		return self::$tmpDir;
-	}
-
 	public static function create($projectName,$options,$force=false){
 		self::$activeDir=dirname(__FILE__);
 		self::$toolsConfig=include("tools/toolsConfig.php");
@@ -102,7 +66,6 @@ class Micro {
 			chdir($projectName);
 			FileUtils::safeMkdir(self::$checkProjectDir);
 
-			$tmpDir=self::downloadAndExtract();
 			FileUtils::safeMkdir("app");
 			FileUtils::safeMkdir("app/views/main");
 			FileUtils::safeMkdir("app/controllers");
@@ -110,7 +73,6 @@ class Micro {
 			FileUtils::safeMkdir("app/config");
 			define('ROOT', realpath('./app').DS);
 			echo "Files copy...\n";
-			FileUtils::xcopy($tmpDir."/".self::$githubRepo."/".self::$frameworkDir."/","app/".self::$frameworkDir);
 			FileUtils::xcopy(self::$activeDir."/project-files/app/controllers/ControllerBase.php", "app/controllers/ControllerBase.php");
 
 
@@ -142,8 +104,7 @@ class Micro {
 			}
 			require_once 'app/'.self::$frameworkDir.'/controllers/Autoloader.php';
 			$config=require_once 'app/config/config.php';
-			Autoloader::register($config);
-			micro\controllers\Startup::setConfig($config);
+			Ubiquity\controllers\Startup::setConfig($config);
 
 			self::createController($config,"Main",self::$indexContent);
 			FileUtils::xcopy(self::$activeDir."/project-files/app/views/".self::$mainViewTemplate, "app/views/index.html");
@@ -156,7 +117,7 @@ class Micro {
 			FileUtils::delTree($tmpDir);
 
 			if(self::isBooleanTrue(self::$configOptions["%all-models%"]))
-				micro\orm\creator\ModelsCreator::create($config);
+				Ubiquity\orm\creator\ModelsCreator::create($config);
 			echo "project `{$projectName}` successfully created.\n";
 		}else{
 			echo "The {$projectName} folder already exists !\n";
@@ -342,20 +303,16 @@ class Micro {
 
 	private static function selfUpdate(){
 		$config=self::_init();
-		$tmpDir=self::downloadAndExtract();
-
 		define('ROOT', realpath('./app').DS);
 		echo "Files copy...\n";
-		FileUtils::xcopy($tmpDir."/ubiquity-master/".self::$frameworkDir."/","app/".self::$frameworkDir);
 
 		$filename="app/controllers/Admin.php";
 		if(file_exists($filename) && self::hasSemantic($config)){
 			FileUtils::xcopy(self::$activeDir."/project-files/app/views/Admin","app/views/Admin");
 		}
-		echo "deleting temporary files...\n";
-		FileUtils::delTree($tmpDir);
 		$answer=Console::question("Do you want to run composer update ?",["y","n"]);
 		if(Console::isYes($answer)){
+			system("composer global update");
 			system("composer update");
 		}
 		echo "project in `".self::$activeDir."` successfully updated.\n";
@@ -363,7 +320,7 @@ class Micro {
 
 	public static function init($command){
 		global $argv;
-		register_shutdown_function(array("Micro","error"));
+		register_shutdown_function(array("Ubiquity","error"));
 		$what=@$argv[2];
 		$options=self::parseArguments();
 		switch ($command) {
@@ -372,11 +329,11 @@ class Micro {
 			break;
 			case "all-models":case "create-all-models":
 				$config=self::_init();
-				micro\orm\creator\ModelsCreator::create($config);
+				Ubiquity\orm\creator\ModelsCreator::create($config);
 				break;
 			case "model":case "create-model":
 				$config=self::_init();
-				micro\orm\creator\ModelsCreator::create($config,true,$what);
+				Ubiquity\orm\creator\ModelsCreator::create($config,true,$what);
 				break;
 			case "controller":case "create-controller":
 				$config=self::_init();
@@ -423,10 +380,9 @@ class Micro {
 		}
 		define('ROOT', realpath('./app').DS);
 		$config=require_once 'app/config/config.php';
-		require_once ROOT.self::$frameworkDir.'/controllers/Autoloader.php';
 		require_once ROOT.'./../vendor/autoload.php';
 		Autoloader::register($config);
-		micro\controllers\Startup::setConfig($config);
+		Ubiquity\controllers\Startup::setConfig($config);
 		return $config;
 	}
 
@@ -445,4 +401,4 @@ error_reporting(E_ALL);
 
 define('DS', DIRECTORY_SEPARATOR);
 
-Micro::init(@$argv[1]);
+Ubiquity::init(@$argv[1]);

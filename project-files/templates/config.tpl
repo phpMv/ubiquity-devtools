@@ -11,14 +11,14 @@ return array(
 				"cache"=>false
 		],
 		"namespaces"=>[],
-		"templateEngine"=>'micro\\views\\engine\\Twig',
+		"templateEngine"=>'Ubiquity\\views\\engine\\Twig',
 		"templateEngineOptions"=>array("cache"=>false),
 		"test"=>false,
 		"debug"=>false,
 		"di"=>[%injections%],
-		"cache"=>["directory"=>"cache/","system"=>"micro\\cache\\system\\ArrayCache","params"=>[]],
+		"cache"=>["directory"=>"cache/","system"=>"Ubiquity\\cache\\system\\ArrayCache","params"=>[]],
 		"mvcNS"=>["models"=>"models","controllers"=>"controllers","rest"=>"rest"],
 		"isRest"=>function(){
-			return micro\utils\RequestUtils::getUrlParts()[0]==="rest";
+			return Ubiquity\utils\RequestUtils::getUrlParts()[0]==="rest";
 		}
 );

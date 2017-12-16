@@ -1,7 +1,7 @@
 <?php
 namespace controllers;
-use micro\utils\RequestUtils;
-use micro\controllers\Controller;
+use Ubiquity\utils\RequestUtils;
+use Ubiquity\controllers\Controller;
  /**
  * ControllerBase
  **/

@@ -1,6 +1,6 @@
 <?php
 namespace controllers;
-use micro\controllers\admin\UbiquityMyAdminBaseController;
+use Ubiquity\controllers\admin\UbiquityMyAdminBaseController;
 
 class Admin extends UbiquityMyAdminBaseController{
 

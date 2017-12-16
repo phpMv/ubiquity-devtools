@@ -1,7 +1,7 @@
 {
 	"name": "phpmv/ubiquity-devtools",
 	"description": "Command line tools for ubiquity-framework",
-	"type": "micro",
+	"type": "installer",
 	"keywords": [
 		"php",
 		"framework"
@@ -18,7 +18,7 @@
 		}
 	],
 	 "bin": [
-        "Micro"
+        "Ubiquity"
     ],
      "extra": {
         "branch-alias": {
