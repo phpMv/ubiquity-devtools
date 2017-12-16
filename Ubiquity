@@ -6,7 +6,7 @@ include 'tools/Command.php';
 include 'tools/utils/FileUtils.php';
 
 class Ubiquity {
-	private static $version="1.0.6";
+	private static $version="1.0.7";
 	private static $appName="#ubiquity devtools";
 	private static $configOptions;
 	private static $toolsConfig;
@@ -110,9 +110,6 @@ class Ubiquity {
 			if(self::isBooleanTrue(self::$configOptions["%admin%"])){
 				self::adminInstall();
 			}
-
-			echo "deleting temporary files...\n";
-			FileUtils::delTree($tmpDir);
 
 			if(self::isBooleanTrue(self::$configOptions["%all-models%"]))
 				Ubiquity\orm\creator\ModelsCreator::create($config);
