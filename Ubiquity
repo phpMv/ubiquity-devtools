@@ -1,6 +1,5 @@
 #!/usr/bin/env php
 <?php
-use Ubiquity\controllers\Autoloader;
 use Ubiquity\cache\CacheManager;
 include 'tools/Console.php';
 include 'tools/Command.php';
@@ -102,7 +101,6 @@ class Ubiquity {
 				system("composer install");
 				require_once ROOT.'./../vendor/autoload.php';
 			}
-			require_once 'app/'.self::$frameworkDir.'/controllers/Autoloader.php';
 			$config=require_once 'app/config/config.php';
 			Ubiquity\controllers\Startup::setConfig($config);
 
@@ -381,7 +379,6 @@ class Ubiquity {
 		define('ROOT', realpath('./app').DS);
 		$config=require_once 'app/config/config.php';
 		require_once ROOT.'./../vendor/autoload.php';
-		Autoloader::register($config);
 		Ubiquity\controllers\Startup::setConfig($config);
 		return $config;
 	}
