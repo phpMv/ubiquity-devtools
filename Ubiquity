@@ -112,7 +112,7 @@ class Ubiquity {
 			}
 
 			if(self::isBooleanTrue(self::$configOptions["%all-models%"]))
-				Ubiquity\orm\creator\ModelsCreator::create($config);
+				(new Ubiquity\orm\creator\database\DbModelsCreator())->create($config);
 			echo "project `{$projectName}` successfully created.\n";
 		}else{
 			echo "The {$projectName} folder already exists !\n";
@@ -324,11 +324,11 @@ class Ubiquity {
 			break;
 			case "all-models":case "create-all-models":
 				$config=self::_init();
-				Ubiquity\orm\creator\ModelsCreator::create($config);
+				(new Ubiquity\orm\creator\database\DbModelsCreator())->create($config);
 				break;
 			case "model":case "create-model":
 				$config=self::_init();
-				Ubiquity\orm\creator\ModelsCreator::create($config,true,$what);
+				(new Ubiquity\orm\creator\database\DbModelsCreator())->create($config,true,$what);
 				break;
 			case "controller":case "create-controller":
 				$config=self::_init();
