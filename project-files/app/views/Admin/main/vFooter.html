@@ -1,0 +1,6 @@
+{% extends "main/vFooter.html" %}
+{% block scripts %}
+	{{ parent() }}
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js"></script>
+	{{ js | raw }}
+{% endblock %}
