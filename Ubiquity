@@ -49,7 +49,7 @@ class Ubiquity {
 		self::$activeDir=dirname(__FILE__);
 		self::$toolsConfig=include("tools/toolsConfig.php");
 		$arguments=[
-				["b","dbName",$projectName],
+				["b","dbName",""],
 				["t","dbType","mysql"],
 				["s","serverName","127.0.0.1"],
 				["p","port","3306"],
