@@ -64,7 +64,6 @@ class Ubiquity {
 				FileUtils::safeMkdir($projectName);
 			chdir($projectName);
 			FileUtils::safeMkdir(self::$checkProjectDir);
-
 			FileUtils::safeMkdir("app");
 			FileUtils::safeMkdir("app/views/main");
 			FileUtils::safeMkdir("app/controllers");
@@ -179,6 +178,7 @@ class Ubiquity {
 				self::$configOptions["%cssFiles%"][]=self::includeCss(self::$toolsConfig["cdn"]["semantic"]["css"]);
 				self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["jquery"]);
 				self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["semantic"]["js"]);
+				self::$indexContent=FileUtils::openFile(self::$activeDir."/project-files/templates/postInstall/semantic.tpl");
 				self::$mainViewTemplate="semantic.html";
 			}
 		}
