@@ -179,13 +179,6 @@ class Ubiquity {
 				self::$configOptions["%cssFiles%"][]=self::includeCss(self::$toolsConfig["cdn"]["semantic"]["css"]);
 				self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["jquery"]);
 				self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["semantic"]["js"]);
-				self::$indexContent='
-		$semantic=$this->jquery->semantic();
-		$semantic->htmlHeader("header",1,"Ubiquity framework");
-		$bt=$semantic->htmlButton("btTest","Semantic-UI Button");
-		$bt->onClick("$(\'#test\').html(\'It works with Semantic-UI too !\');");
-		$this->jquery->compile($this->view);
-		$this->loadView("index.html");';
 				self::$mainViewTemplate="semantic.html";
 			}
 		}

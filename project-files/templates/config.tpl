@@ -10,6 +10,7 @@ return array(
 				"password"=>"%password%",
 				"cache"=>false
 		],
+		"session_name"=>"",
 		"namespaces"=>[],
 		"templateEngine"=>'Ubiquity\\views\\engine\\Twig',
 		"templateEngineOptions"=>array("cache"=>false),
