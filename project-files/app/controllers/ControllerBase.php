@@ -1,6 +1,6 @@
 <?php
 namespace controllers;
-use Ubiquity\utils\RequestUtils;
+use Ubiquity\utils\http\Request;
 use Ubiquity\controllers\Controller;
  /**
  * ControllerBase
@@ -8,13 +8,13 @@ use Ubiquity\controllers\Controller;
 abstract class ControllerBase extends Controller{
 
 	public function initialize(){
-		if(!RequestUtils::isAjax()){
+		if(!Request::isAjax()){
 			$this->loadView("main/vHeader.html");
 		}
 	}
 
 	public function finalize(){
-		if(!RequestUtils::isAjax()){
+		if(!Request::isAjax()){
 			$this->loadView("main/vFooter.html");
 		}
 	}

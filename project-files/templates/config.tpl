@@ -20,6 +20,6 @@ return array(
 		"cache"=>["directory"=>"cache/","system"=>"Ubiquity\\cache\\system\\ArrayCache","params"=>[]],
 		"mvcNS"=>["models"=>"models","controllers"=>"controllers","rest"=>"rest"],
 		"isRest"=>function(){
-			return Ubiquity\utils\RequestUtils::getUrlParts()[0]==="rest";
+			return Ubiquity\utils\http\Request::getUrlParts()[0]==="rest";
 		}
 );
