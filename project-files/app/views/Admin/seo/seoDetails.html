@@ -1,0 +1,17 @@
+<h3 class="ui header">
+	<i class="heartbeat icon"></i>
+	<div class="content">
+		{{controllerClass}}
+	</div>
+</h3>
+<a id='displayAllRoutes' class="ui toggle button">
+	<i class="ui car icon"></i>
+	Display all existing routes
+</a>
+<a id='saveUrls' class="ui positive button" data-ajax="{{urlsFile}}">
+	<i class="ui save icon"></i>
+	Save {{urlsFile}}
+</a>
+<br><br>
+{{ q["dtSiteMap"] | raw }}
+{{ script_foot | raw }}
