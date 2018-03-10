@@ -158,8 +158,8 @@ class Ubiquity {
 			switch ($phpmv){
 				case "bootstrap":case "semantic":
 					self::$configOptions["%injections%"]="\"jquery\"=>function(){
-					\t\t\$jquery=new Ajax\php\ubiquity\JsUtils([\"defer\"=>true]);
-					\t\t\$jquery->{$phpmv}(new Ajax\\".ucfirst($phpmv)."());
+					\t\t\$jquery=new \\Ajax\\php\\ubiquity\\JsUtils([\"defer\"=>true]);
+					\t\t\$jquery->{$phpmv}(new \\Ajax\\".ucfirst($phpmv)."());
 					\t\treturn \$jquery;
 					\t}";
 					break;
@@ -259,7 +259,6 @@ class Ubiquity {
 			if(substr($arg, 0, 2) == '--'){
 				preg_match ("/\=|\:|\ /", $arg, $matches, PREG_OFFSET_CAPTURE);
 				$eqPos=$matches[0][1];
-				//$eqPos = strpos($arg, '=');
 				if($eqPos === false){
 					$key = substr($arg, 2);
 					$out[$key] = isset($out[$key]) ? $out[$key] : true;

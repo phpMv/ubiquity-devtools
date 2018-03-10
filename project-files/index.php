@@ -1,5 +1,5 @@
 <?php
-use Ubiquity\controllers\Startup;
+use \Ubiquity\controllers\Startup;
 error_reporting(E_ALL);
 
 define('DS', DIRECTORY_SEPARATOR);
