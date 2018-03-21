@@ -158,8 +158,8 @@ class Ubiquity {
 			$phpmv=self::$configOptions["%phpmv%"];
 			switch ($phpmv){
 				case "bootstrap":case "semantic":
-					self::$configOptions["%injections%"]="\"jquery\"=>function(){
-					\t\t\$jquery=new \\Ajax\\php\\ubiquity\\JsUtils([\"defer\"=>true]);
+					self::$configOptions["%injections%"]="\"jquery\"=>function(\$controller){
+					\t\t\$jquery=new \\Ajax\\php\\ubiquity\\JsUtils([\"defer\"=>true],\$controller);
 					\t\t\$jquery->{$phpmv}(new \\Ajax\\".ucfirst($phpmv)."());
 					\t\treturn \$jquery;
 					\t}";
