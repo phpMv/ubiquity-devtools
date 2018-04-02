@@ -88,15 +88,15 @@ class Ubiquity {
 
 			self::includePhpmv();
 
+			if(self::isBooleanTrue(self::$configOptions["%admin%"])){
+				self::adminInstall();
+			}
+			
 			self::openReplaceWrite(self::$activeDir."/project-files/templates/config.tpl", "app/config/config.php", self::$configOptions);
 			FileUtils::xcopy(self::$activeDir."/project-files/templates/services.tpl", "app/config/services.php");
 			FileUtils::xcopy(self::$activeDir."/project-files/index.php", "index.php");
 			self::openReplaceWrite(self::$activeDir."/project-files/templates/vHeader.tpl", "app/views/main/vHeader.html", self::$configOptions);
 			self::openReplaceWrite(self::$activeDir."/project-files/templates/vFooter.tpl", "app/views/main/vFooter.html", self::$configOptions);
-
-			if(self::isBooleanTrue(self::$configOptions["%admin%"])){
-				self::adminInstall();
-			}
 
 			self::createComposerFile();
 			$answer=Console::question("Do you want to run composer install ?",["y","n"]);
@@ -112,6 +112,7 @@ class Ubiquity {
 
 			if(self::isBooleanTrue(self::$configOptions["%all-models%"]))
 				(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config);
+			\Ubiquity\cache\CacheManager::checkCache($config);
 			echo "project `{$projectName}` successfully created.\n";
 		}else{
 			echo "The {$projectName} folder already exists !\n";
@@ -128,6 +129,7 @@ class Ubiquity {
 			FileUtils::xcopy(self::$activeDir."/project-files/app/views/Admin","app/views/Admin");
 			FileUtils::xcopy(self::$activeDir."/project-files/app/views/Seo","app/views/Seo");
 			FileUtils::xcopy(self::$activeDir."/project-files/app/controllers/Admin.php","app/controllers/Admin.php");
+			self::$configOptions["%cssFiles%"][]=self::includeCss(self::$toolsConfig["cdn"]["diff2html"]["css"]);
 			echo "Creating the Controller Admin at the location app/controllers/Admin.php\n";
 			self::$toolsConfig["composer"]["require-dev"]["czproject/git-php"]="^3.13";
 		}else{
