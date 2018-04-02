@@ -1,4 +1,6 @@
+{% block body %}
 </div>
+{% endblock %}
 {% block scripts %}
 %jsFiles%
 {% endblock %}

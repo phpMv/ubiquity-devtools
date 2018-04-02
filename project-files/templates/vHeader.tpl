@@ -1,10 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-<base href="{{config["siteUrl"]}}">
-<meta charset="UTF-8">
-<title>%projectName%</title>
+{% block header %}
+	<base href="{{config["siteUrl"]}}">
+	<meta charset="UTF-8">
+	<title>%projectName%</title>
+{% endblock %}
+{% block css %}
 %cssFiles%
+{% endblock %}
 </head>
 <body>
-<div class="ui container">
+{% block body %}
+	<div class="ui container">
+{% endblock %}
