@@ -8,6 +8,7 @@ return array(
 				"port"=>"%port%",
 				"user"=>"%user%",
 				"password"=>"%password%",
+				"options"=>[],
 				"cache"=>false
 		],
 		"sessionName"=>"%projectName%",

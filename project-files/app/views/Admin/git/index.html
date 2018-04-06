@@ -1,6 +1,6 @@
 {{ q["header"] | raw }}
 <div id="messages" style="padding: 20px 0;">{{ q["init-message"] | raw }}</div>
-<div class="ui labeled button">
+<div class="ui {%if initializeBt %}disabled{% endif %} labeled button">
   <div id="settings-btn" class="ui button">
     <i class="settings icon"></i> Repository settings
   </div>
