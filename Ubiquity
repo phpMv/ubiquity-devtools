@@ -6,12 +6,11 @@ include 'tools/Command.php';
 include 'tools/utils/FileUtils.php';
 
 class Ubiquity {
-	private static $version="1.1.0";
+	private static $version="1.1.1";
 	private static $appName="#ubiquity devtools";
 	private static $configOptions;
 	private static $toolsConfig;
-	private static $indexContent="\n\t\$this->loadView('index.html');\n";
-	private static $mainViewTemplate="index.html";
+	private static $indexContent="\n\t\$this->loadView(\"@framework/index/index.html\");\n";
 	private static $activeDir;
 	private static $checkProjectDir=".ubiquity";
 
@@ -91,7 +90,7 @@ class Ubiquity {
 			if(self::isBooleanTrue(self::$configOptions["%admin%"])){
 				self::adminInstall();
 			}
-			
+
 			self::openReplaceWrite(self::$activeDir."/project-files/templates/config.tpl", "app/config/config.php", self::$configOptions);
 			FileUtils::xcopy(self::$activeDir."/project-files/templates/services.tpl", "app/config/services.php");
 			FileUtils::xcopy(self::$activeDir."/project-files/index.php", "index.php");
@@ -108,7 +107,6 @@ class Ubiquity {
 			\Ubiquity\controllers\Startup::setConfig($config);
 
 			self::createController($config,"Main",self::$indexContent);
-			FileUtils::xcopy(self::$activeDir."/project-files/app/views/".self::$mainViewTemplate, "app/views/index.html");
 
 			if(self::isBooleanTrue(self::$configOptions["%all-models%"]))
 				(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config);
@@ -126,8 +124,6 @@ class Ubiquity {
 
 	private static function adminInstall($config=null){
 		if(self::hasSemantic($config)){
-			FileUtils::xcopy(self::$activeDir."/project-files/app/views/Admin","app/views/Admin");
-			FileUtils::xcopy(self::$activeDir."/project-files/app/views/Seo","app/views/Seo");
 			FileUtils::xcopy(self::$activeDir."/project-files/app/controllers/Admin.php","app/controllers/Admin.php");
 			echo "Creating the Controller Admin at the location app/controllers/Admin.php\n";
 			self::$toolsConfig["composer"]["require-dev"]["czproject/git-php"]="^3.13";
@@ -175,14 +171,13 @@ class Ubiquity {
 				self::$configOptions["%cssFiles%"][]=self::includeCss(self::$toolsConfig["cdn"]["bootstrap"]["css"]);
 				self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["jquery"]);
 				self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["bootstrap"]["js"]);
-				self::$mainViewTemplate="bootstrap.html";
+				self::$indexContent=FileUtils::openFile(self::$activeDir."/project-files/templates/postInstall/bootstrap.tpl");
 			}
 			elseif($phpmv==="semantic"){
 				self::$configOptions["%cssFiles%"][]=self::includeCss(self::$toolsConfig["cdn"]["semantic"]["css"]);
 				self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["jquery"]);
 				self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["semantic"]["js"]);
 				self::$indexContent=FileUtils::openFile(self::$activeDir."/project-files/templates/postInstall/semantic.tpl");
-				self::$mainViewTemplate="semantic.html";
 			}
 		}
 	}
