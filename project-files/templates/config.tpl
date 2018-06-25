@@ -17,6 +17,7 @@ return array(
 		"templateEngineOptions"=>array("cache"=>false),
 		"test"=>false,
 		"debug"=>false,
+		"logger"=>function(){return new \Ubiquity\log\libraries\UMonolog("%projectName%",\Monolog\Logger::INFO);},
 		"di"=>[%injections%],
 		"cache"=>["directory"=>"cache/","system"=>"Ubiquity\\cache\\system\\ArrayCache","params"=>[]],
 		"mvcNS"=>["models"=>"models","controllers"=>"controllers","rest"=>""],

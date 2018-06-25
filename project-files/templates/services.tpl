@@ -4,7 +4,7 @@ use Ubiquity\controllers\Router;
 use Ubiquity\orm\DAO;
 
 /*if($config["test"]){
- \Ubiquity\log\Logger::init();
+\Ubiquity\log\Logger::init($config);
  $config["siteUrl"]="http://127.0.0.1:8090/";
  }*/
 
