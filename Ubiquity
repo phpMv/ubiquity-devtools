@@ -177,6 +177,7 @@ class Ubiquity {
 				self::$configOptions["%cssFiles%"][]=self::includeCss(self::$toolsConfig["cdn"]["semantic"]["css"]);
 				self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["jquery"]);
 				self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["semantic"]["js"]);
+				self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["semantic"]["state"]);//Semantic-ui bug see
 				self::$indexContent=FileUtils::openFile(self::$activeDir."/project-files/templates/postInstall/semantic.tpl");
 			}
 		}
