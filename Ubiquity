@@ -59,8 +59,8 @@ class Ubiquity {
 				["a","admin",false],
 		];
 		if(basename(getcwd())==$projectName){
-			$answer=Console::question("Do you want to create a new project named $projectName in $projectName folder ?",["y","n"]);
-			if(Console::isNo($answer)){
+			$answer=Console::question("Do you want to create the new project in this folder ($projectName) ?",["y","n"]);
+			if(Console::isYes($answer)){
 				if(chdir("..")){
 					self::create($projectName,$options,true);
 					return;
