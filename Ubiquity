@@ -58,6 +58,18 @@ class Ubiquity {
 				["q","phpmv",false],
 				["a","admin",false],
 		];
+		if(basename(getcwd())==$projectName){
+			$answer=Console::question("Do you want to create a new project named $projectName in $projectName folder ?",["y","n"]);
+			if(Console::isNo($answer)){
+				if(chdir("..")){
+					self::create($projectName,$options,true);
+					return;
+				}else{
+					echo "Unable to return to parent folder!\n";
+					return;
+				}
+			}
+		}
 		if(!is_dir($projectName) || $force){
 			if(!$force)
 				FileUtils::safeMkdir($projectName);

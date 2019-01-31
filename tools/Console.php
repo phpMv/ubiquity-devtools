@@ -20,4 +20,12 @@ class Console {
 	public static function isYes($answer){
 		return array_search($answer, ["yes","y"])!==false;
 	}
+
+	public static function isNo($answer){
+		return array_search($answer, ["no","n"])!==false;
+	}
+
+	public static function isCancel($answer){
+		return array_search($answer, ["cancel","z"])!==false;
+	}
 }
