@@ -118,7 +118,7 @@ class Ubiquity {
 			$config=require_once 'app/config/config.php';
 			\Ubiquity\controllers\Startup::setConfig($config);
 
-			self::createController($config,"Main",self::$indexContent);
+			self::createController($config,"IndexController",self::$indexContent);
 
 			if(self::isBooleanTrue(self::$configOptions["%all-models%"]))
 				(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config);
