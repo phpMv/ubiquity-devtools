@@ -6,6 +6,9 @@ return [ "cdn" => [ "jquery" => "https://cdnjs.cloudflare.com/ajax/libs/jquery/3
 		"composer" => [ "require" =>
 				[ "php"=>"^7.1","twig/twig" => "^2.0","mindplay/annotations" => "^1.3","phpmv/ubiquity" => "dev-master" ],
 				"require-dev"=>["monolog/monolog" => "^1.24"],
-				"autoload"=>["psr-4"=>[""=>"app/"]]
+				"autoload"=>["psr-4"=>[""=>"app/"],
+				"minimum-stability"=> "dev",
+				"prefer-stable"=> true
+				]
 		]
 ];
