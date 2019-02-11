@@ -1,13 +1,14 @@
 #!/usr/bin/env php
 <?php
 use Ubiquity\cache\CacheManager;
+use Ubiquity\scaffolding\ConsoleScaffoldController;
 include 'tools/Console.php';
 include 'tools/Command.php';
 include 'tools/utils/FileUtils.php';
 
 class Ubiquity {
 	private static $version="1.1.2";
-	private static $appName="#ubiquity devtools";
+	private static $appName="Ubiquity devtools";
 	private static $configOptions;
 	private static $toolsConfig;
 	private static $indexContent="\n\t\$this->loadView(\"@framework/index/index.html\");\n";
@@ -340,9 +341,26 @@ class Ubiquity {
 				$view=self::getOption($options, "v", "views",false);
 				$indexContent=null;
 				if($view){
-					$indexContent="\n\t".'$this->loadDefaultView();'."\n";
+					$indexContent="\n\t\t".'$this->loadDefaultView();'."\n\t";
 				}
 				self::createController($config,$what,$indexContent,$view);
+				break;
+			case "crud":case "crud-controller":
+				$scaffold=new ConsoleScaffoldController(self::$activeDir);
+				$resource=self::getOption($options, 'r', 'resource',null);
+				$crudDatas=self::getOption($options, 'd', 'datas',true);
+				$crudViewer=self::getOption($options, 'v', 'viewer',true);
+				$crudEvents=self::getOption($options, 'e', 'events',true);
+				$crudViews=self::getOption($options, 't', 'templates','index,form,display');
+				$routePath=self::getOption($options, 'p', 'path','');
+				$scaffold->addCrudController($what, $resource,$crudDatas,$crudViewer,$crudEvents,$crudViews,$routePath);
+				break;
+			case "auth": case "auth-controller":
+				$scaffold=new ConsoleScaffoldController(self::$activeDir);
+				$baseClass=self::getOption($options, 'e', 'extends',"Ubiquity\\controllers\\ControllerBase");
+				$authView=self::getOption($options, 't', 'templates','index,info,noAccess,disconnected,message,baseTemplate');
+				$routePath=self::getOption($options, 'p', 'path','');
+				$scaffold->addAuthController($what, $baseClass,$authView,$routePath);
 				break;
 			case "clear-cache":
 				$type=self::getOption($options, "t", "type","all");
@@ -360,6 +378,9 @@ class Ubiquity {
 			case "admin":
 				$config=self::_init();
 				self::adminInstall($config);
+				break;
+			case "help":
+				self::info();
 				break;
 			default:
 				self::info();

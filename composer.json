@@ -7,14 +7,15 @@
 		"framework"
 	],
 	"require": {
-		"php": ">5.3.9"
+		"php": ">7.0",
+		"phpmv/ubiquity": "^2.0"
 	},
 	"license": "Apache-2.0",
 	"authors": [
 		{
 			"name": "Jean-Christophe HERON",
 			"email": "myaddressmail@gmail.com",
-			"role": "Developer"
+			"role": "Lead developer"
 		}
 	],
 	 "bin": [
@@ -22,7 +23,7 @@
     ],
      "extra": {
         "branch-alias": {
-            "dev-master": "1.0.x-dev"
+            "dev-master": "1.1.x-dev"
         }
     }
 }
