@@ -82,7 +82,26 @@ class Command {
 		return new Command("admin", "","Adds UbiquityMyAdmin webtools to the current project .",[],[]);
 	}
 
+	public static function crudController(){
+		return new Command("crud", "","Creates a new CRUD controller.",["crud-controller"],[
+				"r"=>Parameter::create("resource", "The model used", []),
+				"d"=>Parameter::create("datas", "The associated Datas class", ["true","false"],"true"),
+				"v"=>Parameter::create("viewer", "The associated Viewer class", ["true","false"],"true"),
+				"e"=>Parameter::create("events", "The associated Events class", ["true","false"],true),
+				"t"=>Parameter::create("templates", "The templates to modify", ["index","form","display"],"index,form,display"),
+				"p"=>Parameter::create("path", "The associated route", []),
+		]);
+	}
+
+	public static function authController(){
+		return new Command("auth", "","Creates a new controller for authentification.",["auth-controller"],[
+				"e"=>Parameter::create("extends", "The base class of the controller (must derived from AuthController)", [],"Ubiquity\\controllers\\auth\\AuthController"),
+				"t"=>Parameter::create("templates", "The templates to modify", ["index","info","noAccess","disconnected","message","baseTemplate"],'index,info,noAccess,disconnected,message,baseTemplate'),
+				"p"=>Parameter::create("path", "The associated route", []),
+		]);
+	}
+
 	public static function getCommands(){
-		return [self::project(),self::controller(),self::model(),self::allModels(),self::clearCache(),self::initCache(),self::selfUpdate(),self::admin()];
+		return [self::project(),self::controller(),self::model(),self::allModels(),self::clearCache(),self::initCache(),self::selfUpdate(),self::admin(),self::crudController(),self::authController()];
 	}
 }
