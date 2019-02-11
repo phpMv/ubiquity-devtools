@@ -6,7 +6,7 @@ include 'tools/Command.php';
 include 'tools/utils/FileUtils.php';
 
 class Ubiquity {
-	private static $version="1.1.1";
+	private static $version="1.1.2";
 	private static $appName="#ubiquity devtools";
 	private static $configOptions;
 	private static $toolsConfig;
@@ -231,9 +231,9 @@ class Ubiquity {
 		if(file_exists($filename) && !$force){
 			$answer=Console::question("The file {$filename} exists.\nWould you like to replace it?",["y","n"]);
 			if(Console::isYes($answer))
-				self::createController($config,$controllerName,$indexContent,true);
+				self::createController($config,$controllerName,$indexContent,$view,true);
 		}else{
-			echo "Creating the Controller {$controllerName} at the location {$filename}\n";
+			echo "Creation of the Controller {$controllerName} at the location {$filename}\n";
 			$namespace="";
 			if(isset($config["mvcNS"]["controllers"]) && $config["mvcNS"]["controllers"]!=="")
 				$namespace="namespace ".$config["mvcNS"]["controllers"].";";
@@ -241,6 +241,7 @@ class Ubiquity {
 			if($view){
 				$viewFolder="app/views/".$controllerName;
 				FileUtils::safeMkdir($viewFolder);
+				echo "Creation of the the associated view index.html at the location {$viewFolder}/index.html\n";
 				self::openReplaceWrite(self::$activeDir."/project-files/templates/view.tpl", $viewFolder."/index.html", ["%controllerName%"=>$controllerName]);
 			}
 		}
@@ -337,7 +338,11 @@ class Ubiquity {
 			case "controller":case "create-controller":
 				$config=self::_init();
 				$view=self::getOption($options, "v", "views",false);
-				self::createController($config,$what,$view);
+				$indexContent=null;
+				if($view){
+					$indexContent="\n\t".'$this->loadDefaultView();'."\n";
+				}
+				self::createController($config,$what,$indexContent,$view);
 				break;
 			case "clear-cache":
 				$type=self::getOption($options, "t", "type","all");
