@@ -346,18 +346,24 @@ class Ubiquity {
 				self::createController($config,$what,$indexContent,$view);
 				break;
 			case "crud":case "crud-controller":
-				$scaffold=new ConsoleScaffoldController(self::$activeDir);
+				self::_init();
 				$resource=self::getOption($options, 'r', 'resource',null);
-				$crudDatas=self::getOption($options, 'd', 'datas',true);
-				$crudViewer=self::getOption($options, 'v', 'viewer',true);
-				$crudEvents=self::getOption($options, 'e', 'events',true);
-				$crudViews=self::getOption($options, 't', 'templates','index,form,display');
-				$routePath=self::getOption($options, 'p', 'path','');
-				$scaffold->addCrudController($what, $resource,$crudDatas,$crudViewer,$crudEvents,$crudViews,$routePath);
+				$scaffold=new ConsoleScaffoldController(self::$activeDir);
+				if(class_exists($resource)){
+					$crudDatas=self::getOption($options, 'd', 'datas',true);
+					$crudViewer=self::getOption($options, 'v', 'viewer',true);
+					$crudEvents=self::getOption($options, 'e', 'events',true);
+					$crudViews=self::getOption($options, 't', 'templates','index,form,display');
+					$routePath=self::getOption($options, 'p', 'path','');
+					$scaffold->addCrudController($what, $resource,$crudDatas,$crudViewer,$crudEvents,$crudViews,$routePath);
+				}else{
+					echo "The models class {$resource} does not exists!\n";
+				}
 				break;
 			case "auth": case "auth-controller":
+				self::_init();
 				$scaffold=new ConsoleScaffoldController(self::$activeDir);
-				$baseClass=self::getOption($options, 'e', 'extends',"Ubiquity\\controllers\\ControllerBase");
+				$baseClass=self::getOption($options, 'e', 'extends',"\\Ubiquity\\controllers\\auth\\AuthController");
 				$authView=self::getOption($options, 't', 'templates','index,info,noAccess,disconnected,message,baseTemplate');
 				$routePath=self::getOption($options, 'p', 'path','');
 				$scaffold->addAuthController($what, $baseClass,$authView,$routePath);
