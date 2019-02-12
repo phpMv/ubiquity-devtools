@@ -13,13 +13,13 @@ class Parameter {
 
 	public function __toString(){
 		$dec="\t\t\t";
-		$result= "\tshortcut of --".$this->name."\n".$dec.$this->description;
+		$result= "\tshortcut of --<b>".$this->name."</b>\n".$dec.$this->description;
 		if(sizeof($this->values)>0){
 			$result.="\n".$dec."Possibles values :";
-			$result.="\n".$dec.implode(",", $this->values);
+			$result.="\n".$dec.ConsoleFormatter::colorize(implode(",", $this->values),ConsoleFormatter::DARK_GREY);
 		}
 		if($this->defaultValue!==""){
-			$result.="\n".$dec."Default : [".$this->defaultValue."]";
+			$result.="\n".$dec."Default : [".ConsoleFormatter::colorize($this->defaultValue,ConsoleFormatter::GREEN)."]";
 		}
 		return $result;
 	}

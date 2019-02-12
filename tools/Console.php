@@ -1,11 +1,12 @@
 <?php
+include_once 'ConsoleFormatter.php';
 class Console {
 	public static function readline(){
 		return rtrim(fgets(STDIN));
 	}
 
 	public static function question($prompt,array $propositions=null){
-		echo $prompt;
+		echo ConsoleFormatter::colorize($prompt,ConsoleFormatter::BLACK,ConsoleFormatter::BG_YELLOW);
 		if(is_array($propositions)){
 			echo " (".implode("/", $propositions).")\n";
 			do{

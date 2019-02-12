@@ -21,24 +21,47 @@ class Command {
 
 	public function longString(){
 		$dec="\t";
-		$result= "\n".$this->name." [".$this->value."] =>";
+		$result= "\n<b>".$this->name."</b> [".ConsoleFormatter::colorize($this->value,ConsoleFormatter::YELLOW)."] =>";
 		$result.="\n".$dec."* ".$this->description;
 		if(sizeof($this->aliases)>0){
 			$result.="\n".$dec."* Aliases :";
-			$result.=" ".implode(",", $this->aliases);
+			$aliases=$this->aliases;
+			array_walk($aliases,function(&$alias){$alias="<b>".$alias."</b>";});
+			$result.=" ".implode(",", $aliases);
 		}
 		if(sizeof($this->parameters)>0){
 			$result.="\n".$dec."* Parameters :";
 			foreach ($this->parameters as $param=>$content){
-				$result.="\n".$dec."\t-".$param;
+				$result.="\n".$dec."\t<b>-".$param."</b>";
 				$result.=$content."\n";
 			}
 		}
 		return $result;
 	}
 
-	public static function getInfo($command){
-
+	public static function getInfo($cmd){
+		$commands=self::getCommands();
+		$result=[];
+		foreach ($commands as $command){
+			if($command->getName()==$cmd){
+				$result[]=["info"=>"Command <b>{$cmd}</b> find by name","cmd"=>$command];
+			}elseif(array_search($cmd, $command->getAliases())!==false){
+				$result[]=["info"=>"Command <b>{$cmd}</b> find by alias","cmd"=>$command];
+			}elseif(stripos($command->getDescription(), $cmd)!==false){
+				$result[]=["info"=>"Command <b>{$cmd}</b> find in description","cmd"=>$command];
+			}else{
+				$parameters=$command->getParameters();
+				foreach ($parameters as $parameter){
+					if($cmd==$parameter->getName()){
+						$result[]=["info"=>"Command <b>{$cmd}</b> find by the name of a parameter","cmd"=>$command];
+					}
+					if(stripos($parameter->getDescription(), $cmd)!==false){
+						$result[]=["info"=>"Command <b>{$cmd}</b> find in parameter description","cmd"=>$command];
+					}
+				}
+			}
+		}
+		return $result;
 	}
 
 	public static function project(){
@@ -79,7 +102,11 @@ class Command {
 	}
 
 	public static function admin(){
-		return new Command("admin", "","Adds UbiquityMyAdmin webtools to the current project .",[],[]);
+		return new Command("admin", "","Adds UbiquityMyAdmin webtools to the current project.",[],[]);
+	}
+
+	public static function help(){
+		return new Command("help", "?","Get some help about a dev-tools command.",[],[]);
 	}
 
 	public static function crudController(){
@@ -101,7 +128,50 @@ class Command {
 		]);
 	}
 
-	public static function getCommands(){
-		return [self::project(),self::controller(),self::model(),self::allModels(),self::clearCache(),self::initCache(),self::selfUpdate(),self::admin(),self::crudController(),self::authController()];
+	public static function newAction(){
+		return new Command("action", "controller.model","Creates a new action in a controller.",["new-action"],[
+				"p"=>Parameter::create("params", "The action parameters (or arguments)", []),
+				"r"=>Parameter::create("route", "The associated route path", []),
+				"v"=>Parameter::create("create-view", "Creates the associated view", [],"false"),
+		]);
 	}
+
+	public static function getCommands(){
+		return [self::project(),self::help(),self::controller(),self::model(),self::allModels(),self::clearCache(),self::initCache(),self::selfUpdate(),self::admin(),self::crudController(),self::authController(),self::newAction()];
+	}
+	/**
+	 * @return mixed
+	 */
+	public function getName() {
+		return $this->name;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getDescription() {
+		return $this->description;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getValue() {
+		return $this->value;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getAliases() {
+		return $this->aliases;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getParameters() {
+		return $this->parameters;
+	}
+
 }

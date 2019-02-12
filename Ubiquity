@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 use Ubiquity\cache\CacheManager;
-use Ubiquity\scaffolding\ConsoleScaffoldController;
+use Ubiquity\utils\base\UString;
 include 'tools/Console.php';
 include 'tools/Command.php';
 include 'tools/utils/FileUtils.php';
@@ -17,7 +17,7 @@ class Ubiquity {
 
 	public static function createComposerFile(){
 		$composer=json_encode(self::$toolsConfig["composer"]);
-		echo "Composer file creation...\n";
+		echo ConsoleFormatter::showInfo("Composer file creation...\n");
 		FileUtils::writeFile("composer.json", $composer);
 	}
 
@@ -66,7 +66,7 @@ class Ubiquity {
 					self::create($projectName,$options,true);
 					return;
 				}else{
-					echo "Unable to return to parent folder!\n";
+					ConsoleFormatter::showMessage( "Unable to return to parent folder!\n",'error');
 					return;
 				}
 			}
@@ -82,11 +82,11 @@ class Ubiquity {
 			FileUtils::safeMkdir("app/models");
 			FileUtils::safeMkdir("app/config");
 			define('ROOT', realpath('./app').DS);
-			echo "Files copy...\n";
+			echo ConsoleFormatter::showInfo("Files copy...");
 			FileUtils::xcopy(self::$activeDir."/project-files/app/controllers/ControllerBase.php", "app/controllers/ControllerBase.php");
 
 
-			echo "Config files creation...\n";
+			echo ConsoleFormatter::showInfo("Config files creation...\n");
 			self::openReplaceWrite(self::$activeDir."/project-files/.htaccess", getcwd()."/.htaccess", array("%rewriteBase%"=>$projectName));
 			self::$configOptions=["%siteUrl%"=>"http://127.0.0.1/".$projectName."/"];
 			self::$configOptions["%projectName%"]=$projectName;
@@ -121,12 +121,19 @@ class Ubiquity {
 
 			self::createController($config,"IndexController",self::$indexContent);
 
-			if(self::isBooleanTrue(self::$configOptions["%all-models%"]))
+			if(self::isBooleanTrue(self::$configOptions["%all-models%"])){
+				ob_start();
 				(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config);
+				$res=ob_get_clean();
+				echo ConsoleFormatter::showMessage($res,'success','models generation');
+			}
+			ob_start();
 			\Ubiquity\cache\CacheManager::checkCache($config);
-			echo "project `{$projectName}` successfully created.\n";
+			$res=ob_get_clean();
+			echo ConsoleFormatter::showMessage($res,'info','cache initialization');
+			echo ConsoleFormatter::showMessage("project <b>{$projectName}</b> successfully created.",'success','new-project');
 		}else{
-			echo "The {$projectName} folder already exists !\n";
+			echo ConsoleFormatter::showInfo("The <b>{$projectName}</b> folder already exists !\n");
 			$answer=Console::question("Would you like to continue ?",["y","n"]);
 			if(Console::isYes($answer)){
 				self::create($projectName,$options,true);
@@ -138,10 +145,18 @@ class Ubiquity {
 	private static function adminInstall($config=null){
 		if(self::hasSemantic($config)){
 			FileUtils::xcopy(self::$activeDir."/project-files/app/controllers/Admin.php","app/controllers/Admin.php");
-			echo "Creating the Controller Admin at the location app/controllers/Admin.php\n";
+			echo ConsoleFormatter::showInfo("Creating the Controller <b>Admin</b> at the location <b>app/controllers/Admin.php<:b>\n");
 			self::$toolsConfig["composer"]["require-dev"]["czproject/git-php"]="^3.13";
 		}else{
-			throw new Exception("UbiquityMyAdmin require phpmv=semantic option.");
+			echo ConsoleFormatter::showMessage("UbiquityMyAdmin require phpmv=semantic option.",'error');
+			$answer=Console::question("Would you like to add Semantic-UI ?",["y","n"]);
+			if(Console::isYes($answer)){
+				self::$configOptions["%phpmv%"]="semantic";
+				self::includePhpmv();
+				self::adminInstall($config);
+			}else{
+				exit(1);
+			}
 		}
 	}
 
@@ -205,22 +220,19 @@ class Ubiquity {
 	}
 
 	private static function showConfigOptions(){
-		$output = implode(', ', array_map(
+		$output = implode("\n", array_map(
 		function ($v, $k) {if(is_array($v))
 			$v=implode(",",$v );
 			return sprintf("%s='%s'", str_ireplace("%", "", $k), $v); },
 		self::$configOptions,
 		array_keys(self::$configOptions)
 		));
-		echo "command line arguments :\n";
-		echo $output."\n";
-		if(self::isBooleanTrue(self::$configOptions["%admin%"]) && !self::hasSemantic()){
-			throw new Exception("UbiquityMyAdmin require phpmv=semantic option.");
-		}
+		echo ConsoleFormatter::showMessage($output."\n",'info','Command line arguments');
 		$phpmv=self::$configOptions["%phpmv%"];
 		if($phpmv!==false){
 			if($phpmv!=="bootstrap" && $phpmv!=="semantic"){
-				throw new Exception($phpmv." is not a valid option for phpMv-UI.");
+				echo ConsoleFormatter::showMessage("<b>".$phpmv."</b> is not a valid option for phpMv-UI.\n",'error');
+				exit(1);
 			}
 		}
 	}
@@ -234,7 +246,7 @@ class Ubiquity {
 			if(Console::isYes($answer))
 				self::createController($config,$controllerName,$indexContent,$view,true);
 		}else{
-			echo "Creation of the Controller {$controllerName} at the location {$filename}\n";
+			$msg= "Creation of the Controller {$controllerName} at the location {$filename}\n";
 			$namespace="";
 			if(isset($config["mvcNS"]["controllers"]) && $config["mvcNS"]["controllers"]!=="")
 				$namespace="namespace ".$config["mvcNS"]["controllers"].";";
@@ -242,9 +254,10 @@ class Ubiquity {
 			if($view){
 				$viewFolder="app/views/".$controllerName;
 				FileUtils::safeMkdir($viewFolder);
-				echo "Creation of the the associated view index.html at the location {$viewFolder}/index.html\n";
+				$msg.= "Creation of the the associated view index.html at the location {$viewFolder}/index.html\n";
 				self::openReplaceWrite(self::$activeDir."/project-files/templates/view.tpl", $viewFolder."/index.html", ["%controllerName%"=>$controllerName]);
 			}
+			ConsoleFormatter::showMessage($msg, "success","Controller creation");
 		}
 	}
 
@@ -253,7 +266,7 @@ class Ubiquity {
 			$microDir=$dir.DIRECTORY_SEPARATOR.self::$checkProjectDir;
 			if(file_exists($microDir) && is_dir($microDir)){
 				chdir($dir);
-				echo "The project folder is ".FileUtils::cleanPathname($dir)."\n";
+				echo ConsoleFormatter::showInfo("The project folder is <b>".FileUtils::cleanPathname($dir)."</b>\n");
 				return true;
 			}
 		}
@@ -304,7 +317,7 @@ class Ubiquity {
 	private static function selfUpdate(){
 		$config=self::_init();
 		define('ROOT', realpath('./app').DS);
-		echo "Files copy...\n";
+		echo ConsoleFormatter::showInfo("Files copy...\n");
 
 		$filename="app/controllers/Admin.php";
 		if(file_exists($filename) && self::hasSemantic($config)){
@@ -316,13 +329,13 @@ class Ubiquity {
 			system("composer global update");
 			system("composer update");
 		}
-		echo "project in `".self::$activeDir."` successfully updated.\n";
+		echo ConsoleFormatter::showMessage("project in <b>".self::$activeDir."</b> successfully updated.",'success','self-update');
 	}
 
-	public static function init($command){
+	public static function init($command,$current=2){
 		global $argv;
 		register_shutdown_function(array("Ubiquity","error"));
-		$what=@$argv[2];
+		$what=@$argv[$current];
 		$options=self::parseArguments();
 		switch ($command) {
 			case "project":case "create-project":case "new":
@@ -346,9 +359,10 @@ class Ubiquity {
 				self::createController($config,$what,$indexContent,$view);
 				break;
 			case "crud":case "crud-controller":
-				self::_init();
+				$config=self::_init();
 				$resource=self::getOption($options, 'r', 'resource',null);
-				$scaffold=new ConsoleScaffoldController(self::$activeDir);
+				$resource=self::getCompleteClassname($config, $resource);
+				$scaffold=new \ConsoleScaffoldController(self::$activeDir);
 				if(class_exists($resource)){
 					$crudDatas=self::getOption($options, 'd', 'datas',true);
 					$crudViewer=self::getOption($options, 'v', 'viewer',true);
@@ -357,12 +371,12 @@ class Ubiquity {
 					$routePath=self::getOption($options, 'p', 'path','');
 					$scaffold->addCrudController($what, $resource,$crudDatas,$crudViewer,$crudEvents,$crudViews,$routePath);
 				}else{
-					echo "The models class {$resource} does not exists!\n";
+					echo ConsoleFormatter::showMessage("The models class <b>{$resource}</b> does not exists!",'error','crud-controller');
 				}
 				break;
 			case "auth": case "auth-controller":
 				self::_init();
-				$scaffold=new ConsoleScaffoldController(self::$activeDir);
+				$scaffold=new \ConsoleScaffoldController(self::$activeDir);
 				$baseClass=self::getOption($options, 'e', 'extends',"\\Ubiquity\\controllers\\auth\\AuthController");
 				$authView=self::getOption($options, 't', 'templates','index,info,noAccess,disconnected,message,baseTemplate');
 				$routePath=self::getOption($options, 'p', 'path','');
@@ -373,10 +387,36 @@ class Ubiquity {
 				$config=self::_init();
 				CacheManager::clearCache($config,$type);
 				break;
+			case "action": case "new-action":
+				$config=self::_init();
+				$scaffold=new \ConsoleScaffoldController(self::$activeDir);
+				@list($controller,$action)=explode('.', $what);
+				if($controller!=null && $action!=null){
+					$controller=self::getCompleteClassname($config, $controller,'controllers');
+					if(class_exists($controller)){
+						$parameters=self::getOption($options, 'p', 'params');
+						$routePath=self::getOption($options, 'r', 'route');
+						$createView=self::getOption($options, 'v', 'create-view',false);
+						$routeInfo=null;
+						if($routePath!=null){
+							$routeInfo=["path"=>$routePath,"methods"=>null];
+						}
+						$scaffold->_newAction($controller, $action,$parameters,'',$routeInfo,$createView);
+					}
+					else{
+						echo ConsoleFormatter::showMessage("The controller class <b>{$controller}</b> does not exists!",'error','new-action');
+					}
+				}else{
+					echo ConsoleFormatter::showMessage("You must use <b>controller.action</b> notation!",'error','new-action');
+				}
+				break;
 			case "init-cache":
 				$type=self::getOption($options, "t", "type","all");
 				$config=self::_init();
+				ob_start();
 				CacheManager::initCache($config,$type);
+				$res=ob_get_clean();
+				echo ConsoleFormatter::showMessage($res,'success','init-cache:'.$type);
 				break;
 			case "self-update":
 				self::selfUpdate();
@@ -386,33 +426,71 @@ class Ubiquity {
 				self::adminInstall($config);
 				break;
 			case "help":
-				self::info();
+				if(isset($what)){
+					self::infoCmd($what);
+				}else{
+					self::info();
+				}
 				break;
 			default:
-				self::info();
+				$commands=Command::getInfo($command);
+				echo ConsoleFormatter::showMessage("The command {$command} does not exists!",'warning');
+				if(sizeof($commands)>0){
+					$cmd=current($commands)["cmd"];
+					$answer=Console::question("Did you mean {$cmd->getName()}?",["y","n"]);
+					if(Console::isYes($answer)){
+						self::init($cmd->getName(),1);
+					}else{
+						exit(1);
+					}
+				}
 			break;
 		}
+	}
+
+	private static function getCompleteClassname($config,$classname,$type='models'){
+		$prefix=$config["mvcNS"][$type]??null;
+		$classname=ltrim($classname,"\\");
+		if(isset($prefix)){
+			if(!UString::startswith($classname,$prefix)){
+				$classname=$prefix."\\".$classname;
+			}
+		}
+		return $classname;
 	}
 
 	private static function info(){
 		echo self::$appName." (".self::$version.")\n";
 		$commands=Command::getCommands();
 		foreach ($commands as $command){
-			echo $command->longString();
+			echo ConsoleFormatter::formatHtml($command->longString());
+			echo "\n";
+		}
+	}
+
+	private static function infoCmd($cmd){
+		$infos=Command::getInfo($cmd);
+		$command=null;
+		foreach ($infos as $info){
+			echo ConsoleFormatter::showInfo($info['info']);
+			if($command!==$info['cmd']){
+				echo ConsoleFormatter::formatHtml($info['cmd']->longString());
+			}
+			$command=$info['cmd'];
 			echo "\n";
 		}
 	}
 	private static function _init(){
 		self::$activeDir=dirname(__FILE__);
 		if(!self::setDir(getcwd())){
-			echo "Failed to locate project root folder\n";
-			echo "An Ubiquity project must contain the ".self::$checkProjectDir." folder.\n";
+			echo ConsoleFormatter::showMessage("Failed to locate project root folder\nAn Ubiquity project must contain the <b>".self::$checkProjectDir."</b> folder.",'error');
 			die();
 		}
 		define('ROOT', realpath('./app').DS);
 		$config=require_once 'app/config/config.php';
 		require_once ROOT.'./../vendor/autoload.php';
 		\Ubiquity\controllers\Startup::setConfig($config);
+		include 'tools/ConsoleScaffoldController.php';
 		return $config;
 	}
 
