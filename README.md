@@ -17,7 +17,7 @@ curl -s http://getcomposer.org/installer | php
 Run the composer installer :
 
 ```bash
-composer global require phpmv/ubiquity-devtools 1.0.x-dev
+composer global require phpmv/ubiquity-devtools
 ```
 Make sure to place the `~/.composer/vendor/bin` directory in your PATH so the **Ubiquity** executable can be located by your system.
 
@@ -25,7 +25,7 @@ Make sure to place the `~/.composer/vendor/bin` directory in your PATH so the **
 ### Information
 To get a list of available commands just run in console:
 ```bash
-Ubiquity
+Ubiquity help
 ```
 This command should display something similar to:
 
