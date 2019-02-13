@@ -17,7 +17,7 @@ curl -s http://getcomposer.org/installer | php
 Run the composer installer :
 
 ```bash
-composer global require phpmv/ubiquity-devtools 1.0.x-dev
+composer global require phpmv/ubiquity-devtools
 ```
 Make sure to place the `~/.composer/vendor/bin` directory in your PATH so the **Ubiquity** executable can be located by your system.
 
@@ -25,12 +25,12 @@ Make sure to place the `~/.composer/vendor/bin` directory in your PATH so the **
 ### Information
 To get a list of available commands just run in console:
 ```bash
-Ubiquity
+Ubiquity help
 ```
 This command should display something similar to:
 
 ```bash
-#ubiquity devtools (1.0.3)
+Ubiquity devtools (1.1.2)
 
 project [projectName] =>
         * Creates a new #ubiquity project.
@@ -64,10 +64,23 @@ project [projectName] =>
 
                 -a      shortcut of --admin
                         Adds UbiquityMyAdmin tool.
+                        Possibles values :
+                        true,false
+                        Default : [false]
+
+
+help [?] =>
+        * Get some help about a dev-tools command.
 
 controller [controllerName] =>
         * Creates a new controller.
         * Aliases : create-controller
+        * Parameters :
+                -v      shortcut of --views
+                        creates an associated view folder
+                        Possibles values :
+                        true,false
+
 
 model [tableName] =>
         * Generates a new model.
@@ -88,6 +101,79 @@ clear-cache [] =>
 
 init-cache [] =>
         * Creates the cache for models.
+
+self-update [] =>
+        * Updates Ubiquity framework for the current project.
+
+admin [] =>
+        * Adds UbiquityMyAdmin webtools to the current project.
+
+crud [] =>
+        * Creates a new CRUD controller.
+        * Aliases : crud-controller
+        * Parameters :
+                -r      shortcut of --resource
+                        The model used
+
+                -d      shortcut of --datas
+                        The associated Datas class
+                        Possibles values :
+                        true,false
+                        Default : [true]
+
+                -v      shortcut of --viewer
+                        The associated Viewer class
+                        Possibles values :
+                        true,false
+                        Default : [true]
+
+                -e      shortcut of --events
+                        The associated Events class
+                        Possibles values :
+                        true,false
+                        Default : [1]
+
+                -t      shortcut of --templates
+                        The templates to modify
+                        Possibles values :
+                        index,form,display
+                        Default : [index,form,display]
+
+                -p      shortcut of --path
+                        The associated route
+
+
+auth [] =>
+        * Creates a new controller for authentification.
+        * Aliases : auth-controller
+        * Parameters :
+                -e      shortcut of --extends
+                        The base class of the controller (must derived from AuthController)
+                        Default : [Ubiquity\controllers\auth\AuthController]
+
+                -t      shortcut of --templates
+                        The templates to modify
+                        Possibles values :
+                        index,info,noAccess,disconnected,message,baseTemplate
+                        Default : [index,info,noAccess,disconnected,message,baseTemplate]
+
+                -p      shortcut of --path
+                        The associated route
+
+
+action [controller.model] =>
+        * Creates a new action in a controller.
+        * Aliases : new-action
+        * Parameters :
+                -p      shortcut of --params
+                        The action parameters (or arguments)
+
+                -r      shortcut of --route
+                        The associated route path
+
+                -v      shortcut of --create-view
+                        Creates the associated view
+                        Default : [false]
 ```
 
 ### Project creation
