@@ -68,9 +68,34 @@ project [projectName] =>
                         true,false
                         Default : [false]
 
+        * Samples :
+                Creates a new project
+                  · Ubiquity new blog
+                With admin interface
+                  · Ubiquity new blog -q=semantic -a
+                and models generation
+                  · Ubiquity new blog -q=semantic -a -m -b=blogDB
+
+serve [] =>
+        * Start the php web server.
+        * Parameters :
+                -h      shortcut of --host
+                        Sets the host ip address.
+                        Default : [127.0.0.1]
+
+                -p      shortcut of --port
+                        Sets listen port number.
+                        Default : [8090]
+
+        * Samples :
+                Starts the server on 127.0.0.1:8090
+                  · Ubiquity serve
 
 help [?] =>
         * Get some help about a dev-tools command.
+        * Samples :
+                Get some help about crud
+                  · Ubiquity help crud
 
 controller [controllerName] =>
         * Creates a new controller.
@@ -81,34 +106,59 @@ controller [controllerName] =>
                         Possibles values :
                         true,false
 
+        * Samples :
+                Creates a controller
+                  · Ubiquity controller UserController
+                with its associated view
+                  · Ubiquity controller UserController -v
 
 model [tableName] =>
         * Generates a new model.
         * Aliases : create-model
+        * Samples :
+                  · Ubiquity model User
 
 all-models [] =>
         * Generates all models from database.
         * Aliases : create-all-models
+        * Samples :
+                  · Ubiquity all-models
 
 clear-cache [] =>
         * Clear models cache.
         * Parameters :
-                -a      shortcut of --all
-                        Clear annotations and models cache.
+                -t      shortcut of --type
+                        Defines the type of cache to reset.
                         Possibles values :
-                        true,false
+                        all,annotations,controller,rest,models,queries,views
 
+        * Samples :
+                Clear all caches
+                  · Ubiquity clear-cache -t=all
+                Clear models cache
+                  · Ubiquity clear-cache -t=models
 
 init-cache [] =>
-        * Creates the cache for models.
+        * Init the cache for models, router, rest.
+        * Parameters :
+                -t      shortcut of --type
+                        Defines the type of cache to create.
+                        Possibles values :
+                        all,controller,rest,models
+
+        * Samples :
+                Init all caches
+                  · Ubiquity init-cache
+                Init models cache
+                  · Ubiquity init-cache -t=models
 
 self-update [] =>
         * Updates Ubiquity framework for the current project.
 
 admin [] =>
-        * Adds UbiquityMyAdmin webtools to the current project.
+        * Add UbiquityMyAdmin webtools to the current project.
 
-crud [] =>
+crud [crudControllerName] =>
         * Creates a new CRUD controller.
         * Aliases : crud-controller
         * Parameters :
@@ -131,7 +181,7 @@ crud [] =>
                         The associated Events class
                         Possibles values :
                         true,false
-                        Default : [1]
+                        Default : [true]
 
                 -t      shortcut of --templates
                         The templates to modify
@@ -142,8 +192,15 @@ crud [] =>
                 -p      shortcut of --path
                         The associated route
 
+        * Samples :
+                Creates a crud controller for the class models\User
+                  · Ubiquity crud -r=User
+                and associates a route to it
+                  · Ubiquity crud -r=User -p=/users
+                allows customization of index and form templates
+                  · Ubiquity crud -r=User -t=index,form
 
-auth [] =>
+auth [authControllerName] =>
         * Creates a new controller for authentification.
         * Aliases : auth-controller
         * Parameters :
@@ -160,8 +217,15 @@ auth [] =>
                 -p      shortcut of --path
                         The associated route
 
+        * Samples :
+                Creates a new controller for authentification
+                  · Ubiquity auth AdminAuthController
+                and associates a route to it
+                  · Ubiquity auth AdminAuthController -p=/admin/auth
+                allows customization of index and info templates
+                  · Ubiquity auth AdminAuthController -t=index,info
 
-action [controller.model] =>
+action [controller.action] =>
         * Creates a new action in a controller.
         * Aliases : new-action
         * Parameters :
@@ -174,6 +238,18 @@ action [controller.model] =>
                 -v      shortcut of --create-view
                         Creates the associated view
                         Default : [false]
+
+        * Samples :
+                Adds the action all in controller Users
+                  · Ubiquity action Users.all
+                Adds the action display in controller Users with a parameter
+                  · Ubiquity action Users.display -p=idUser
+                and associates a route to it
+                  · Ubiquity action Users.display -p=idUser -r=/users/display/{idUser}
+                with multiple parameters
+                  · Ubiquity action Users.search -p=name,address
+                and create the associated view
+                  · Ubiquity action Users.search -p=name,address -v
 ```
 
 ### Project creation
