@@ -8,12 +8,25 @@ class Console {
 	public static function question($prompt,array $propositions=null){
 		echo ConsoleFormatter::colorize($prompt,ConsoleFormatter::BLACK,ConsoleFormatter::BG_YELLOW);
 		if(is_array($propositions)){
-			echo " (".implode("/", $propositions).")\n";
-			do{
-				$answer=self::readline();
-			}while(array_search($answer, $propositions)===false);
-		}else
+			if(sizeof($propositions)>2){
+				$props="";
+				foreach ($propositions as $index=>$prop){
+					$props.="[".($index+1)."] ".$prop."\n";
+				}
+				echo ConsoleFormatter::formatContent($props);
+				do{
+					$answer=self::readline();
+				}while((int)$answer!=$answer || !isset($propositions[(int)$answer]));
+				$answer=$propositions[(int)$answer];
+			}else {
+				echo " (".implode("/", $propositions).")\n";
+				do{
+					$answer=self::readline();
+				}while(array_search($answer, $propositions)===false);
+			}
+		}else{
 			$answer=self::readline();
+		}
 
 		return $answer;
 	}

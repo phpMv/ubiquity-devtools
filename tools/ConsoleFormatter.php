@@ -32,7 +32,7 @@ class ConsoleFormatter {
 		return self::colorize(self::formatContent($content),self::CYAN);
 	}
 
-	private static function formatContent($content,$prefix='    · '){
+	public static function formatContent($content,$prefix='    · '){
 		$content = str_replace ( "<br>", "\n", $content );
 		$content=self::formatHtml($content);
 		$content= strip_tags ( $content );

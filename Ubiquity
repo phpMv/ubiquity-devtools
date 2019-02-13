@@ -7,7 +7,7 @@ include 'tools/Command.php';
 include 'tools/utils/FileUtils.php';
 
 class Ubiquity {
-	private static $version="1.1.2";
+	private static $version="1.1.3";
 	private static $appName="Ubiquity devtools";
 	private static $configOptions;
 	private static $toolsConfig;
@@ -361,6 +361,17 @@ class Ubiquity {
 			case "crud":case "crud-controller":
 				$config=self::_init();
 				$resource=self::getOption($options, 'r', 'resource',null);
+				if($resource==null){
+					echo ConsoleFormatter::showMessage('resource is a required parameter! You must add <b>-r</b> option.','error','crud-controller');
+					$models=CacheManager::getModels($config,true);
+					$answer=Console::question("Enter the resource to add from the following:\n",$models);
+					if(array_search($answer, $models)!==false){
+						$resource=$answer;
+					}else{
+						echo ConsoleFormatter::showInfo("Cancelled operation.");
+						exit(1);
+					}
+				}
 				$resource=self::getCompleteClassname($config, $resource);
 				$scaffold=new \ConsoleScaffoldController(self::$activeDir);
 				if(class_exists($resource)){
@@ -431,6 +442,24 @@ class Ubiquity {
 				}else{
 					self::info();
 				}
+				break;
+			case "serve":
+				$host=self::getOption($options, 'h', 'host','127.0.0.1');
+				if(!filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
+					echo ConsoleFormatter::showMessage($host." is not a valid ipv4 address!",'error');
+					exit(1);
+				}
+				$port=self::getOption($options, 'p', 'port',8090);
+				if(($p=(int)$port)!=$port || !($p>0 && $p<26000 )){
+					echo ConsoleFormatter::showMessage($port." is an invalid port number!",'error');
+					exit(1);
+				}
+				$what=$host.':'.$port;
+				self::_init();
+				echo ConsoleFormatter::showInfo("Starting php server at <b>".$what."</b>...\nPress Ctrl+C to stop it!\n");
+				FileUtils::xcopy(self::$activeDir."/tools/server/.htrouter.php",".ubiquity/.htrouter.php");
+				self::openReplaceWrite(self::$activeDir."/tools/server/_index.php", getcwd()."/.ubiquity/_index.php", array("%siteUrl%"=>'http://'.$what));
+				system('php -S '.$what.' .ubiquity'.\DS.'.htrouter.php -t '.getcwd().' &');
 				break;
 			default:
 				$commands=Command::getInfo($command);
