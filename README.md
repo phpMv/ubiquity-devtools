@@ -259,6 +259,13 @@ Ubiquity new blog
 ```
 You can see more options about installation by reading the [Project creation section](http://micro-framework.readthedocs.io/en/latest/install.html).
 
+### Testing
+You can test with the php web server,
+from the root folder of your web application, run :
+```
+Ubiquity serve
+```
+
 ### Models creation
 make sure that the database is configured properly in app/config/config.php file :
 ```php
