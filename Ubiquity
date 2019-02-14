@@ -251,7 +251,7 @@ class Ubiquity {
 			if(Console::isYes($answer))
 				self::createController($config,$controllerName,$indexContent,$view,true);
 		}else{
-			$msg= "Creation of the Controller {$controllerName} at the location {$filename}\n";
+			$msg= "Creation of the Controller <b>{$controllerName}</b> at the location <b>{$filename}</b>\n";
 			$namespace="";
 			if(isset($config["mvcNS"]["controllers"]) && $config["mvcNS"]["controllers"]!=="")
 				$namespace="namespace ".$config["mvcNS"]["controllers"].";";
@@ -262,7 +262,7 @@ class Ubiquity {
 				$msg.= "Creation of the the associated view index.html at the location {$viewFolder}/index.html\n";
 				self::openReplaceWrite(self::$activeDir."/project-files/templates/view.tpl", $viewFolder."/index.html", ["%controllerName%"=>$controllerName]);
 			}
-			ConsoleFormatter::showMessage($msg, "success","Controller creation");
+			echo ConsoleFormatter::showMessage($msg, "success","Controller creation");
 		}
 	}
 
@@ -483,7 +483,28 @@ class Ubiquity {
 				$search=self::getOption($options, 's', 'search');
 				$method=self::getOption($options, 'm', 'method');
 				$config=self::_init(true);
-				self::infoRoutes($config, $type, $fields, $search, $method, $limit, $offset);
+				$tbl=new ConsoleTable();
+				if($search!=null || $method!=null){
+					$search=($search==null)?null:$search;
+					$routes=FrameworkParts::testRoutes($config, $search,$method,$type);
+				}else{
+					$routes=FrameworkParts::getRoutes($config,$type,$method);
+				}
+
+				if($limit!=null || $offset!=null){
+					$offset=$offset?(int)$offset:0;
+					$limit=($limit)?(int)$limit:null;
+					$routes=array_slice($routes, $offset,$limit);
+				}
+				$rArray=new ReflectArray();
+				$rArray->setProperties(explode(",", $fields));
+				$rArray->setObjects($routes);
+				$tbl->setDatas($rArray->parse());
+				echo $tbl->getTable();
+				if($rArray->hasMessages()){
+					echo ConsoleFormatter::showMessage(implode("\n", $rArray->getMessages()),'error');
+				}
+				echo ConsoleFormatter::showInfo(sizeof($routes)." routes ({$type})\n");
 				break;
 			default:
 				$commands=Command::getInfo($command);
@@ -499,31 +520,6 @@ class Ubiquity {
 				}
 			break;
 		}
-	}
-
-	private static function infoRoutes($config,$type,$fields,$search,$method,$limit,$offset){
-		$tbl=new ConsoleTable();
-		if($search!=null || $method!=null){
-			$search=($search==null)?null:$search;
-			$routes=FrameworkParts::testRoutes($config, $search,$method,$type);
-		}else{
-			$routes=FrameworkParts::getRoutes($config,$type,$method);
-		}
-
-		if($limit!=null || $offset!=null){
-			$offset=$offset?(int)$offset:0;
-			$limit=($limit)?(int)$limit:null;
-			$routes=array_slice($routes, $offset,$limit);
-		}
-		$rArray=new ReflectArray();
-		$rArray->setProperties(explode(",", $fields));
-		$rArray->setObjects($routes);
-		$tbl->setDatas($rArray->parse());
-		echo $tbl->getTable();
-		if($rArray->hasMessages()){
-			echo ConsoleFormatter::showMessage(implode("\n", $rArray->getMessages()),'error');
-		}
-		echo ConsoleFormatter::showInfo(sizeof($routes)." routes ({$type})\n");
 	}
 
 	private static function requiredParam($what,$paramName){
