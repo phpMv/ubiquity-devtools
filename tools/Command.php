@@ -101,6 +101,21 @@ class Command {
 				['Ubiquity model User']);
 	}
 
+	public static function routes(){
+		return new Command("info:routes", "","Display the cached routes.",["info:r","info::routes"],[
+				"t"=>Parameter::create("type", "Defines the type of routes to display.",["all","routes","rest"]),
+				"l"=>Parameter::create("limit", " Specifies the number of routes to return.",[]),
+				"o"=>Parameter::create("offset", "Specifies the number of routes to skip before starting to return.",[]),
+				"s"=>Parameter::create("search", "Search routes corresponding to a path.",[]),
+				"m"=>Parameter::create("method", "Allows to specify a method with search attribute.",['get','post','put','delete','patch'])
+		],
+				['Ubiquity info:routes','Ubiquity info:routes -type=rest','Only the routes with the method post'=>'Ubiquity info:routes -type=rest -m=-post']);
+	}
+
+	public static function version(){
+		return new Command("version", "","Return PHP, Framework and dev-tools versions.");
+	}
+
 	public static function allModels(){
 		return new Command("all-models", "","Generates all models from database.",["create-all-models"],[],
 				['Ubiquity all-models']);
@@ -187,6 +202,7 @@ class Command {
 		return [self::project(),
 				self::serve(),
 				self::help(),
+				self::version(),
 				self::controller(),
 				self::model(),
 				self::allModels(),
@@ -196,7 +212,9 @@ class Command {
 				self::admin(),
 				self::crudController(),
 				self::authController(),
-				self::newAction()];
+				self::newAction(),
+				self::routes()
+		];
 	}
 	/**
 	 * @return mixed

@@ -16,8 +16,8 @@ class Console {
 				echo ConsoleFormatter::formatContent($props);
 				do{
 					$answer=self::readline();
-				}while((int)$answer!=$answer || !isset($propositions[(int)$answer]));
-				$answer=$propositions[(int)$answer];
+				}while((int)$answer!=$answer || !isset($propositions[(int)$answer-1]));
+				$answer=$propositions[(int)$answer-1];
 			}else {
 				echo " (".implode("/", $propositions).")\n";
 				do{
