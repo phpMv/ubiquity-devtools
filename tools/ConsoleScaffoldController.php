@@ -26,7 +26,7 @@ class ConsoleScaffoldController extends \Ubiquity\scaffolding\ScaffoldController
 	}
 
 	protected function _addMessageForRouteCreation($path, $jsCallback = "") {
-		echo "You need to re-init Router cache to apply this update with init-cache command\n";
+		echo ConsoleFormatter::showMessage("You need to re-init Router cache to apply this update with init-cache command\n");
 	}
 }
 
