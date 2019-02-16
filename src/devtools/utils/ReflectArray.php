@@ -1,5 +1,5 @@
 <?php
-namespace devtools\utils;
+namespace Ubiquity\devtools\utils;
 use Ubiquity\utils\base\UString;
 
 class ReflectArray {

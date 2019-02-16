@@ -1,18 +1,18 @@
 #!/usr/bin/env php
 <?php
 
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
 use Ubiquity\cache\CacheManager;
 use Ubiquity\core\Framework;
-use devtools\cmd\Command;
-use devtools\cmd\Console;
-use devtools\cmd\ConsoleFormatter;
-use devtools\cmd\ConsoleTable;
-use devtools\core\ConsoleScaffoldController;
-use devtools\utils\FileUtils;
-use devtools\utils\FrameworkParts;
-use devtools\utils\ReflectArray;
+use Ubiquity\devtools\cmd\Command;
+use Ubiquity\devtools\cmd\Console;
+use Ubiquity\devtools\cmd\ConsoleFormatter;
+use Ubiquity\devtools\cmd\ConsoleTable;
+use Ubiquity\devtools\core\ConsoleScaffoldController;
+use Ubiquity\devtools\utils\FileUtils;
+use Ubiquity\devtools\utils\FrameworkParts;
+use Ubiquity\devtools\utils\ReflectArray;
 use Ubiquity\utils\base\UArray;
 use Ubiquity\utils\base\UString;
 

@@ -1,5 +1,5 @@
 <?php
-namespace devtools\cmd;
+namespace  Ubiquity\devtools\cmd;
 
 class Parameter {
 	protected $name;

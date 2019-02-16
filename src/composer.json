@@ -17,12 +17,9 @@
 			"role": "Lead developer"
 		}
 	],
-	 "bin": [
-        "src/Ubiquity"
-    ],
-     "extra": {
-        "branch-alias": {
-            "dev-master": "1.2.x-dev"
-        }
-    }
+	"autoload" : {
+		"psr-4" : {
+			"Ubiquity\\" : "src/"
+		}
+	}
 }
