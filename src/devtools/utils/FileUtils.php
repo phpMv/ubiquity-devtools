@@ -1,5 +1,5 @@
 <?php
-namespace Ubiquity\devtools\utils;
+namespace devtools\utils;
 
 class FileUtils {
 	public static function deleteAllFilesFromFolder($folder){

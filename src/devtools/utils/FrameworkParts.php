@@ -1,5 +1,5 @@
 <?php
-namespace Ubiquity\devtools\utils;
+namespace devtools\utils;
 use Ubiquity\cache\CacheManager;
 use Ubiquity\controllers\admin\popo\Route;
 use Ubiquity\controllers\Router;

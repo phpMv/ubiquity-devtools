@@ -18,11 +18,11 @@
 		}
 	],
 	 "bin": [
-        "src/Ubiquity/devtools/Ubiquity"
+        "src/Ubiquity"
     ],
 	"autoload" : {
 		"psr-4" : {
-			"Ubiquity\\devtools\\" : "src/Ubiquity/devtools/"
+			"" : "src/"
 		}
 	},
      "extra": {

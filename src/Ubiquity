@@ -1,17 +1,18 @@
 #!/usr/bin/env php
 <?php
-namespace Ubiquity\devtools;
+
+require __DIR__ . '/../vendor/autoload.php';
 
 use Ubiquity\cache\CacheManager;
 use Ubiquity\core\Framework;
-use Ubiquity\devtools\cmd\Command;
-use Ubiquity\devtools\cmd\Console;
-use Ubiquity\devtools\cmd\ConsoleFormatter;
-use Ubiquity\devtools\cmd\ConsoleTable;
-use Ubiquity\devtools\core\ConsoleScaffoldController;
-use Ubiquity\devtools\utils\FileUtils;
-use Ubiquity\devtools\utils\FrameworkParts;
-use Ubiquity\devtools\utils\ReflectArray;
+use devtools\cmd\Command;
+use devtools\cmd\Console;
+use devtools\cmd\ConsoleFormatter;
+use devtools\cmd\ConsoleTable;
+use devtools\core\ConsoleScaffoldController;
+use devtools\utils\FileUtils;
+use devtools\utils\FrameworkParts;
+use devtools\utils\ReflectArray;
 use Ubiquity\utils\base\UArray;
 use Ubiquity\utils\base\UString;
 
@@ -23,6 +24,7 @@ class Ubiquity {
 	private static $indexContent="\n\t\$this->loadView(\"@framework/index/index.html\");\n";
 	private static $activeDir;
 	private static $checkProjectDir=".ubiquity";
+	private static $toolsPath="devtools/";
 
 	public static function createComposerFile(){
 		$composer=json_encode(self::$toolsConfig["composer"]);
@@ -56,7 +58,7 @@ class Ubiquity {
 
 	public static function create($projectName,$options,$force=false){
 		self::$activeDir=dirname(__FILE__);
-		self::$toolsConfig=include("core/toolsConfig.php");
+		self::$toolsConfig=include("devtools/core/toolsConfig.php");
 		$arguments=[
 				["b","dbName",""],
 				["t","dbType","mysql"],
@@ -92,11 +94,11 @@ class Ubiquity {
 			FileUtils::safeMkdir("app/config");
 			define('ROOT', realpath('./app').DS);
 			echo ConsoleFormatter::showInfo("Files copy...");
-			FileUtils::xcopy(self::$activeDir."/project-files/app/controllers/ControllerBase.php", "app/controllers/ControllerBase.php");
+			FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/ControllerBase.php", "app/controllers/ControllerBase.php");
 
 
 			echo ConsoleFormatter::showInfo("Config files creation...\n");
-			self::openReplaceWrite(self::$activeDir."/project-files/.htaccess", getcwd()."/.htaccess", array("%rewriteBase%"=>$projectName));
+			self::openReplaceWrite(self::$activeDir."/devtools/project-files/.htaccess", getcwd()."/.htaccess", array("%rewriteBase%"=>$projectName));
 			self::$configOptions=["%siteUrl%"=>"http://127.0.0.1/".$projectName."/"];
 			self::$configOptions["%projectName%"]=$projectName;
 			self::$configOptions["%injections%"]="";
@@ -113,11 +115,11 @@ class Ubiquity {
 				self::adminInstall();
 			}
 
-			self::openReplaceWrite(self::$activeDir."/project-files/templates/config.tpl", "app/config/config.php", self::$configOptions);
-			FileUtils::xcopy(self::$activeDir."/project-files/templates/services.tpl", "app/config/services.php");
-			FileUtils::xcopy(self::$activeDir."/project-files/index.php", "index.php");
-			self::openReplaceWrite(self::$activeDir."/project-files/templates/vHeader.tpl", "app/views/main/vHeader.html", self::$configOptions);
-			self::openReplaceWrite(self::$activeDir."/project-files/templates/vFooter.tpl", "app/views/main/vFooter.html", self::$configOptions);
+			self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/config.tpl", "app/config/config.php", self::$configOptions);
+			FileUtils::xcopy(self::$activeDir."/devtools/project-files/templates/services.tpl", "app/config/services.php");
+			FileUtils::xcopy(self::$activeDir."/devtools/project-files/index.php", "index.php");
+			self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/vHeader.tpl", "app/views/main/vHeader.html", self::$configOptions);
+			self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/vFooter.tpl", "app/views/main/vFooter.html", self::$configOptions);
 
 			self::createComposerFile();
 			$answer=Console::question("Do you want to run composer install ?",["y","n"]);
@@ -153,7 +155,7 @@ class Ubiquity {
 
 	private static function adminInstall($config=null){
 		if(self::hasSemantic($config)){
-			FileUtils::xcopy(self::$activeDir."/project-files/app/controllers/Admin.php","app/controllers/Admin.php");
+			FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/Admin.php","app/controllers/Admin.php");
 			echo ConsoleFormatter::showInfo("Creating the Controller <b>Admin</b> at the location <b>app/controllers/Admin.php<:b>\n");
 			self::$toolsConfig["composer"]["require-dev"]["czproject/git-php"]="^3.13";
 		}else{
@@ -208,14 +210,14 @@ class Ubiquity {
 				self::$configOptions["%cssFiles%"][]=self::includeCss(self::$toolsConfig["cdn"]["bootstrap"]["css"]);
 				self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["jquery"]);
 				self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["bootstrap"]["js"]);
-				self::$indexContent=FileUtils::openFile(self::$activeDir."/project-files/templates/postInstall/bootstrap.tpl");
+				self::$indexContent=FileUtils::openFile(self::$activeDir."/devtools/project-files/templates/postInstall/bootstrap.tpl");
 			}
 			elseif($phpmv==="semantic"){
 				self::$configOptions["%cssFiles%"][]=self::includeCss(self::$toolsConfig["cdn"]["semantic"]["css"]);
 				self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["jquery"]);
 				self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["semantic"]["js"]);
 				self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["semantic"]["state"]);//Semantic-ui bug see
-				self::$indexContent=FileUtils::openFile(self::$activeDir."/project-files/templates/postInstall/semantic.tpl");
+				self::$indexContent=FileUtils::openFile(self::$activeDir."/devtools/project-files/templates/postInstall/semantic.tpl");
 			}
 		}
 	}
@@ -259,12 +261,12 @@ class Ubiquity {
 			$namespace="";
 			if(isset($config["mvcNS"]["controllers"]) && $config["mvcNS"]["controllers"]!=="")
 				$namespace="namespace ".$config["mvcNS"]["controllers"].";";
-			self::openReplaceWrite(self::$activeDir."/project-files/templates/controller.tpl", $filename, ["%controllerName%"=>$controllerName,"%indexContent%"=>$indexContent,"%namespace%"=>$namespace]);
+			self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/controller.tpl", $filename, ["%controllerName%"=>$controllerName,"%indexContent%"=>$indexContent,"%namespace%"=>$namespace]);
 			if($view){
 				$viewFolder="app/views/".$controllerName;
 				FileUtils::safeMkdir($viewFolder);
 				$msg.= "Creation of the the associated view index.html at the location {$viewFolder}/index.html\n";
-				self::openReplaceWrite(self::$activeDir."/project-files/templates/view.tpl", $viewFolder."/index.html", ["%controllerName%"=>$controllerName]);
+				self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/view.tpl", $viewFolder."/index.html", ["%controllerName%"=>$controllerName]);
 			}
 			echo ConsoleFormatter::showMessage($msg, "success","Controller creation");
 		}
@@ -331,8 +333,8 @@ class Ubiquity {
 
 		$filename="app/controllers/Admin.php";
 		if(file_exists($filename) && self::hasSemantic($config)){
-			FileUtils::xcopy(self::$activeDir."/project-files/app/views/Admin","app/views/Admin");
-			FileUtils::xcopy(self::$activeDir."/project-files/app/views/Seo","app/views/Seo");
+			FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/views/Admin","app/views/Admin");
+			FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/views/Seo","app/views/Seo");
 		}
 		$answer=Console::question("Do you want to run composer update ?",["y","n"]);
 		if(Console::isYes($answer)){
@@ -344,7 +346,7 @@ class Ubiquity {
 
 	public static function init($command,$current=2){
 		global $argv;
-		register_shutdown_function(array("Ubiquity","error"));
+		register_shutdown_function(array(Ubiquity::class,"error"));
 		$what=@$argv[$current];
 		$options=self::parseArguments();
 		switch ($command) {
@@ -544,10 +546,10 @@ class Ubiquity {
 		self::_init();
 		echo ConsoleFormatter::showInfo("Starting php server at <b>".$what."</b>...\nPress Ctrl+C to stop it!\n");
 		if(!file_exists(".ubiquity/.htrouter.php")){
-			FileUtils::xcopy(self::$activeDir."/server/.htrouter.php",".ubiquity/.htrouter.php");
+			FileUtils::xcopy(self::$activeDir."/devtools/server/.htrouter.php",".ubiquity/.htrouter.php");
 		}
 		if(!file_exists(".ubiquity/_index.php")){
-			FileUtils::xcopy(self::$activeDir."/server/_index.php",".ubiquity/_index.php");
+			FileUtils::xcopy(self::$activeDir."/devtools/server/_index.php",".ubiquity/_index.php");
 		}
 
 		if(file_exists(".ubiquity/config.php")){

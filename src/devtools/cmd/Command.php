@@ -1,5 +1,5 @@
 <?php
-namespace Ubiquity\devtools\cmd;
+namespace devtools\cmd;
 
 class Command {
 	protected $name;

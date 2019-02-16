@@ -1,7 +1,7 @@
 <?php
-namespace Ubiquity\devtools\core;
+namespace devtools\core;
 
-use Ubiquity\devtools\cmd\ConsoleFormatter;
+use devtools\cmd\ConsoleFormatter;
 
 class ConsoleScaffoldController extends \Ubiquity\scaffolding\ScaffoldController {
 	private $activeDir;
@@ -25,7 +25,7 @@ class ConsoleScaffoldController extends \Ubiquity\scaffolding\ScaffoldController
 	}
 
 	protected function getTemplateDir() {
-		return $this->activeDir . "/project-files/templates/";
+		return $this->activeDir . "/devtools/project-files/templates/";
 	}
 
 	protected function _addMessageForRouteCreation($path, $jsCallback = "") {

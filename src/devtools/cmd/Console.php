@@ -1,5 +1,5 @@
 <?php
-namespace Ubiquity\devtools\cmd;
+namespace devtools\cmd;
 
 class Console {
 	public static function readline(){
