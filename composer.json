@@ -20,6 +20,11 @@
 	 "bin": [
         "src/Ubiquity"
     ],
+    "autoload" : {
+		"psr-4" : {
+			"Ubiquity\\" : "src/"
+		}
+	},
      "extra": {
         "branch-alias": {
             "dev-master": "1.2.x-dev"
