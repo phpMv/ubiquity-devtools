@@ -1,5 +1,5 @@
 <?php
-
+namespace Ubiquity\devtools\utils;
 use Ubiquity\utils\base\UString;
 
 class ReflectArray {
@@ -16,7 +16,7 @@ class ReflectArray {
 			$this->properties=$this->getProperties($object);
 		}
 		$result=[$this->properties];
-		$r=new ReflectionClass($object);
+		$r=new \ReflectionClass($object);
 
 		foreach ($this->objects as $object){
 			if(is_array($object)){

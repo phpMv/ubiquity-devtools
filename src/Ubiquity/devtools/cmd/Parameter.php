@@ -1,4 +1,6 @@
 <?php
+namespace Ubiquity\devtools\cmd;
+
 class Parameter {
 	protected $name;
 	protected $description;

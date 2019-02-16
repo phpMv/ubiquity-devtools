@@ -18,11 +18,16 @@
 		}
 	],
 	 "bin": [
-        "Ubiquity"
+        "src/Ubiquity/devtools/Ubiquity"
     ],
+	"autoload" : {
+		"psr-4" : {
+			"Ubiquity\\devtools\\" : "src/Ubiquity/devtools/"
+		}
+	},
      "extra": {
         "branch-alias": {
-            "dev-master": "1.1.x-dev"
+            "dev-master": "1.2.x-dev"
         }
     }
 }

@@ -1,5 +1,6 @@
 <?php
-include_once 'ConsoleFormatter.php';
+namespace Ubiquity\devtools\cmd;
+
 class Console {
 	public static function readline(){
 		return rtrim(fgets(STDIN));

@@ -1,4 +1,7 @@
 <?php
+namespace Ubiquity\devtools\core;
+
+use Ubiquity\devtools\cmd\ConsoleFormatter;
 
 class ConsoleScaffoldController extends \Ubiquity\scaffolding\ScaffoldController {
 	private $activeDir;

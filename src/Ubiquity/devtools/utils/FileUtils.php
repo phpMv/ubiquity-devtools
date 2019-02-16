@@ -1,4 +1,6 @@
 <?php
+namespace Ubiquity\devtools\utils;
+
 class FileUtils {
 	public static function deleteAllFilesFromFolder($folder){
 		$files = glob($folder.'/*');

@@ -1,4 +1,6 @@
 <?php
+namespace Ubiquity\devtools\cmd;
+
 class ConsoleTable {
 	const TOP_LEFT='┌', TOP_RIGHT='┐';
 

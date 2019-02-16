@@ -1,5 +1,5 @@
 <?php
-include_once 'Parameter.php';
+namespace Ubiquity\devtools\cmd;
 
 class Command {
 	protected $name;
