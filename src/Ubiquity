@@ -488,7 +488,7 @@ class Ubiquity {
 				$offset=self::getOption($options, 'o', 'offset');
 				$search=self::getOption($options, 's', 'search');
 				$method=self::getOption($options, 'm', 'method');
-				$config=self::_init(true);
+				$config=self::_init();
 				$tbl=new ConsoleTable();
 				if($search!=null || $method!=null){
 					$search=($search==null)?null:$search;

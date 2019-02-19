@@ -66,10 +66,15 @@ class ConsoleTable {
 		$output .=($this->v_lines[$index]==1)? self::V_LINE:' ';
 
 		$output .= $padding; # left padding
-		$cell    = trim(preg_replace('/\s+/', ' ', $cell)); # remove line breaks
+		if(is_string($cell)){
+			$cell    = trim(preg_replace('/\s+/', ' ', $cell)); # remove line breaks
+		}else{
+			$cell='{}';
+		}
 		$content = preg_replace('#\x1b[[][^A-Za-z]*[A-Za-z]#', '', $cell);
 		$delta   = strlen($cell) - strlen($content)+$this->padding;
 		$output .= str_pad($cell, $width-$delta , $row ? ' ' : '-'); # cell content
+
 		//$output .= $padding; # right padding
 		if ($row && $index == count($row)-1) {
 			$output .= ($this->v_lines[count($row)]==1)?self::V_LINE:' ';
@@ -206,12 +211,14 @@ class ConsoleTable {
 				}
 				$index=0;
 				foreach ($row as $col) {
-					$content = preg_replace('#\x1b[[][^A-Za-z]*[A-Za-z]#', '', $col);
-					if (!isset($this->colWidths[$index])) {
-						$this->colWidths[$index] = strlen($content)+2*$this->padding;
-					} else {
-						if (strlen($content)+2*$this->padding > $this->colWidths[$index]) {
+					if(is_string($col)){
+						$content = preg_replace('#\x1b[[][^A-Za-z]*[A-Za-z]#', '', $col);
+						if (!isset($this->colWidths[$index])) {
 							$this->colWidths[$index] = strlen($content)+2*$this->padding;
+						} else {
+							if (strlen($content)+2*$this->padding > $this->colWidths[$index]) {
+								$this->colWidths[$index] = strlen($content)+2*$this->padding;
+							}
 						}
 					}
 					$index++;
