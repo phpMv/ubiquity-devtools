@@ -198,6 +198,37 @@ class Command {
 		]);
 	}
 
+	public static function infoModel(){
+		return new Command("info:model", "infoType","Returns the model meta datas.",["info-model"],[
+				"s"=>Parameter::create("separate", "If true, returns each info in a separate table", []),
+				"m"=>Parameter::create("model", "The model on which the information is sought.", []),
+				"f"=>Parameter::create("fields", "The fields to display in the table.", []),
+		],[
+				'Gets metadatas for User class'=>'Ubiquity info:model -m=User'
+		]);
+	}
+
+	public static function infoModels(){
+		return new Command("info:models", "","Returns the models meta datas.",["info-models"],[
+				"m"=>Parameter::create("models", "The models on which the information is sought.", []),
+				"f"=>Parameter::create("fields", "The fields to display in the table.", []),
+		],[
+				'Gets metadatas for all models'=>'Ubiquity info:models',
+				'Gets metadatas for User and Group models'=>'Ubiquity info:models -m=User,Group',
+				'Gets all primary keys for all models'=>'Ubiquity info:models -f=#primaryKeys'
+		]);
+	}
+
+	public static function infoValidation(){
+		return new Command("info:validation", "memberName","Returns the models validation info.",["info-validation","info:validators","info-validators"],[
+				"s"=>Parameter::create("separate", "If true, returns each info in a separate table", []),
+				"m"=>Parameter::create("model", "The model on which the information is sought.", [])
+		],[
+				'Gets validators for User class'=>'Ubiquity info:validation -m=User',
+				'Gets validators for User class on member firstname'=>'Ubiquity info:validation firstname -m=User'
+		]);
+	}
+
 	public static function getCommands(){
 		return [self::project(),
 				self::serve(),
@@ -213,7 +244,10 @@ class Command {
 				self::crudController(),
 				self::authController(),
 				self::newAction(),
-				self::routes()
+				self::routes(),
+				self::infoModel(),
+				self::infoModels(),
+				self::infoValidation()
 		];
 	}
 	/**

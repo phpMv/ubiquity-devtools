@@ -535,7 +535,7 @@ class Ubiquity {
 				}
 				echo ConsoleFormatter::showInfo(sizeof($routes)." routes ({$type})\n");
 				break;
-			case "info:model":
+			case "info:model":case "info-model":
 				$sep=self::getBooleanOption($options, 's', 'separate',true);
 				if($what!=null){
 					$what='#'.trim($what,'#');
@@ -550,9 +550,9 @@ class Ubiquity {
 					echo ConsoleFormatter::showMessage("The models class <b>{$model}</b> does not exists!",'error','info:model');
 				}
 				break;
-			case "info:models":
+			case "info:models":case "info-models":
 				$config=self::_init();
-				$fields=self::getOption($options, 'f', 'fields','#tableName,#primaryKeys');
+				$fields=self::getOption($options, 'f', 'fields','');
 				$selectedModels=self::getSelectedModels(self::getOption($options, 'm', 'models',null),$config);
 				$models=CacheManager::getModels($config,true);
 				foreach ($models as $model){
@@ -608,6 +608,9 @@ class Ubiquity {
 	}
 
 	private static function displayModelInfo($fields,$infos,$what,$sep){
+		if($fields!=null){
+			$fields=explode(",", $fields);
+		}
 		if($what==null && $sep){
 			$infosKeys=array_keys($infos);
 			foreach ($infosKeys as $k){
@@ -620,6 +623,9 @@ class Ubiquity {
 			$tbl=new ConsoleTable();
 			$tbl->setIndent(5);
 			$rArray=new ClassicArray($infos,$what);
+			if(is_array($fields) && sizeof($fields)>0){
+				$rArray->setFields($fields);
+			}
 			$tbl->setDatas($rArray->parse());
 			if($what!=null){
 				echo ConsoleFormatter::showInfo($what);
