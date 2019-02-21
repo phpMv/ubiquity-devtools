@@ -12,12 +12,13 @@ use Ubiquity\devtools\cmd\ConsoleTable;
 use Ubiquity\devtools\core\ConsoleScaffoldController;
 use Ubiquity\devtools\utils\FileUtils;
 use Ubiquity\devtools\utils\FrameworkParts;
-use Ubiquity\devtools\utils\ReflectArray;
+use Ubiquity\devtools\utils\arrays\ReflectArray;
 use Ubiquity\utils\base\UArray;
 use Ubiquity\utils\base\UString;
+use Ubiquity\devtools\utils\arrays\ClassicArray;
 
 class Ubiquity {
-	private static $version="1.1.4";
+	private static $version="1.1.5";
 	private static $appName="Ubiquity devtools";
 	private static $configOptions;
 	private static $toolsConfig;
@@ -53,6 +54,25 @@ class Ubiquity {
 			$option=$default;
 		}else
 			$option="";
+		return $option;
+	}
+
+	private static function getBooleanOption($options,$option,$longOption,$default=NULL){
+		if(array_key_exists($option, $options)){
+			$option=$options[$option];
+		}else if(array_key_exists($longOption, $options)){
+			$option=$options[$longOption];
+		}
+		else if(isset($default)===true){
+			$option=$default;
+		}else{
+			$option=false;
+		}
+		if(filter_var ( $option, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) === false){
+			$option=false;
+		}else{
+			$option=true;
+		}
 		return $option;
 	}
 
@@ -344,10 +364,20 @@ class Ubiquity {
 		echo ConsoleFormatter::showMessage("project in <b>".self::$activeDir."</b> successfully updated.",'success','self-update');
 	}
 
+	private static function displayResult($callback){
+		ob_start();
+		$callback();
+		$res=ob_get_clean();
+		echo ConsoleFormatter::showInfo($res);
+	}
+
 	public static function init($command,$current=2){
 		global $argv;
 		register_shutdown_function(array(Ubiquity::class,"error"));
 		$what=@$argv[$current];
+		if($what!=null && strpos($what, '=')!==false){
+			$what=null;
+		}
 		$options=self::parseArguments();
 		switch ($command) {
 			case "project":case "create-project":case "new":
@@ -355,11 +385,16 @@ class Ubiquity {
 			break;
 			case "all-models":case "create-all-models":
 				$config=self::_init();
-				(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config);
+				$base=self::getOption($options, "b", "dbName",$config["database"]["dbName"]);
+				$config["database"]["dbName"]=self::requiredParam($base, 'dbName');
+				self::displayResult(function()use($config){(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config);});
 				break;
 			case "model":case "create-model":
 				$config=self::_init();
-				(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config,true,$what);
+				$what=self::requiredParam($what, 'tableName');
+				$base=self::getOption($options, "b", "dbName",$config["database"]["dbName"]);
+				$config["database"]["dbName"]=self::requiredParam($base, 'dbName');
+				self::displayResult(function()use($config,$what){(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config,true,$what);});
 				break;
 			case "controller":case "create-controller":
 				$config=self::_init();
@@ -374,21 +409,9 @@ class Ubiquity {
 			case "crud":case "crud-controller":
 				$config=self::_init();
 				$what=self::requiredParam($what, 'controllerName');
-				$resource=self::getOption($options, 'r', 'resource',null);
-				if($resource==null){
-					echo ConsoleFormatter::showMessage('resource is a required parameter! You must add <b>-r</b> option.','error','crud-controller');
-					$models=CacheManager::getModels($config,true);
-					$answer=Console::question("Enter the resource to add from the following:\n",$models);
-					if(array_search($answer, $models)!==false){
-						$resource=$answer;
-					}else{
-						echo ConsoleFormatter::showInfo("Cancelled operation.");
-						exit(1);
-					}
-				}
-				$resource=self::getCompleteClassname($config, $resource);
-				$scaffold=new ConsoleScaffoldController(self::$activeDir);
+				$resource=self::answerModel($options, 'r', 'resource', 'crud-controller', $config);
 				if(class_exists($resource)){
+					$scaffold=new ConsoleScaffoldController(self::$activeDir);
 					$crudDatas=self::getOption($options, 'd', 'datas',true);
 					$crudViewer=self::getOption($options, 'v', 'viewer',true);
 					$crudEvents=self::getOption($options, 'e', 'events',true);
@@ -512,6 +535,47 @@ class Ubiquity {
 				}
 				echo ConsoleFormatter::showInfo(sizeof($routes)." routes ({$type})\n");
 				break;
+			case "info:model":
+				$sep=self::getBooleanOption($options, 's', 'separate',true);
+				if($what!=null){
+					$what='#'.trim($what,'#');
+				}
+				$config=self::_init();
+				$model=self::answerModel($options, 'm', 'model', 'info:model', $config);
+				if(class_exists($model)){
+					$infos=FrameworkParts::getModelInfos($model,$config);
+					$fields=self::getOption($options, 'f', 'fields','#tableName,#primaryKeys');
+					self::displayModelInfo($fields, $infos, $what, $sep);
+				}else{
+					echo ConsoleFormatter::showMessage("The models class <b>{$model}</b> does not exists!",'error','info:model');
+				}
+				break;
+			case "info:models":
+				$config=self::_init();
+				$fields=self::getOption($options, 'f', 'fields','#tableName,#primaryKeys');
+				$selectedModels=self::getSelectedModels(self::getOption($options, 'm', 'models',null),$config);
+				$models=CacheManager::getModels($config,true);
+				foreach ($models as $model){
+					if($selectedModels==null || array_search($model, $selectedModels)!==false){
+						$infos=FrameworkParts::getModelInfos($model,$config);
+						echo ConsoleFormatter::showInfo("Infos for <b>".$model."</b>\n");
+						self::displayModelInfo($fields, $infos, null, false);
+					}
+				}
+				break;
+			case "info:validators":case "info:validation":
+				$sep=self::getBooleanOption($options, 's', 'separate',false);
+
+				$config=self::_init();
+				$model=self::answerModel($options, 'm', 'model', 'info:validators', $config);
+				if(class_exists($model)){
+					$infos=FrameworkParts::getValidatorsInfo($model,$config);
+					$fields=self::getOption($options, 'f', 'fields');
+					self::displayModelInfo($fields, $infos, $what, $sep);
+				}else{
+					echo ConsoleFormatter::showMessage("The models class <b>{$model}</b> does not exists!",'error','info:model');
+				}
+				break;
 			default:
 				$commands=Command::getInfo($command);
 				echo ConsoleFormatter::showMessage("The command {$command} does not exists!",'warning');
@@ -528,6 +592,45 @@ class Ubiquity {
 		}
 	}
 
+	private static function getSelectedModels($models,$config){
+		if($models!=null){
+			$result=[];
+			$models=explode(",", $models);
+			foreach ($models as $model){
+				$model=self::getCompleteClassname($config, $model);
+				if(class_exists($model)){
+					$result[]=$model;
+				}
+			}
+			return $result;
+		}
+		return null;
+	}
+
+	private static function displayModelInfo($fields,$infos,$what,$sep){
+		if($what==null && $sep){
+			$infosKeys=array_keys($infos);
+			foreach ($infosKeys as $k){
+				self::displayModelInfo($fields, $infos, $k, false);
+			}
+		}else{
+			if($what!=null && isset($infos[$what])){
+				$infos=$infos[$what];
+			}
+			$tbl=new ConsoleTable();
+			$tbl->setIndent(5);
+			$rArray=new ClassicArray($infos,$what);
+			$tbl->setDatas($rArray->parse());
+			if($what!=null){
+				echo ConsoleFormatter::showInfo($what);
+			}
+			echo $tbl->getTable();
+			if($rArray->hasMessages()){
+				echo ConsoleFormatter::showMessage(implode("\n", $rArray->getMessages()),'error');
+			}
+		}
+	}
+
 	private static function requiredParam($what,$paramName){
 		if($what==null){
 			ConsoleFormatter::showMessage($paramName.' is a required parameter','error');
@@ -539,6 +642,22 @@ class Ubiquity {
 			}
 		}
 		return $what;
+	}
+
+	private static function answerModel($options,$option,$longOption,$part,$config){
+		$resource=self::getOption($options, $option, $longOption,null);
+		if($resource==null){
+			echo ConsoleFormatter::showMessage($longOption.' is a required parameter! You must add <b>-'.$option.'</b> option.','error',$part);
+			$models=CacheManager::getModels($config,true);
+			$answer=Console::question("Enter the ".$longOption." to add from the following:\n",$models);
+			if(array_search($answer, $models)!==false){
+				$resource=$answer;
+			}else{
+				echo ConsoleFormatter::showInfo("Cancelled operation.");
+				exit(1);
+			}
+		}
+		return self::getCompleteClassname($config, $resource);
 	}
 
 	private static function startServer($host,$port){

@@ -3,6 +3,8 @@ namespace Ubiquity\devtools\utils;
 use Ubiquity\cache\CacheManager;
 use Ubiquity\controllers\admin\popo\Route;
 use Ubiquity\controllers\Router;
+use Ubiquity\orm\OrmUtils;
+use Ubiquity\contents\validation\ValidatorsManager;
 
 class FrameworkParts {
 
@@ -30,6 +32,16 @@ class FrameworkParts {
 		self::initCache($config,$type);
 		$routes=Router::testRoutes($search,$method);
 		return Route::init($routes);
+	}
+
+	public static function getModelInfos($model,$config){
+		CacheManager::startProd($config);
+		return OrmUtils::getModelMetadata($model);
+	}
+
+	public static function getValidatorsInfo($model,$config){
+		CacheManager::startProd($config);
+		return ValidatorsManager::getCacheInfo($model);
 	}
 }
 

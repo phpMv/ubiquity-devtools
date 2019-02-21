@@ -1,11 +1,10 @@
 <?php
-namespace Ubiquity\devtools\utils;
+namespace Ubiquity\devtools\utils\arrays;
 use Ubiquity\utils\base\UString;
 
-class ReflectArray {
+class ReflectArray extends BaseArray{
 	private $objects;
 	private $properties;
-	private $messages=[];
 
 	public function parse(){
 		$object=current($this->objects);
@@ -42,7 +41,7 @@ class ReflectArray {
 	private function parseValue($value){
 		$result="-";
 		if(is_array($value)){
-			$result='['.implode(',', $value).']';
+			return $this->parseArray($value);
 		}elseif(UString::isValid($value)){
 			$result=UString::toString($value);
 		}else{
@@ -64,10 +63,6 @@ class ReflectArray {
 		return $result;
 	}
 
-	public function hasMessages(){
-		return sizeof($this->messages)>0;
-	}
-
 	/**
 	 * @param mixed $objects
 	 */
@@ -81,13 +76,5 @@ class ReflectArray {
 	public function setProperties($properties) {
 		$this->properties = $properties;
 	}
-
-	/**
-	 * @return multitype:
-	 */
-	public function getMessages() {
-		return $this->messages;
-	}
-
 
 }

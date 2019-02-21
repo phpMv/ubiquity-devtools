@@ -41,6 +41,11 @@ class ConsoleTable {
 	 */
 	private $colWidths;
 
+	/**
+	 * @var array
+	 */
+	private $rowHeight;
+
 	private $colCount;
 
 	private $rowCount;
@@ -72,8 +77,8 @@ class ConsoleTable {
 			$cell='{}';
 		}
 		$content = preg_replace('#\x1b[[][^A-Za-z]*[A-Za-z]#', '', $cell);
-		$delta   = strlen($cell) - strlen($content)+$this->padding;
-		$output .= str_pad($cell, $width-$delta , $row ? ' ' : '-'); # cell content
+		$delta   = mb_strlen($cell,'UTF-8') - mb_strlen($content,'UTF-8')+$this->padding;
+		$output .= $this->mb_str_pad($cell, $width-$delta , $row ? ' ' : '-'); # cell content
 
 		//$output .= $padding; # right padding
 		if ($row && $index == count($row)-1) {
@@ -85,6 +90,30 @@ class ConsoleTable {
 	private function initializeBorders(){
 		$this->h_lines=array_fill(0,sizeof($this->datas)+1 , 1);
 		$this->v_lines=array_fill(0, $this->colCount+1, 1);
+	}
+
+	/**
+	 * mb_str_pad version for multibyte encoding
+	 * @see http://php.net/manual/fr/function.str-pad.php#116244
+	 * @param string $str
+	 * @param int $pad_len
+	 * @param string $pad_str
+	 * @param string $dir
+	 * @param string $encoding
+	 * @return string
+	 */
+	private function mb_str_pad($str, $pad_len, $pad_str = ' ', $dir = STR_PAD_RIGHT, $encoding = NULL){
+		$encoding = $encoding === NULL ? mb_internal_encoding() : $encoding;
+		$padBefore = $dir === STR_PAD_BOTH || $dir === STR_PAD_LEFT;
+		$padAfter = $dir === STR_PAD_BOTH || $dir === STR_PAD_RIGHT;
+		$pad_len -= mb_strlen($str, $encoding);
+		$targetLen = $padBefore && $padAfter ? $pad_len / 2 : $pad_len;
+		$strToRepeatLen = mb_strlen($pad_str, $encoding);
+		$repeatTimes = ceil($targetLen / $strToRepeatLen);
+		$repeatedString = str_repeat($pad_str, max(0, $repeatTimes)); // safe if used with valid utf-8 strings
+		$before = $padBefore ? mb_substr($repeatedString, 0, floor($targetLen), $encoding) : '';
+		$after = $padAfter ? mb_substr($repeatedString, 0, ceil($targetLen), $encoding) : '';
+		return $before . $str . $after;
 	}
 
 	public function setDatas($datas){
@@ -113,17 +142,30 @@ class ConsoleTable {
 		}
 	}
 
+	private function getLineRow($row,$yl){
+		$result=[];
+		foreach ($row as $col){
+			$lines=explode("\n", $col);
+			$result[]=(isset($lines[$yl]))?$lines[$yl]:' ';
+		}
+		return $result;
+	}
+
 	public function getTable(){
 		$res='';
 		$y=0;
 		foreach ($this->datas as $row) {
 			$res.=$this->border($y).PHP_EOL;
-			$index=0;
-			foreach ($row as $col) {
-				$res.=$this->getCellOutput($index,$row);
-				$index++;
+			$rowHeight=$this->rowHeight[$y];
+			for($yl=0;$yl<$rowHeight;$yl++){
+				$lineRow=$this->getLineRow($row, $yl);
+				$index=0;
+				foreach ($lineRow as $col) {
+					$res.=$this->getCellOutput($index,$lineRow);
+					$index++;
+				}
+				$res.=PHP_EOL;
 			}
-			$res.=PHP_EOL;
 			$y++;
 		}
 		$res.=$this->border(sizeof($this->datas)).PHP_EOL;
@@ -150,7 +192,7 @@ class ConsoleTable {
 
 	private function border($row){
 		$line=($this->h_lines[$row])?self::H_LINE:' ';
-		$res='';
+		$res=str_repeat(' ', $this->indent);
 		for ($i=0;$i<$this->colCount;$i++){
 			$res.=$this->getBorderValue($row, $i);
 			$res.=str_repeat($line, $this->colWidths[$i]);
@@ -204,30 +246,55 @@ class ConsoleTable {
 	 */
 	private function calculateColWidths(){
 		$colCount=0;
+		$y=0;
 		foreach ($this->datas as $row) {
 			if (is_array($row)) {
 				if(sizeof($row)>$colCount){
 					$colCount=sizeof($row);
 				}
 				$index=0;
+				$this->rowHeight[$y]=1;
 				foreach ($row as $col) {
 					if(is_string($col)){
-						$content = preg_replace('#\x1b[[][^A-Za-z]*[A-Za-z]#', '', $col);
-						if (!isset($this->colWidths[$index])) {
-							$this->colWidths[$index] = strlen($content)+2*$this->padding;
-						} else {
-							if (strlen($content)+2*$this->padding > $this->colWidths[$index]) {
-								$this->colWidths[$index] = strlen($content)+2*$this->padding;
+						$lines=explode("\n", $col);
+						$size=sizeof($lines);
+						if($size>$this->rowHeight[$y]){
+							$this->rowHeight[$y]=$size;
+						}
+						foreach ($lines as $line){
+							$content = preg_replace('#\x1b[[][^A-Za-z]*[A-Za-z]#', '', $line);
+							$len=mb_strlen($content,'UTF-8');
+							if (!isset($this->colWidths[$index])) {
+								$this->colWidths[$index] = $len+2*$this->padding;
+							} else {
+								if ($len+2*$this->padding > $this->colWidths[$index]) {
+									$this->colWidths[$index] =$len+2*$this->padding;
+								}
 							}
 						}
 					}
 					$index++;
 				}
 			}
+			$y++;
 		}
 		$this->colCount=$colCount;
 		$this->rowCount=sizeof($this->datas);
 		return $this->colWidths;
 	}
+	/**
+	 * @param number $padding
+	 */
+	public function setPadding($padding) {
+		$this->padding = $padding;
+	}
+
+	/**
+	 * @param number $indent
+	 */
+	public function setIndent($indent) {
+		$this->indent = $indent;
+	}
+
 }
 
