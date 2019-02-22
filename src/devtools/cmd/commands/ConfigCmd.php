@@ -8,6 +8,7 @@ use Ubiquity\devtools\cmd\ConsoleFormatter;
 
 class ConfigCmd extends AbstractCmd{
 	public static function run(&$config,$options,$what){
+		echo ConsoleFormatter::showInfo('Displaying config variables from <b>app/config/config.php</b> file');
 		$datas=$config;
 		$fields=self::getOption($options, 'f', 'fields');
 		if($fields!=null){

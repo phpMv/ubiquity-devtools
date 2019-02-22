@@ -20,6 +20,10 @@ use Ubiquity\devtools\cmd\commands\CrudCmd;
 use Ubiquity\devtools\cmd\commands\InfoValidationCmd;
 use Ubiquity\devtools\cmd\commands\NewActionCmd;
 use Ubiquity\devtools\cmd\commands\AuthCmd;
+use Ubiquity\devtools\cmd\commands\DAOCmd;
+use Ubiquity\controllers\Startup;
+use Ubiquity\devtools\cmd\ConsoleTable;
+use Ubiquity\devtools\utils\arrays\ClassicArray;
 
 class Ubiquity {
 	use CmdTrait;
@@ -271,7 +275,7 @@ class Ubiquity {
 			$microDir=$dir.DIRECTORY_SEPARATOR.self::$checkProjectDir;
 			if(file_exists($microDir) && is_dir($microDir)){
 				chdir($dir);
-				echo ConsoleFormatter::showInfo("The project folder is <b>".FileUtils::cleanPathname($dir)."</b>\n");
+				echo ConsoleFormatter::showInfo("The project folder is <b>".FileUtils::cleanPathname($dir)."</b>");
 				return true;
 			}
 		}
@@ -309,8 +313,10 @@ class Ubiquity {
 
 	public static function init($command,$current=2){
 		global $argv;
-		register_shutdown_function(array(Ubiquity::class,"error"));
-		$what=@$argv[$current];
+		set_exception_handler(array(Ubiquity::class,"error"));
+		//ob_start ( array (__class__,'error' ) );
+
+		$what=$argv[$current]??null;
 		if($what!=null && strpos($what, '=')!==false){
 			$what=null;
 		}
@@ -444,6 +450,11 @@ class Ubiquity {
 				ConfigSetCmd::run($config, $options);
 				break;
 
+			case "dao":
+				$config=self::_init();
+				DAOCmd::run($config, $options, $what);
+				break;
+
 			default:
 				$commands=Command::getInfo($command);
 				echo ConsoleFormatter::showMessage("The command {$command} does not exists!",'warning');
@@ -528,11 +539,9 @@ class Ubiquity {
 		return $s === true || $s === "true" || $s === 1 || $s === "1";
 	}
 
-	public static function error(){
-		/*$last_error = error_get_last();
-		if ($last_error['type'] === E_ERROR) {
-			Startup::errorHandler(E_ERROR, $last_error['message'], $last_error['file'], $last_error['line']);
-		}*/
+	public static function error(Exception $exception) {
+		$msg="\n<b>Message</b> : ".ConsoleFormatter::colorize($exception->getMessage(),ConsoleFormatter::LIGHT_GRAY)."\n<b>File</b> : " .$exception->getFile()."\n<b>Line : </b> " . $exception->getLine();
+		echo ConsoleFormatter::showMessage($msg,'error');
 	}
 }
 error_reporting(E_ALL);

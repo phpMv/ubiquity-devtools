@@ -133,7 +133,7 @@ class ConsoleTable {
 					if((isset($flag[$index]) && $col!==$flag[$index]) || !isset($flag[$index])){
 						$flag[$index]=$col;
 					}else{
-						$col=' ';
+						$col='≡';
 						$this->h_lines[$y]=0;
 					}
 					$index++;

@@ -7,6 +7,7 @@ use Ubiquity\utils\base\UString;
 
 class ClassicArray extends BaseArray{
 	private $fields;
+	private $iFields;
 	private $datas;
 
 	public function __construct($datas,$part=null){
@@ -36,6 +37,9 @@ class ClassicArray extends BaseArray{
 	}
 
 	private function parseReverse_(){
+		if(sizeof($this->datas)==0){
+			return [['Nothing to display']];
+		}
 		if(UArray::isAssociative($this->datas)){
 			$array=[['field','value']];
 			$fields=$this->getFields();
@@ -47,7 +51,7 @@ class ClassicArray extends BaseArray{
 			$array=[];
 
 			foreach ($this->datas as $data){
-					$array[]=[$this->parseValue($data)];
+				$array[]=[$this->parseValue($data)];
 			}
 
 		}
@@ -65,7 +69,7 @@ class ClassicArray extends BaseArray{
 
 	protected function parseValue($value) {
 		if(is_array($value)){
-			return $this->parseArray($value);
+			return $this->parseArray($value,$this->iFields);
 		}elseif(UString::isValid($value)){
 			return var_export($value,true);
 		}
@@ -92,6 +96,13 @@ class ClassicArray extends BaseArray{
 	public function setDatas($datas) {
 		$this->datas = $datas;
 	}
+	/**
+	 * @param mixed $iFields
+	 */
+	public function setIFields($iFields) {
+		$this->iFields = $iFields;
+	}
+
 
 }
 

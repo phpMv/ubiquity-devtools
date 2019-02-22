@@ -60,6 +60,14 @@ trait CmdTrait {
 			return $option;
 	}
 
+	protected static function getOptionArray($options,$option,$longOption,$default=NULL){
+		$option=self::getOption($options, $option, $longOption,$default);
+		if(is_string($option)){
+			return explode(',', $option);
+		}
+		return $option;
+	}
+
 	protected static function getBooleanOption($options,$option,$longOption,$default=NULL){
 		if(array_key_exists($option, $options)){
 			$option=$options[$option];
