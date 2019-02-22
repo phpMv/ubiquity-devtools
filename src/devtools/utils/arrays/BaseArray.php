@@ -2,6 +2,8 @@
 
 namespace Ubiquity\devtools\utils\arrays;
 
+use Ubiquity\utils\base\UIntrospection;
+
 abstract class BaseArray {
 	protected $messages=[];
 
@@ -24,10 +26,17 @@ abstract class BaseArray {
 				$prefix=$k." : ";
 			}
 			if(is_array($v)){
-				$result[]=" · ".$prefix.$this->parseInlineArray($v);
+				$v=$this->parseInlineArray($v);
+			}elseif($v instanceof \stdClass){
+				$v=$this->parseInlineArray((array)$v);
+			}elseif($v instanceof \Closure){
+				$v=UIntrospection::closure_dump($v);
+			}elseif(is_object($v)){
+				$v='{.}';
 			}else{
-				$result[]=" · ".$prefix.$v;
+				$v=var_export($v,true);
 			}
+			$result[]=" · ".$prefix.$v;
 
 		}
 		return implode("\n",$result);
@@ -41,11 +50,17 @@ abstract class BaseArray {
 				$prefix=$k.": ";
 			}
 			if(is_array($v)){
-				$result[]=$prefix.$this->parseInlineArray($v);
+				$v=$this->parseInlineArray($v);
+			}elseif($v instanceof \stdClass){
+				$v=$this->parseInlineArray((array)$v);
+			}elseif($v instanceof \Closure){
+				$v=UIntrospection::closure_dump($v);
+			}elseif(is_object($v)){
+				$v='{.}';
 			}else{
-				$result[]=$prefix.$v;
+				$v=var_export($v,true);
 			}
-
+			$result[]=$prefix.$v;
 		}
 		return '['.implode(",",$result).']';
 	}

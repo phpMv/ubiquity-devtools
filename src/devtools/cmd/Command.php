@@ -23,26 +23,26 @@ class Command {
 
 	public function longString(){
 		$dec="\t";
-		$result= "\n<b>".$this->name."</b> [".ConsoleFormatter::colorize($this->value,ConsoleFormatter::YELLOW)."] =>";
-		$result.="\n".$dec."* ".$this->description;
+		$result= "\n<b>■ ".$this->name."</b> [".ConsoleFormatter::colorize($this->value,ConsoleFormatter::YELLOW)."] =>";
+		$result.="\n".$dec."· ".$this->description;
 		if(sizeof($this->aliases)>0){
-			$result.="\n".$dec."* Aliases :";
+			$result.="\n".$dec."· Aliases :";
 			$aliases=$this->aliases;
 			array_walk($aliases,function(&$alias){$alias="<b>".$alias."</b>";});
 			$result.=" ".implode(",", $aliases);
 		}
 		if(sizeof($this->parameters)>0){
-			$result.="\n".$dec."* Parameters :";
+			$result.="\n".$dec."· Parameters :";
 			foreach ($this->parameters as $param=>$content){
 				$result.="\n".$dec."\t<b>-".$param."</b>";
 				$result.=$content."\n";
 			}
 		}
 		if(sizeof($this->examples)>0){
-			$result.="\n".$dec."* Samples :";
+			$result.="\n".$dec."<b>× Samples :</b>";
 			foreach ($this->examples as $desc=>$sample){
 				if(is_string($desc)){
-					$result.="\n".$dec."\t".ConsoleFormatter::colorize($desc,ConsoleFormatter::WIGHT);
+					$result.="\n".$dec."\t".ConsoleFormatter::colorize($desc,ConsoleFormatter::LIGHT_GRAY);
 				}
 				$result.="\n".$dec."\t  · ".ConsoleFormatter::colorize($sample,ConsoleFormatter::CYAN);
 			}
@@ -229,6 +229,22 @@ class Command {
 		]);
 	}
 
+	public static function configInfo(){
+		return new Command("config", "","Returns the config informations from app/config/config.php.",["info-config","info:config"],[
+				"f"=>Parameter::create("fields", "The fields to display.", [])
+		],[
+				'Display all config vars'=>'Ubiquity config',
+				'Display database config vars'=>'Ubiquity config -f=database'
+		]);
+	}
+
+	public static function configSet(){
+		return new Command("config:set", "","Modify/add variables and save them in app/config/config.php. Supports only long parameters with --.",["info-set","set:config","set-config"],[],[
+				'Assigns a new value to siteURL'=>'Ubiquity config:set --siteURL=http://127.0.0.1/quick-start/',
+				'Change the database name and port'=>'Ubiquity config:set --database.dbName=blog --database.port=3307'
+		]);
+	}
+
 	public static function getCommands(){
 		return [self::project(),
 				self::serve(),
@@ -247,7 +263,9 @@ class Command {
 				self::routes(),
 				self::infoModel(),
 				self::infoModels(),
-				self::infoValidation()
+				self::infoValidation(),
+				self::configInfo(),
+				self::configSet()
 		];
 	}
 	/**

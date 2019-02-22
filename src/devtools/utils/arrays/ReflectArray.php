@@ -43,7 +43,7 @@ class ReflectArray extends BaseArray{
 		if(is_array($value)){
 			return $this->parseArray($value);
 		}elseif(UString::isValid($value)){
-			$result=UString::toString($value);
+			$result=var_export($value,true);
 		}else{
 			$result=$value;
 		}

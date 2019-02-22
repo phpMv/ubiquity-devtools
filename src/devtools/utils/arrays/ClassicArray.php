@@ -67,9 +67,9 @@ class ClassicArray extends BaseArray{
 		if(is_array($value)){
 			return $this->parseArray($value);
 		}elseif(UString::isValid($value)){
-			return $value;
+			return var_export($value,true);
 		}
-		return '?';
+		return '{.}';
 	}
 
 	/**

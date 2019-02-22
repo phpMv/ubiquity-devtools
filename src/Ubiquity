@@ -8,16 +8,21 @@ use Ubiquity\core\Framework;
 use Ubiquity\devtools\cmd\Command;
 use Ubiquity\devtools\cmd\Console;
 use Ubiquity\devtools\cmd\ConsoleFormatter;
-use Ubiquity\devtools\cmd\ConsoleTable;
-use Ubiquity\devtools\core\ConsoleScaffoldController;
 use Ubiquity\devtools\utils\FileUtils;
-use Ubiquity\devtools\utils\FrameworkParts;
-use Ubiquity\devtools\utils\arrays\ReflectArray;
 use Ubiquity\utils\base\UArray;
-use Ubiquity\utils\base\UString;
-use Ubiquity\devtools\utils\arrays\ClassicArray;
+use Ubiquity\devtools\cmd\commands\ConfigSetCmd;
+use Ubiquity\devtools\cmd\traits\CmdTrait;
+use Ubiquity\devtools\cmd\commands\ConfigCmd;
+use Ubiquity\devtools\cmd\commands\InfoRoutesCmd;
+use Ubiquity\devtools\cmd\commands\InfoModelsCmd;
+use Ubiquity\devtools\cmd\commands\InfoModelCmd;
+use Ubiquity\devtools\cmd\commands\CrudCmd;
+use Ubiquity\devtools\cmd\commands\InfoValidationCmd;
+use Ubiquity\devtools\cmd\commands\NewActionCmd;
+use Ubiquity\devtools\cmd\commands\AuthCmd;
 
 class Ubiquity {
+	use CmdTrait;
 	private static $version="1.1.5";
 	private static $appName="Ubiquity devtools";
 	private static $configOptions;
@@ -44,37 +49,6 @@ class Ubiquity {
 		return FileUtils::writeFile($destination,$str);
 	}
 
-	private static function getOption($options,$option,$longOption,$default=NULL){
-		if(array_key_exists($option, $options)){
-			$option=$options[$option];
-		}else if(array_key_exists($longOption, $options)){
-			$option=$options[$longOption];
-		}
-		else if(isset($default)===true){
-			$option=$default;
-		}else
-			$option="";
-		return $option;
-	}
-
-	private static function getBooleanOption($options,$option,$longOption,$default=NULL){
-		if(array_key_exists($option, $options)){
-			$option=$options[$option];
-		}else if(array_key_exists($longOption, $options)){
-			$option=$options[$longOption];
-		}
-		else if(isset($default)===true){
-			$option=$default;
-		}else{
-			$option=false;
-		}
-		if(filter_var ( $option, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) === false){
-			$option=false;
-		}else{
-			$option=true;
-		}
-		return $option;
-	}
 
 	public static function create($projectName,$options,$force=false){
 		self::$activeDir=dirname(__FILE__);
@@ -308,44 +282,6 @@ class Ubiquity {
 			return self::setDir($newDir);
 	}
 
-	private static function parseArguments(){
-		global $argv;
-		$argv_copy=$argv;
-		array_shift($argv_copy);
-		$out = array();
-		foreach($argv_copy as $arg){
-			if(substr($arg, 0, 2) == '--'){
-				preg_match ("/\=|\:|\ /", $arg, $matches, PREG_OFFSET_CAPTURE);
-				$eqPos=$matches[0][1];
-				if($eqPos === false){
-					$key = substr($arg, 2);
-					$out[$key] = isset($out[$key]) ? $out[$key] : true;
-				}
-				else{
-					$key = substr($arg, 2, $eqPos - 2);
-					$out[$key] = substr($arg, $eqPos + 1);
-				}
-			}
-			else if(substr($arg, 0, 1) == '-'){
-				if(substr($arg, 2, 1) == '='||substr($arg, 2, 1) == ':' || substr($arg, 2, 1) == ' '){
-					$key = substr($arg, 1, 1);
-					$out[$key] = substr($arg, 3);
-				}
-				else{
-					$chars = str_split(substr($arg, 1));
-					foreach($chars as $char){
-						$key = $char;
-						$out[$key] = isset($out[$key]) ? $out[$key] : true;
-					}
-				}
-			}
-			else{
-				$out[] = $arg;
-			}
-		}
-		return $out;
-	}
-
 	private static function selfUpdate(){
 		$config=self::_init();
 		define('ROOT', realpath('./app').DS);
@@ -389,6 +325,7 @@ class Ubiquity {
 				$config["database"]["dbName"]=self::requiredParam($base, 'dbName');
 				self::displayResult(function()use($config){(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config);});
 				break;
+
 			case "model":case "create-model":
 				$config=self::_init();
 				$what=self::requiredParam($what, 'tableName');
@@ -396,6 +333,7 @@ class Ubiquity {
 				$config["database"]["dbName"]=self::requiredParam($base, 'dbName');
 				self::displayResult(function()use($config,$what){(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config,true,$what);});
 				break;
+
 			case "controller":case "create-controller":
 				$config=self::_init();
 				$what=self::requiredParam($what, 'controllerName');
@@ -406,31 +344,18 @@ class Ubiquity {
 				}
 				self::createController($config,$what,$indexContent,$view);
 				break;
+
 			case "crud":case "crud-controller":
 				$config=self::_init();
 				$what=self::requiredParam($what, 'controllerName');
-				$resource=self::answerModel($options, 'r', 'resource', 'crud-controller', $config);
-				if(class_exists($resource)){
-					$scaffold=new ConsoleScaffoldController(self::$activeDir);
-					$crudDatas=self::getOption($options, 'd', 'datas',true);
-					$crudViewer=self::getOption($options, 'v', 'viewer',true);
-					$crudEvents=self::getOption($options, 'e', 'events',true);
-					$crudViews=self::getOption($options, 't', 'templates','index,form,display');
-					$routePath=self::getOption($options, 'p', 'path','');
-					$scaffold->addCrudController($what, $resource,$crudDatas,$crudViewer,$crudEvents,$crudViews,$routePath);
-				}else{
-					echo ConsoleFormatter::showMessage("The models class <b>{$resource}</b> does not exists!",'error','crud-controller');
-				}
+				CrudCmd::run($config, $options, $what, self::$activeDir);
 				break;
+
 			case "auth": case "auth-controller":
 				self::_init();
-				$what=self::requiredParam($what, 'controllerName');
-				$scaffold=new ConsoleScaffoldController(self::$activeDir);
-				$baseClass=self::getOption($options, 'e', 'extends',"\\Ubiquity\\controllers\\auth\\AuthController");
-				$authView=self::getOption($options, 't', 'templates','index,info,noAccess,disconnected,message,baseTemplate');
-				$routePath=self::getOption($options, 'p', 'path','');
-				$scaffold->addAuthController($what, $baseClass,$authView,$routePath);
+				AuthCmd::run($config, $options, $what, self::$activeDir);
 				break;
+
 			case "clear-cache":
 				$type=self::getOption($options, "t", "type","all");
 				$config=self::_init();
@@ -438,28 +363,9 @@ class Ubiquity {
 				break;
 			case "action": case "new-action":
 				$config=self::_init();
-				$what=self::requiredParam($what, 'controller.action');
-				$scaffold=new ConsoleScaffoldController(self::$activeDir);
-				@list($controller,$action)=explode('.', $what);
-				if($controller!=null && $action!=null){
-					$controller=self::getCompleteClassname($config, $controller,'controllers');
-					if(class_exists($controller)){
-						$parameters=self::getOption($options, 'p', 'params');
-						$routePath=self::getOption($options, 'r', 'route');
-						$createView=self::getOption($options, 'v', 'create-view',false);
-						$routeInfo=null;
-						if($routePath!=null){
-							$routeInfo=["path"=>$routePath,"methods"=>null];
-						}
-						$scaffold->_newAction($controller, $action,$parameters,'',$routeInfo,$createView);
-					}
-					else{
-						echo ConsoleFormatter::showMessage("The controller class <b>{$controller}</b> does not exists!",'error','new-action');
-					}
-				}else{
-					echo ConsoleFormatter::showMessage("You must use <b>controller.action</b> notation!",'error','new-action');
-				}
+				NewActionCmd::run($config, $options, $what, self::$activeDir);
 				break;
+
 			case "init-cache":
 				$type=self::getOption($options, "t", "type","all");
 				$config=self::_init();
@@ -468,13 +374,16 @@ class Ubiquity {
 				$res=ob_get_clean();
 				echo ConsoleFormatter::showMessage($res,'success','init-cache:'.$type);
 				break;
+
 			case "self-update":
 				self::selfUpdate();
 				break;
+
 			case "admin":
 				$config=self::_init();
 				self::adminInstall($config);
 				break;
+
 			case "help":
 				if(isset($what)){
 					self::infoCmd($what);
@@ -504,78 +413,37 @@ class Ubiquity {
 				}
 				echo ConsoleFormatter::showInfo($v);
 				break;
-			case "info:routes":case "info:r":case "info::routes":
-				$type=self::getOption($options, 't', 'type','routes');
-				$fields=self::getOption($options, 'f', 'fields','path,controller,action,parameters');
-				$limit=self::getOption($options, 'l', 'limit');
-				$offset=self::getOption($options, 'o', 'offset');
-				$search=self::getOption($options, 's', 'search');
-				$method=self::getOption($options, 'm', 'method');
-				$config=self::_init();
-				$tbl=new ConsoleTable();
-				if($search!=null || $method!=null){
-					$search=($search==null)?null:$search;
-					$routes=FrameworkParts::testRoutes($config, $search,$method,$type);
-				}else{
-					$routes=FrameworkParts::getRoutes($config,$type,$method);
-				}
 
-				if($limit!=null || $offset!=null){
-					$offset=$offset?(int)$offset:0;
-					$limit=($limit)?(int)$limit:null;
-					$routes=array_slice($routes, $offset,$limit);
-				}
-				$rArray=new ReflectArray();
-				$rArray->setProperties(explode(",", $fields));
-				$rArray->setObjects($routes);
-				$tbl->setDatas($rArray->parse());
-				echo $tbl->getTable();
-				if($rArray->hasMessages()){
-					echo ConsoleFormatter::showMessage(implode("\n", $rArray->getMessages()),'error');
-				}
-				echo ConsoleFormatter::showInfo(sizeof($routes)." routes ({$type})\n");
-				break;
-			case "info:model":case "info-model":
-				$sep=self::getBooleanOption($options, 's', 'separate',true);
-				if($what!=null){
-					$what='#'.trim($what,'#');
-				}
+			case "info:routes":case "info:r":case "info::routes":
 				$config=self::_init();
-				$model=self::answerModel($options, 'm', 'model', 'info:model', $config);
-				if(class_exists($model)){
-					$infos=FrameworkParts::getModelInfos($model,$config);
-					$fields=self::getOption($options, 'f', 'fields','#tableName,#primaryKeys');
-					self::displayModelInfo($fields, $infos, $what, $sep);
-				}else{
-					echo ConsoleFormatter::showMessage("The models class <b>{$model}</b> does not exists!",'error','info:model');
-				}
+				InfoRoutesCmd::run($config, $options, $what);
 				break;
+
+			case "info:model":case "info-model":
+				$config=self::_init();
+				InfoModelCmd::run($config, $options, $what);
+				break;
+
 			case "info:models":case "info-models":
 				$config=self::_init();
-				$fields=self::getOption($options, 'f', 'fields','');
-				$selectedModels=self::getSelectedModels(self::getOption($options, 'm', 'models',null),$config);
-				$models=CacheManager::getModels($config,true);
-				foreach ($models as $model){
-					if($selectedModels==null || array_search($model, $selectedModels)!==false){
-						$infos=FrameworkParts::getModelInfos($model,$config);
-						echo ConsoleFormatter::showInfo("Infos for <b>".$model."</b>\n");
-						self::displayModelInfo($fields, $infos, null, false);
-					}
-				}
+				InfoModelsCmd::run($config, $options, $what);
 				break;
-			case "info:validators":case "info:validation":
-				$sep=self::getBooleanOption($options, 's', 'separate',false);
 
+			case "config": case "info:config":case "info-config":
 				$config=self::_init();
-				$model=self::answerModel($options, 'm', 'model', 'info:validators', $config);
-				if(class_exists($model)){
-					$infos=FrameworkParts::getValidatorsInfo($model,$config);
-					$fields=self::getOption($options, 'f', 'fields');
-					self::displayModelInfo($fields, $infos, $what, $sep);
-				}else{
-					echo ConsoleFormatter::showMessage("The models class <b>{$model}</b> does not exists!",'error','info:model');
-				}
+				ConfigCmd::run($config, $options, $what);
 				break;
+
+			case "info:validators":case "info:validation":
+				$config=self::_init();
+				InfoValidationCmd::run($config, $options, $what);
+				break;
+
+			case "config:set":case "config-set":
+				$config=self::_init();
+				ConfigSetCmd::run($config, $options);
+				break;
+
 			default:
 				$commands=Command::getInfo($command);
 				echo ConsoleFormatter::showMessage("The command {$command} does not exists!",'warning');
@@ -590,80 +458,6 @@ class Ubiquity {
 				}
 			break;
 		}
-	}
-
-	private static function getSelectedModels($models,$config){
-		if($models!=null){
-			$result=[];
-			$models=explode(",", $models);
-			foreach ($models as $model){
-				$model=self::getCompleteClassname($config, $model);
-				if(class_exists($model)){
-					$result[]=$model;
-				}
-			}
-			return $result;
-		}
-		return null;
-	}
-
-	private static function displayModelInfo($fields,$infos,$what,$sep){
-		if($fields!=null){
-			$fields=explode(",", $fields);
-		}
-		if($what==null && $sep){
-			$infosKeys=array_keys($infos);
-			foreach ($infosKeys as $k){
-				self::displayModelInfo($fields, $infos, $k, false);
-			}
-		}else{
-			if($what!=null && isset($infos[$what])){
-				$infos=$infos[$what];
-			}
-			$tbl=new ConsoleTable();
-			$tbl->setIndent(5);
-			$rArray=new ClassicArray($infos,$what);
-			if(is_array($fields) && sizeof($fields)>0){
-				$rArray->setFields($fields);
-			}
-			$tbl->setDatas($rArray->parse());
-			if($what!=null){
-				echo ConsoleFormatter::showInfo($what);
-			}
-			echo $tbl->getTable();
-			if($rArray->hasMessages()){
-				echo ConsoleFormatter::showMessage(implode("\n", $rArray->getMessages()),'error');
-			}
-		}
-	}
-
-	private static function requiredParam($what,$paramName){
-		if($what==null){
-			ConsoleFormatter::showMessage($paramName.' is a required parameter','error');
-			$answer=Console::question("Enter a value for ".$paramName.':');
-			if($answer==null){
-				exit(1);
-			}else{
-				return $answer;
-			}
-		}
-		return $what;
-	}
-
-	private static function answerModel($options,$option,$longOption,$part,$config){
-		$resource=self::getOption($options, $option, $longOption,null);
-		if($resource==null){
-			echo ConsoleFormatter::showMessage($longOption.' is a required parameter! You must add <b>-'.$option.'</b> option.','error',$part);
-			$models=CacheManager::getModels($config,true);
-			$answer=Console::question("Enter the ".$longOption." to add from the following:\n",$models);
-			if(array_search($answer, $models)!==false){
-				$resource=$answer;
-			}else{
-				echo ConsoleFormatter::showInfo("Cancelled operation.");
-				exit(1);
-			}
-		}
-		return self::getCompleteClassname($config, $resource);
 	}
 
 	private static function startServer($host,$port){
@@ -691,17 +485,6 @@ class Ubiquity {
 			}
 		}
 		system('php -S '.$what.' .ubiquity'.\DS.'.htrouter.php -t '.getcwd().' &');
-	}
-
-	private static function getCompleteClassname($config,$classname,$type='models'){
-		$prefix=$config["mvcNS"][$type]??null;
-		$classname=ltrim($classname,"\\");
-		if(isset($prefix)){
-			if(!UString::startswith($classname,$prefix)){
-				$classname=$prefix."\\".$classname;
-			}
-		}
-		return $classname;
 	}
 
 	private static function info(){
