@@ -2,6 +2,9 @@
 namespace Ubiquity\devtools\core;
 
 use Ubiquity\devtools\cmd\ConsoleFormatter;
+use Ubiquity\controllers\Startup;
+use Ubiquity\cache\CacheManager;
+use Ubiquity\scaffolding\creators\RestControllerCreator;
 
 class ConsoleScaffoldController extends \Ubiquity\scaffolding\ScaffoldController {
 	private $activeDir;
@@ -24,12 +27,26 @@ class ConsoleScaffoldController extends \Ubiquity\scaffolding\ScaffoldController
 		return ConsoleFormatter::showMessage($content, $type,$title);
 	}
 
-	protected function getTemplateDir() {
+	public function getTemplateDir() {
 		return $this->activeDir . "/devtools/project-files/templates/";
 	}
 
 	protected function _addMessageForRouteCreation($path, $jsCallback = "") {
 		echo ConsoleFormatter::showMessage("You need to re-init Router cache to apply this update with init-cache command\n");
+	}
+
+	public function addRestController($restControllerName, $resource, $routePath = "", $reInit = true) {
+		$restCreator = new RestControllerCreator( $restControllerName, $resource, $routePath );
+		$restCreator->create ( $this ,$reInit);
+	}
+
+	public function initRestCache($refresh = true) {
+		$config = Startup::getConfig ();
+		\ob_start ();
+		CacheManager::initCache ( $config, "rest" );
+		CacheManager::initCache ( $config, "controllers" );
+		$message = \ob_get_clean ();
+		echo $this->showSimpleMessage ($message, "info", "Rest", "info cache re-init");
 	}
 }
 

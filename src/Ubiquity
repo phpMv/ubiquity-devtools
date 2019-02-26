@@ -21,13 +21,11 @@ use Ubiquity\devtools\cmd\commands\InfoValidationCmd;
 use Ubiquity\devtools\cmd\commands\NewActionCmd;
 use Ubiquity\devtools\cmd\commands\AuthCmd;
 use Ubiquity\devtools\cmd\commands\DAOCmd;
-use Ubiquity\controllers\Startup;
-use Ubiquity\devtools\cmd\ConsoleTable;
-use Ubiquity\devtools\utils\arrays\ClassicArray;
+use Ubiquity\devtools\cmd\commands\RestCmd;
 
 class Ubiquity {
 	use CmdTrait;
-	private static $version="1.1.5";
+	private static $version="1.1.5+";
 	private static $appName="Ubiquity devtools";
 	private static $configOptions;
 	private static $toolsConfig;
@@ -450,9 +448,14 @@ class Ubiquity {
 				ConfigSetCmd::run($config, $options);
 				break;
 
-			case "dao":
+			case "dao":case "DAO":
 				$config=self::_init();
 				DAOCmd::run($config, $options, $what);
+				break;
+
+			case "rest":case "rest-controller":
+				$config=self::_init();
+				RestCmd::run($config, $options, $what, self::$activeDir);
 				break;
 
 			default:
@@ -539,7 +542,7 @@ class Ubiquity {
 		return $s === true || $s === "true" || $s === 1 || $s === "1";
 	}
 
-	public static function error(Exception $exception) {
+	public static function error($exception) {
 		$msg="\n<b>Message</b> : ".ConsoleFormatter::colorize($exception->getMessage(),ConsoleFormatter::LIGHT_GRAY)."\n<b>File</b> : " .$exception->getFile()."\n<b>Line : </b> " . $exception->getLine();
 		echo ConsoleFormatter::showMessage($msg,'error');
 	}

@@ -22,6 +22,7 @@ class DAOCmd extends AbstractCmd{
 			CacheManager::startProd($config);
 			DAO::startDatabase($config);
 			$start=microtime(true);
+			$objects=null;
 			switch ($what){
 				case 'getAll':
 					$objects=DAO::getAll($resource,$condition,$included,$parameters);
@@ -33,7 +34,7 @@ class DAOCmd extends AbstractCmd{
 					$rf=new ResponseFormatter();
 					$datas=$rf->cleanRestObject($object);
 					break;
-				case "uGetAll":
+				case 'uGetAll':
 					$objects=DAO::uGetAll($resource,$condition,$included,$parameters);
 					$rf=new ResponseFormatter();
 					$datas=$rf->getDatas($objects);
@@ -60,7 +61,7 @@ class DAOCmd extends AbstractCmd{
 				$tbl->setIndent(5);
 				$rArray=new ClassicArray($datas,$what);
 				if(is_array($fields) && sizeof($fields)>0){
-					if(sizeof($datas)>1){
+					if(is_array($objects)){
 				 		$rArray->setIFields($fields);
 					}else{
 						$rArray->setFields($fields);
@@ -71,7 +72,9 @@ class DAOCmd extends AbstractCmd{
 					echo ConsoleFormatter::showInfo($what);
 				}
 				echo $tbl->getTable();
-				echo ConsoleFormatter::showInfo(sizeof($datas). " instances of ".$resource);
+				if(is_array($objects)){
+					echo ConsoleFormatter::showInfo(sizeof($datas). " instances of ".$resource);
+				}
 				echo ConsoleFormatter::showInfo(sprintf("Query executed in %.3f seconds", (float)microtime(true)-$start));
 			}else{
 				echo ConsoleFormatter::showInfo('Nothing to display');

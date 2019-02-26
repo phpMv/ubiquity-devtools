@@ -166,9 +166,33 @@ class Command {
 				"t"=>Parameter::create("templates", "The templates to modify", ["index","form","display"],"index,form,display"),
 				"p"=>Parameter::create("path", "The associated route", [])
 		],[
-				'Creates a crud controller for the class models\User'=>'Ubiquity crud -r=User',
-				'and associates a route to it'=>'Ubiquity crud -r=User -p=/users',
-				'allows customization of index and form templates'=>'Ubiquity crud -r=User -t=index,form'
+				'Creates a crud controller for the class models\User'=>'Ubiquity crud CrudUsers -r=User',
+				'and associates a route to it'=>'Ubiquity crud CrudUsers -r=User -p=/users',
+				'allows customization of index and form templates'=>'Ubiquity crud CrudUsers -r=User -t=index,form'
+		]);
+	}
+
+	public static function restController(){
+		return new Command("rest", "restControllerName","Creates a new REST controller.",["rest-controller"],[
+				"r"=>Parameter::create("resource", "The model used", []),
+				"p"=>Parameter::create("path", "The associated route", [])
+		],[
+				'Creates a REST controller for the class models\User'=>'Ubiquity rest RestUsers -r=User -p=/rest/users'
+		]);
+	}
+
+	public static function dao(){
+		return new Command("dao", "command","Executes a DAO command (getAll,getOne,count,uGetAll,uGetOne,uCount).",["DAO"],[
+				"r"=>Parameter::create("resource", "The model used", []),
+				"c"=>Parameter::create("condition", "The where part of the query",[]),
+				"i"=>Parameter::create("included", "The associated members to load (boolean or array: client.*,commands)",[]),
+				"p"=>Parameter::create("parameters", "The parameters for a parameterized query",[]),
+				"f"=>Parameter::create("fields", "The fields to display in the response",[])
+		],[
+				'Returns all instances of models\User'=>'Ubiquity dao getAll -r=User',
+				'Returns all instances of models\User and includes their commands'=>'Ubiquity dao getAll -r=User -i=commands',
+				'Returns the User with the id 5'=>'Ubiquity dao getOne -c="id=5"-r=User',
+				'Returns the list of users belonging to the "Brittany" or "Normandy" regions'=>'Ubiquity uGetAll -r=User -c="region.name= ? or region.name= ?" -p=Brittany,Normandy'
 		]);
 	}
 
@@ -253,12 +277,14 @@ class Command {
 				self::controller(),
 				self::model(),
 				self::allModels(),
+				self::dao(),
 				self::clearCache(),
 				self::initCache(),
 				self::selfUpdate(),
 				self::admin(),
 				self::crudController(),
 				self::authController(),
+				self::restController(),
 				self::newAction(),
 				self::routes(),
 				self::infoModel(),
