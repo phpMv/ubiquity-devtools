@@ -30,12 +30,12 @@ Ubiquity help
 This command should display something similar to:
 
 ```bash
-Ubiquity devtools (1.1.2)
+Ubiquity devtools (1.1.5)
 
-project [projectName] =>
-        * Creates a new #ubiquity project.
-        * Aliases : new,create-project
-        * Parameters :
+■ project [projectName] =>
+        · Creates a new #ubiquity project.
+        · Aliases : new,create-project
+        · Parameters :
                 -b      shortcut of --dbName
                         Sets the database name.
 
@@ -68,7 +68,7 @@ project [projectName] =>
                         true,false
                         Default : [false]
 
-        * Samples :
+        × Samples :
                 Creates a new project
                   · Ubiquity new blog
                 With admin interface
@@ -76,92 +76,124 @@ project [projectName] =>
                 and models generation
                   · Ubiquity new blog -q=semantic -a -m -b=blogDB
 
-serve [] =>
-        * Start the php web server.
-        * Parameters :
+■ serve [] =>
+        · Start the php web server.
+        · Parameters :
                 -h      shortcut of --host
                         Sets the host ip address.
                         Default : [127.0.0.1]
 
                 -p      shortcut of --port
-                        Sets listen port number.
+                        Sets the listen port number.
                         Default : [8090]
 
-        * Samples :
-                Starts the server on 127.0.0.1:8090
+        × Samples :
+                Starts the server at 127.0.0.1:8090
                   · Ubiquity serve
 
-help [?] =>
-        * Get some help about a dev-tools command.
-        * Samples :
+■ help [?] =>
+        · Get some help about a dev-tools command.
+        × Samples :
                 Get some help about crud
                   · Ubiquity help crud
 
-controller [controllerName] =>
-        * Creates a new controller.
-        * Aliases : create-controller
-        * Parameters :
+■ version [] =>
+        · Return PHP, Framework and dev-tools versions.
+
+■ controller [controllerName] =>
+        · Creates a new controller.
+        · Aliases : create-controller
+        · Parameters :
                 -v      shortcut of --views
                         creates an associated view folder
                         Possibles values :
                         true,false
 
-        * Samples :
+        × Samples :
                 Creates a controller
                   · Ubiquity controller UserController
                 with its associated view
                   · Ubiquity controller UserController -v
 
-model [tableName] =>
-        * Generates a new model.
-        * Aliases : create-model
-        * Samples :
+■ model [tableName] =>
+        · Generates a new model.
+        · Aliases : create-model
+        × Samples :
                   · Ubiquity model User
 
-all-models [] =>
-        * Generates all models from database.
-        * Aliases : create-all-models
-        * Samples :
+■ all-models [] =>
+        · Generates all models from database.
+        · Aliases : create-all-models
+        × Samples :
                   · Ubiquity all-models
 
-clear-cache [] =>
-        * Clear models cache.
-        * Parameters :
+■ dao [command] =>
+        · Executes a DAO command (getAll,getOne,count,uGetAll,uGetOne,uCount).
+        · Aliases : DAO
+        · Parameters :
+                -r      shortcut of --resource
+                        The model used
+
+                -c      shortcut of --condition
+                        The where part of the query
+
+                -i      shortcut of --included
+                        The associated members to load (boolean of array: client.*,commands)
+
+                -p      shortcut of --parameters
+                        The parameters for a parameterized query
+
+                -f      shortcut of --fields
+                        The fields to display in the response
+
+        × Samples :
+                Returns all instances of models\User
+                  · Ubiquity dao getAll -r=User
+                Returns all instances of models\User and includes their commands
+                  · Ubiquity dao getAll -r=User -i=commands
+                Returns the User with the id 5
+                  · Ubiquity dao getOne -c="id=5"-r=User
+                Returns the list of users belonging to the "Brittany" or "Normandy" regions
+                  · Ubiquity uGetAll -r=User -c="region.name= ? or region.name= ?" -p=Brittany,Normandy
+
+■ clear-cache [] =>
+        · Clear models cache.
+        · Parameters :
                 -t      shortcut of --type
                         Defines the type of cache to reset.
                         Possibles values :
                         all,annotations,controller,rest,models,queries,views
 
-        * Samples :
+        × Samples :
                 Clear all caches
                   · Ubiquity clear-cache -t=all
                 Clear models cache
                   · Ubiquity clear-cache -t=models
 
-init-cache [] =>
-        * Init the cache for models, router, rest.
-        * Parameters :
+■ init-cache [] =>
+        · Init the cache for models, router, rest.
+        · Parameters :
                 -t      shortcut of --type
                         Defines the type of cache to create.
                         Possibles values :
                         all,controller,rest,models
 
-        * Samples :
+        × Samples :
                 Init all caches
                   · Ubiquity init-cache
                 Init models cache
                   · Ubiquity init-cache -t=models
 
-self-update [] =>
-        * Updates Ubiquity framework for the current project.
+■ self-update [] =>
+        · Updates Ubiquity framework for the current project.
 
-admin [] =>
-        * Add UbiquityMyAdmin webtools to the current project.
+■ admin [] =>
+        · Add UbiquityMyAdmin webtools to the current project.
 
-crud [crudControllerName] =>
-        * Creates a new CRUD controller.
-        * Aliases : crud-controller
-        * Parameters :
+■ crud [crudControllerName] =>
+        · Creates a new CRUD controller.
+        · Aliases : crud-controller
+        · Parameters :
                 -r      shortcut of --resource
                         The model used
 
@@ -192,18 +224,18 @@ crud [crudControllerName] =>
                 -p      shortcut of --path
                         The associated route
 
-        * Samples :
+        × Samples :
                 Creates a crud controller for the class models\User
-                  · Ubiquity crud -r=User
+                  · Ubiquity crud CrudUsers -r=User
                 and associates a route to it
-                  · Ubiquity crud -r=User -p=/users
+                  · Ubiquity crud CrudUsers -r=User -p=/users
                 allows customization of index and form templates
-                  · Ubiquity crud -r=User -t=index,form
+                  · Ubiquity crud CrudUsers -r=User -t=index,form
 
-auth [authControllerName] =>
-        * Creates a new controller for authentification.
-        * Aliases : auth-controller
-        * Parameters :
+■ auth [authControllerName] =>
+        · Creates a new controller for authentification.
+        · Aliases : auth-controller
+        · Parameters :
                 -e      shortcut of --extends
                         The base class of the controller (must derived from AuthController)
                         Default : [Ubiquity\controllers\auth\AuthController]
@@ -217,7 +249,7 @@ auth [authControllerName] =>
                 -p      shortcut of --path
                         The associated route
 
-        * Samples :
+        × Samples :
                 Creates a new controller for authentification
                   · Ubiquity auth AdminAuthController
                 and associates a route to it
@@ -225,10 +257,24 @@ auth [authControllerName] =>
                 allows customization of index and info templates
                   · Ubiquity auth AdminAuthController -t=index,info
 
-action [controller.action] =>
-        * Creates a new action in a controller.
-        * Aliases : new-action
-        * Parameters :
+■ rest [restControllerName] =>
+        · Creates a new REST controller.
+        · Aliases : rest-controller
+        · Parameters :
+                -r      shortcut of --resource
+                        The model used
+
+                -p      shortcut of --path
+                        The associated route
+
+        × Samples :
+                Creates a REST controller for the class models\User
+                  · Ubiquity rest RestUsers -r=User -p=/rest/users
+
+■ action [controller.action] =>
+        · Creates a new action in a controller.
+        · Aliases : new-action
+        · Parameters :
                 -p      shortcut of --params
                         The action parameters (or arguments)
 
@@ -239,7 +285,7 @@ action [controller.action] =>
                         Creates the associated view
                         Default : [false]
 
-        * Samples :
+        × Samples :
                 Adds the action all in controller Users
                   · Ubiquity action Users.all
                 Adds the action display in controller Users with a parameter
@@ -250,6 +296,109 @@ action [controller.action] =>
                   · Ubiquity action Users.search -p=name,address
                 and create the associated view
                   · Ubiquity action Users.search -p=name,address -v
+
+■ info:routes [] =>
+        · Display the cached routes.
+        · Aliases : info:r,info::routes
+        · Parameters :
+                -t      shortcut of --type
+                        Defines the type of routes to display.
+                        Possibles values :
+                        all,routes,rest
+
+                -l      shortcut of --limit
+                         Specifies the number of routes to return.
+
+                -o      shortcut of --offset
+                        Specifies the number of routes to skip before starting to return.
+
+                -s      shortcut of --search
+                        Search routes corresponding to a path.
+
+                -m      shortcut of --method
+                        Allows to specify a method with search attribute.
+                        Possibles values :
+                        get,post,put,delete,patch
+
+        × Samples :
+                  · Ubiquity info:routes
+                  · Ubiquity info:routes -type=rest
+                Only the routes with the method post
+                  · Ubiquity info:routes -type=rest -m=-post
+
+■ info:model [infoType] =>
+        · Returns the model meta datas.
+        · Aliases : info-model
+        · Parameters :
+                -s      shortcut of --separate
+                        If true, returns each info in a separate table
+
+                -m      shortcut of --model
+                        The model on which the information is sought.
+
+                -f      shortcut of --fields
+                        The fields to display in the table.
+
+        × Samples :
+                Gets metadatas for User class
+                  · Ubiquity info:model -m=User
+
+■ info:models [] =>
+        · Returns the models meta datas.
+        · Aliases : info-models
+        · Parameters :
+                -m      shortcut of --models
+                        The models on which the information is sought.
+
+                -f      shortcut of --fields
+                        The fields to display in the table.
+
+        × Samples :
+                Gets metadatas for all models
+                  · Ubiquity info:models
+                Gets metadatas for User and Group models
+                  · Ubiquity info:models -m=User,Group
+                Gets all primary keys for all models
+                  · Ubiquity info:models -f=#primaryKeys
+
+■ info:validation [memberName] =>
+        · Returns the models validation info.
+        · Aliases : info-validation,info:validators,info-validators
+        · Parameters :
+                -s      shortcut of --separate
+                        If true, returns each info in a separate table
+
+                -m      shortcut of --model
+                        The model on which the information is sought.
+
+        × Samples :
+                Gets validators for User class
+                  · Ubiquity info:validation -m=User
+                Gets validators for User class on member firstname
+                  · Ubiquity info:validation firstname -m=User
+
+■ config [] =>
+        · Returns the config informations from app/config/config.php.
+        · Aliases : info-config,info:config
+        · Parameters :
+                -f      shortcut of --fields
+                        The fields to display.
+
+        × Samples :
+                Display all config vars
+                  · Ubiquity config
+                Display database config vars
+                  · Ubiquity config -f=database
+
+■ config:set [] =>
+        · Modify/add variables and save them in app/config/config.php. Supports only long parameters with --.
+        · Aliases : info-set,set:config,set-config
+        × Samples :
+                Assigns a new value to siteURL
+                  · Ubiquity config:set --siteURL=http://127.0.0.1/quick-start/
+                Change the database name and port
+                  · Ubiquity config:set --database.dbName=blog --database.port=3307
+
 ```
 
 ### Project creation
