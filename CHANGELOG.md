@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - count
     - uCount
 
+### Fixed
+ - [New project template has invalid link to Admin page](https://github.com/phpMv/ubiquity/issues/8)
+
 ## [1.1.5] - 2019-02-22
 ### Added
 - New commands
