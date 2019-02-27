@@ -24,7 +24,7 @@ class ConsoleFormatter {
 		if (isset($bgColor)) {
 			$coloredString .= self::escape($bgColor);
 		}
-		$coloredString .=  self::escape(self::CLEAR);
+		$coloredString .=  $string .self::escape(self::CLEAR);
 		return $coloredString;
 	}
 
