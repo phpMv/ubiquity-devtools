@@ -53,21 +53,23 @@ class Command {
 	public static function getInfo($cmd){
 		$commands=self::getCommands();
 		$result=[];
-		foreach ($commands as $command){
-			if($command->getName()==$cmd){
-				$result[]=["info"=>"Command <b>{$cmd}</b> find by name","cmd"=>$command];
-			}elseif(array_search($cmd, $command->getAliases())!==false){
-				$result[]=["info"=>"Command <b>{$cmd}</b> find by alias","cmd"=>$command];
-			}elseif(stripos($command->getDescription(), $cmd)!==false){
-				$result[]=["info"=>"Command <b>{$cmd}</b> find in description","cmd"=>$command];
-			}else{
-				$parameters=$command->getParameters();
-				foreach ($parameters as $parameter){
-					if($cmd==$parameter->getName()){
-						$result[]=["info"=>"Command <b>{$cmd}</b> find by the name of a parameter","cmd"=>$command];
-					}
-					if(stripos($parameter->getDescription(), $cmd)!==false){
-						$result[]=["info"=>"Command <b>{$cmd}</b> find in parameter description","cmd"=>$command];
+		if($cmd!=null){
+			foreach ($commands as $command){
+				if($command->getName()==$cmd){
+					$result[]=["info"=>"Command <b>{$cmd}</b> find by name","cmd"=>$command];
+				}elseif(array_search($cmd, $command->getAliases())!==false){
+					$result[]=["info"=>"Command <b>{$cmd}</b> find by alias","cmd"=>$command];
+				}elseif(stripos($command->getDescription(), $cmd)!==false){
+					$result[]=["info"=>"Command <b>{$cmd}</b> find in description","cmd"=>$command];
+				}else{
+					$parameters=$command->getParameters();
+					foreach ($parameters as $parameter){
+						if($cmd==$parameter->getName()){
+							$result[]=["info"=>"Command <b>{$cmd}</b> find by the name of a parameter","cmd"=>$command];
+						}
+						if(stripos($parameter->getDescription(), $cmd)!==false){
+							$result[]=["info"=>"Command <b>{$cmd}</b> find in parameter description","cmd"=>$command];
+						}
 					}
 				}
 			}
