@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - New commands
+ - ``Ubiquity restapi`` -> create a REST API controller (based on JsonApi)
   - ``Ubiquity rest`` -> create a REST controller associated to a model
   - ``Ubiquity dao`` -> query the database
     - getOne
