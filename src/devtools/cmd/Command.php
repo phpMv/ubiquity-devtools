@@ -183,6 +183,14 @@ class Command {
 		]);
 	}
 
+	public static function restApiController(){
+		return new Command("restapi", "restControllerName","Creates a new REST API controller.",["restapi-controller"],[
+				"p"=>Parameter::create("path", "The associated route", [])
+		],[
+				'Creates a REST API controller'=>'Ubiquity restapi -p=/rest'
+		]);
+	}
+
 	public static function dao(){
 		return new Command("dao", "command","Executes a DAO command (getAll,getOne,count,uGetAll,uGetOne,uCount).",["DAO"],[
 				"r"=>Parameter::create("resource", "The model used", []),
@@ -287,6 +295,7 @@ class Command {
 				self::crudController(),
 				self::authController(),
 				self::restController(),
+				self::restApiController(),
 				self::newAction(),
 				self::routes(),
 				self::infoModel(),

@@ -22,6 +22,7 @@ use Ubiquity\devtools\cmd\commands\NewActionCmd;
 use Ubiquity\devtools\cmd\commands\AuthCmd;
 use Ubiquity\devtools\cmd\commands\DAOCmd;
 use Ubiquity\devtools\cmd\commands\RestCmd;
+use Ubiquity\devtools\cmd\commands\RestApiCmd;
 
 class Ubiquity {
 	use CmdTrait;
@@ -456,6 +457,11 @@ class Ubiquity {
 			case "rest":case "rest-controller":
 				$config=self::_init();
 				RestCmd::run($config, $options, $what, self::$activeDir);
+				break;
+
+			case "restapi":case "restapi-controller":
+				$config=self::_init();
+				RestApiCmd::run($config, $options, $what, self::$activeDir);
 				break;
 
 			default:
