@@ -21,6 +21,9 @@ composer global require phpmv/ubiquity-devtools
 ```
 Make sure to place the `~/.composer/vendor/bin` directory in your PATH so the **Ubiquity** executable can be located by your system.
 
+>To confirm Ubiquity was succefully installed, type *Ubiquity help* to get a list of available commands (sample below)
+>If you got a command not found error, you *must* set your Ubiquity *bin* installation dir to you *system path variable*
+
 ## II Devtools commands
 ### Information
 To get a list of available commands just run in console:
