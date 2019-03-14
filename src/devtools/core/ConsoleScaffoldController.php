@@ -5,6 +5,8 @@ use Ubiquity\devtools\cmd\ConsoleFormatter;
 use Ubiquity\controllers\Startup;
 use Ubiquity\cache\CacheManager;
 use Ubiquity\scaffolding\creators\RestControllerCreator;
+use Ubiquity\controllers\rest\RestController;
+use Ubiquity\controllers\rest\api\jsonapi\JsonApiRestController;
 
 class ConsoleScaffoldController extends \Ubiquity\scaffolding\ScaffoldController {
 	private $activeDir;
@@ -36,7 +38,12 @@ class ConsoleScaffoldController extends \Ubiquity\scaffolding\ScaffoldController
 	}
 
 	public function addRestController($restControllerName, $resource, $routePath = "", $reInit = true) {
-		$restCreator = new RestControllerCreator( $restControllerName, $resource, $routePath );
+		$restCreator = new RestControllerCreator( $restControllerName, RestController::class,$resource, $routePath );
+		$restCreator->create ( $this ,$reInit);
+	}
+
+	public function addRestApiController($restControllerName, $routePath = "", $reInit = true){
+		$restCreator = new RestControllerCreator( $restControllerName, JsonApiRestController::class,'', $routePath );
 		$restCreator->create ( $this ,$reInit);
 	}
 
