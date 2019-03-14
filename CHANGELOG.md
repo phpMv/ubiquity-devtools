@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+Nothing
+
+## [1.1.6] - 2019-03-14
 ### Added
 - New commands
  - ``Ubiquity restapi`` -> create a REST API controller (based on JsonApi)
