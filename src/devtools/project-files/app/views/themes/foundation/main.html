@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+{% block header %}
+	<base href="{{config["siteUrl"]}}">
+	<meta charset="UTF-8">
+	<title>ubi-projects Foundation</title>
+{% endblock %}
+{% block css %}
+	{{css_('css/style.css')}}
+	{{css('https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.min.css')}}
+{% endblock %}
+</head>
+<body>
+{% block head %}
+			<div class="top-bar">
+				<div class="grid-container">
+				 <div class="row">
+					<ul class="menu">
+					  <li class="menu-text">Themes</li>
+						  {% for theme in themes %}
+							  <li class="{{ activeTheme==theme ? 'is-active' }}"><a href="IndexController/ct/{{theme}}">
+							    {{theme}}
+							  </a></li>
+						  {% endfor %}
+					  </ul>
+					  </div>
+				  </div>
+			  </div>
+{% endblock %}
+{% block body %}
+
+{% endblock %}
+{% block footer %}
+
+{% endblock %}
+{% block scripts %}
+{{js('https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js')}}
+{{js('https://cdn.jsdelivr.net/npm/foundation-sites@6.5.3/dist/js/foundation.min.js')}}
+    <script>
+      $(document).foundation();
+    </script>
+{% endblock %}
+</body>
+</html>

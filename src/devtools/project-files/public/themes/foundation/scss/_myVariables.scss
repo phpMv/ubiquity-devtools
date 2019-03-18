@@ -1,0 +1,55 @@
+$global-radius: 3px;
+$body-font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+$header-font-weight: 650;
+$header-styles: (
+  small: (
+    'h1': ('font-size': 24),
+    'h2': ('font-size': 20),
+    'h3': ('font-size': 19),
+    'h4': ('font-size': 18),
+    'h5': ('font-size': 17),
+    'h6': ('font-size': 16),
+  ),
+  medium: (
+    'h1': ('font-size': 40),
+    'h2': ('font-size': 31),
+    'h3': ('font-size': 25),
+    'h4': ('font-size': 20),
+    'h5': ('font-size': 16),
+    'h6': ('font-size': 14),
+  ),
+) !default;
+
+i.large {
+	font-size: 3rem!important;
+}
+
+.top-bar, .top-bar .menu{
+	background-color: #343a40!important;
+}
+
+.top-bar .menu .menu-text{
+	color: #fff!important;
+}
+
+.top-bar .menu{
+	min-width: 1170px!important;
+}
+
+.menu.links{
+	background-color: #f8f9fa!important;
+	padding: 10px 0;
+}
+
+.version{
+	background-color: #D39D38!important;
+}
+
+.infos .value{
+	color: #1779ba;
+	font-weight: 500;
+}
+.inverted{
+	background: #545454 linear-gradient(transparent,rgba(0,0,0,.05))!important;
+	color: #fff!important;
+}

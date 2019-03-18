@@ -23,6 +23,7 @@ use Ubiquity\devtools\cmd\commands\AuthCmd;
 use Ubiquity\devtools\cmd\commands\DAOCmd;
 use Ubiquity\devtools\cmd\commands\RestCmd;
 use Ubiquity\devtools\cmd\commands\RestApiCmd;
+use Ubiquity\devtools\cmd\commands\AddThemeCmd;
 
 class Ubiquity {
 	use CmdTrait;
@@ -64,8 +65,9 @@ class Ubiquity {
 				["u","user","root"],
 				["w","password",""],
 				["m","all-models",false],
-				["q","phpmv",false],
 				["a","admin",false],
+				["h","themes","bootstrap,foundation,semantic"],
+				["c","use-cdn",false],
 		];
 		if(($dir=basename(getcwd()))==$projectName || $projectName==null){
 			$answer=Console::question("Do you want to create the new project in this folder ($dir) ?",["y","n"]);
@@ -98,7 +100,6 @@ class Ubiquity {
 			self::openReplaceWrite(self::$activeDir."/devtools/project-files/.htaccess", getcwd()."/.htaccess", array("%rewriteBase%"=>$projectName));
 			self::$configOptions=["%siteUrl%"=>"http://127.0.0.1/".$projectName."/"];
 			self::$configOptions["%projectName%"]=$projectName;
-			self::$configOptions["%injections%"]="";
 			self::$configOptions["%cssFiles%"]=[];
 			self::$configOptions["%jsFiles%"]=[];
 			foreach ($arguments as $argument){
@@ -106,7 +107,6 @@ class Ubiquity {
 			}
 			self::showConfigOptions();
 
-			self::includePhpmv();
 
 			if(self::isBooleanTrue(self::$configOptions["%admin%"])){
 				self::adminInstall();
@@ -115,14 +115,38 @@ class Ubiquity {
 			self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/config.tpl", "app/config/config.php", self::$configOptions);
 			FileUtils::xcopy(self::$activeDir."/devtools/project-files/templates/services.tpl", "app/config/services.php");
 			FileUtils::xcopy(self::$activeDir."/devtools/project-files/index.php", "index.php");
-			self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/vHeader.tpl", "app/views/main/vHeader.html", self::$configOptions);
-			self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/vFooter.tpl", "app/views/main/vFooter.html", self::$configOptions);
+
+			$themes=self::$configOptions["%themes%"];
+			$themes=explode(',', $themes);
+			$themesConfig=include("devtools/core/themesConfig.php");
+			$hasThemes=false;
+			$vendorCopies=[];
+			foreach ($themes as $theme){
+				if(isset($themesConfig[$theme])){
+					$vendorCopies=AddThemeCmd::addTheme($theme, $themesConfig[$theme], self::$activeDir,false,self::$toolsConfig["composer"]);
+					$hasThemes=true;
+				}else{
+					echo ConsoleFormatter::showMessage('The theme <b>'.$theme.'</b> does not exists!','warning','Themes installation');
+				}
+			}
+			if(!$hasThemes){
+				self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/indexNoTheme.tpl", "app/views/index.html", self::$configOptions);
+				self::$configOptions["%cssFiles%"][]=self::includeCss('css/style.css');
+				FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/indexControllerThemes.php", "app/controllers/indexController.php");
+			}else{
+				FileUtils::xcopy(self::$activeDir."/devtools/project-files/templates/indexThemes.tpl", "app/views/index.html");
+				FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/indexController.php", "app/controllers/indexController.php");
+			}
 
 			self::createComposerFile();
 			$answer=Console::question("Do you want to run composer install ?",["y","n"]);
 			if(Console::isYes($answer)){
 				system("composer install");
 				require_once ROOT.'./../vendor/autoload.php';
+				foreach ($vendorCopies as $src=>$dest){
+					FileUtils::xcopy($src,$dest);
+					ConsoleFormatter::showInfo("Copy of file <b>".$src."</b> to <b>".$dest."</b>...");
+				}
 			}
 			$config=require_once 'app/config/config.php';
 			\Ubiquity\controllers\Startup::setConfig($config);
@@ -151,80 +175,17 @@ class Ubiquity {
 	}
 
 	private static function adminInstall($config=null){
-		if(self::hasSemantic($config)){
-			FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/Admin.php","app/controllers/Admin.php");
-			echo ConsoleFormatter::showInfo("Creating the Controller <b>Admin</b> at the location <b>app/controllers/Admin.php<:b>\n");
-			self::$toolsConfig["composer"]["require-dev"]["czproject/git-php"]="^3.13";
-		}else{
-			echo ConsoleFormatter::showMessage("UbiquityMyAdmin require phpmv=semantic option.",'error');
-			$answer=Console::question("Would you like to add Semantic-UI ?",["y","n"]);
-			if(Console::isYes($answer)){
-				self::$configOptions["%phpmv%"]="semantic";
-				self::includePhpmv();
-				self::adminInstall($config);
-			}else{
-				exit(1);
-			}
-		}
-	}
-
-	private static function hasSemantic($config=null){
-		if(!isset($config))
-			return @self::$configOptions["%phpmv%"]==="semantic";
-		else{
-			if(isset($config["di"])){
-				$di=$config["di"];
-				if(isset($di["jquery"])){
-					$jquery=$di["jquery"];
-					if($jquery instanceof \Ajax\php\ubiquity\JsUtils){
-						return $jquery->semantic()!==null;
-					}else
-						return false;
-				}else
-					return false;
-			}else
-				return false;
-		}
-	}
-
-	private static function includePhpmv(){
-		if(self::$configOptions["%phpmv%"]!==false){
-			$phpmv=self::$configOptions["%phpmv%"];
-			switch ($phpmv){
-				case "bootstrap":case "semantic":
-					self::$configOptions["%injections%"]="\"jquery\"=>function(\$controller){
-					\t\t\$jquery=new \\Ajax\\php\\ubiquity\\JsUtils([\"defer\"=>true],\$controller);
-					\t\t\$jquery->{$phpmv}(new \\Ajax\\".ucfirst($phpmv)."());
-					\t\treturn \$jquery;
-					\t}";
-					break;
-				default:
-					throw new \Exception($phpmv." is not a valid option for phpMv-UI.");
-					break;
-			}
-			self::$toolsConfig["composer"]["require"]["phpmv/php-mv-ui"]="dev-master";
-			if($phpmv==="bootstrap"){
-				self::$configOptions["%cssFiles%"][]=self::includeCss(self::$toolsConfig["cdn"]["bootstrap"]["css"]);
-				self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["jquery"]);
-				self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["bootstrap"]["js"]);
-				self::$indexContent=FileUtils::openFile(self::$activeDir."/devtools/project-files/templates/postInstall/bootstrap.tpl");
-			}
-			elseif($phpmv==="semantic"){
-				self::$configOptions["%cssFiles%"][]=self::includeCss(self::$toolsConfig["cdn"]["semantic"]["css"]);
-				self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["jquery"]);
-				self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["semantic"]["js"]);
-				self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["semantic"]["state"]);//Semantic-ui bug see
-				self::$indexContent=FileUtils::openFile(self::$activeDir."/devtools/project-files/templates/postInstall/semantic.tpl");
-			}
-		}
+		FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/Admin.php","app/controllers/Admin.php");
+		echo ConsoleFormatter::showInfo("Creating the Controller <b>Admin</b> at the location <b>app/controllers/Admin.php<:b>\n");
+		self::$toolsConfig["composer"]["require-dev"]["czproject/git-php"]="^3.13";
 	}
 
 	private static function includeCss($filename){
-		return "<link rel=\"stylesheet\" type=\"text/css\" href=\"{$filename}\">";
+		return "{{ css('".$filename."') }}";
 	}
 
 	private static function includeJs($filename){
-		return "<script src=\"{$filename}\"></script>";
+		return "{{ js('".$filename."') }}";
 	}
 
 	private static function showConfigOptions(){
@@ -236,13 +197,6 @@ class Ubiquity {
 		array_keys(self::$configOptions)
 		));
 		echo ConsoleFormatter::showMessage($output."\n",'info','Command line arguments');
-		$phpmv=self::$configOptions["%phpmv%"];
-		if($phpmv!==false){
-			if($phpmv!=="bootstrap" && $phpmv!=="semantic"){
-				echo ConsoleFormatter::showMessage("<b>".$phpmv."</b> is not a valid option for phpMv-UI.\n",'error');
-				exit(1);
-			}
-		}
 	}
 
 	public static function createController($config,$controllerName,$indexContent=null,$view=false,$force=false){
@@ -286,12 +240,12 @@ class Ubiquity {
 	}
 
 	private static function selfUpdate(){
-		$config=self::_init();
+		self::_init();
 		define('ROOT', realpath('./app').DS);
 		echo ConsoleFormatter::showInfo("Files copy...\n");
 
 		$filename="app/controllers/Admin.php";
-		if(file_exists($filename) && self::hasSemantic($config)){
+		if(file_exists($filename)){
 			FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/views/Admin","app/views/Admin");
 			FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/views/Seo","app/views/Seo");
 		}

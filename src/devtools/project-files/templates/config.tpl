@@ -18,7 +18,7 @@ return array(
 		"test"=>false,
 		"debug"=>false,
 		"logger"=>function(){return new \Ubiquity\log\libraries\UMonolog("%projectName%",\Monolog\Logger::INFO);},
-		"di"=>[%injections%],
+		"di"=>[],
 		"cache"=>["directory"=>"cache/","system"=>"Ubiquity\\cache\\system\\ArrayCache","params"=>[]],
 		"mvcNS"=>["models"=>"models","controllers"=>"controllers","rest"=>""],
 		"isRest"=>function(){
