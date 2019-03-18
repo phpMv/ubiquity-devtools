@@ -13,15 +13,15 @@ class AddThemeCmd extends AbstractCmd{
 
 	public static function addTheme($name,$themeConfig,$activeDir,$standalone=false,&$composer=[]){
 			echo ConsoleFormatter::showMessage('Composer installation & files copy...','Info','Adding theme <b>'.$name.'</b>');
-
-			FileUtils::safeMkdir("./../public/assets");
+			$baseDir=getcwd();
+			$dest=$baseDir.'/public/assets/'.$name;
+			FileUtils::safeMkdir($dest);
 			$source=$activeDir.'/devtools/project-files/public/themes/'.$name;
-			$dest='./../public/assets/';
 			FileUtils::xcopy($source, $dest);
 
-			FileUtils::safeMkdir("app/views/themes");
+			$dest="app/views/themes/".$name;
+			FileUtils::safeMkdir($dest);
 			$source=$activeDir.'/devtools/project-files/app/views/themes/'.$name;
-			$dest='app/views/themes';
 			FileUtils::xcopy($source, $dest);
 
 			$composerRequires=$themeConfig['composer'];
@@ -35,7 +35,7 @@ class AddThemeCmd extends AbstractCmd{
 			$vendorCopies=$themeConfig['vendor-copy']??[];
 			if($standalone){
 				foreach ($vendorCopies as $src=>$dest){
-					FileUtils::xcopy($src,$dest);
+					FileUtils::xcopy($baseDir.$src,$baseDir.$dest);
 					echo '*';
 				}
 			}

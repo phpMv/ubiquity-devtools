@@ -27,7 +27,7 @@ use Ubiquity\devtools\cmd\commands\AddThemeCmd;
 
 class Ubiquity {
 	use CmdTrait;
-	private static $version="1.1.6";
+	private static $version="1.1.7";
 	private static $appName="Ubiquity devtools";
 	private static $configOptions;
 	private static $toolsConfig;
@@ -132,10 +132,10 @@ class Ubiquity {
 			if(!$hasThemes){
 				self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/indexNoTheme.tpl", "app/views/index.html", self::$configOptions);
 				self::$configOptions["%cssFiles%"][]=self::includeCss('css/style.css');
-				FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/indexControllerThemes.php", "app/controllers/indexController.php");
+				FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/indexController.php", "app/controllers/indexController.php");
 			}else{
 				FileUtils::xcopy(self::$activeDir."/devtools/project-files/templates/indexThemes.tpl", "app/views/index.html");
-				FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/indexController.php", "app/controllers/indexController.php");
+				FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/indexControllerThemes.php", "app/controllers/indexController.php");
 			}
 
 			self::createComposerFile();
@@ -143,15 +143,14 @@ class Ubiquity {
 			if(Console::isYes($answer)){
 				system("composer install");
 				require_once ROOT.'./../vendor/autoload.php';
+				$dir=getcwd();
 				foreach ($vendorCopies as $src=>$dest){
-					FileUtils::xcopy($src,$dest);
+					FileUtils::xcopy($dir.$src,$dir.$dest);
 					ConsoleFormatter::showInfo("Copy of file <b>".$src."</b> to <b>".$dest."</b>...");
 				}
 			}
 			$config=require_once 'app/config/config.php';
 			\Ubiquity\controllers\Startup::setConfig($config);
-
-			self::createController($config,"IndexController",self::$indexContent);
 
 			if(self::isBooleanTrue(self::$configOptions["%all-models%"])){
 				ob_start();
