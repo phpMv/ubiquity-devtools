@@ -180,6 +180,7 @@ class Ubiquity {
 		FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/Admin.php","app/controllers/Admin.php");
 		echo ConsoleFormatter::showInfo("Creating the Controller <b>Admin</b> at the location <b>app/controllers/Admin.php<:b>\n");
 		self::$toolsConfig["composer"]["require-dev"]["czproject/git-php"]="^3.13";
+		self::$toolsConfig["composer"]["require"]["phpmv/php-mv-ui"]="^2.2.6";
 	}
 
 	private static function includeCss($filename){
