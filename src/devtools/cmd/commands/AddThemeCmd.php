@@ -32,7 +32,7 @@ class AddThemeCmd extends AbstractCmd{
 					$composer['require'][$composerRequire]=$version;
 				}
 			}
-			$vendorCopies=$themeConfig['vendor-copy'];
+			$vendorCopies=$themeConfig['vendor-copy']??[];
 			if($standalone){
 				foreach ($vendorCopies as $src=>$dest){
 					FileUtils::xcopy($src,$dest);

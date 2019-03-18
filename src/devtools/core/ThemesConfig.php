@@ -14,8 +14,8 @@ return [
 		'semantic'=>[
 				'composer'=>['semantic/ui'=>'^2.4'],
 				'vendor-copy'=>[
-						'./../vendor/dist/semantic.min.css'=>'./../public/assets/semantic/css/',
-						'./../vendor/dist/semantic.min.js'=>'./../public/assets/semantic/js/'
+						'./../vendor/semantic/ui/dist/semantic.min.css'=>'./../public/assets/semantic/css/',
+						'./../vendor/semantic/ui/dist/semantic.min.js'=>'./../public/assets/semantic/js/'
 				]
 		]
 ];
