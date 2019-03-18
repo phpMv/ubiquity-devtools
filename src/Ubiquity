@@ -31,7 +31,6 @@ class Ubiquity {
 	private static $appName="Ubiquity devtools";
 	private static $configOptions;
 	private static $toolsConfig;
-	private static $indexContent="\n\t\$this->loadView(\"@framework/index/index.html\");\n";
 	private static $activeDir;
 	private static $checkProjectDir=".ubiquity";
 	private static $toolsPath="devtools/";
@@ -112,14 +111,13 @@ class Ubiquity {
 				self::adminInstall();
 			}
 
-			self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/config.tpl", "app/config/config.php", self::$configOptions);
 			FileUtils::xcopy(self::$activeDir."/devtools/project-files/templates/services.tpl", "app/config/services.php");
 			FileUtils::xcopy(self::$activeDir."/devtools/project-files/index.php", "index.php");
-
+            //-------------Add themes----------------
 			$themes=self::$configOptions["%themes%"];
 			$themes=explode(',', $themes);
 			$themesConfig=include("devtools/core/themesConfig.php");
-			$hasThemes=false;
+			$hasThemes=false;$activeTheme="";
 			$vendorCopies=[];
 			foreach ($themes as $theme){
 				if(isset($themesConfig[$theme])){
@@ -133,11 +131,16 @@ class Ubiquity {
 				self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/indexNoTheme.tpl", "app/views/index.html", self::$configOptions);
 				self::$configOptions["%cssFiles%"][]=self::includeCss('css/style.css');
 				FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/indexController.php", "app/controllers/indexController.php");
+				self::$configOptions['%activeTheme%']='';
 			}else{
+			    $activeTheme=current($themes);
+			    self::$configOptions['%activeTheme%']=',"activeTheme"=>"'.$activeTheme.'"';
 				FileUtils::xcopy(self::$activeDir."/devtools/project-files/templates/indexThemes.tpl", "app/views/index.html");
 				FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/indexControllerThemes.php", "app/controllers/indexController.php");
 			}
-
+			
+			self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/config.tpl", "app/config/config.php", self::$configOptions);
+			
 			self::createComposerFile();
 			$answer=Console::question("Do you want to run composer install ?",["y","n"]);
 			if(Console::isYes($answer)){

@@ -14,7 +14,7 @@ return array(
 		"sessionName"=>"%projectName%",
 		"namespaces"=>[],
 		"templateEngine"=>'Ubiquity\\views\\engine\\Twig',
-		"templateEngineOptions"=>array("cache"=>false),
+		"templateEngineOptions"=>array("cache"=>false%activeTheme%),
 		"test"=>false,
 		"debug"=>false,
 		"logger"=>function(){return new \Ubiquity\log\libraries\UMonolog("%projectName%",\Monolog\Logger::INFO);},
