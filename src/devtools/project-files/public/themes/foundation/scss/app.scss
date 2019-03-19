@@ -1,3 +1,6 @@
+//For compilation, run from the project root folder
+//sass public/assets/foundation/scss/app.scss public/assets/foundation/css/style.css --load-path=vendor
+
 @import '_myVariables.scss';
 
 @import 'zurb/foundation/scss/foundation';

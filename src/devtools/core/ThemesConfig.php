@@ -4,9 +4,8 @@ return [
 				'composer'=>['twitter/bootstrap'=>'^4.3','fortawesome/font-awesome'=>'^5.7'],
 				'vendor-copy'=>[
 						'/vendor/fortawesome/font-awesome/css/all.min.css'=>'/public/assets/bootstrap/css/all.min.css',
-						'/vendor/fortawesome/font-awesome/webfonts/'=>'/public/assets/bootstrap/webfonts/',
-				],
-				'xcopy'=>['bootstrap/'=>'app/views/themes/']
+						'/vendor/fortawesome/font-awesome/webfonts'=>'/public/assets/bootstrap/webfonts',
+				]
 		],
 		'foundation'=>[
 				'composer'=>['zurb/foundation'=>'^6.5']

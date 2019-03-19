@@ -9678,4 +9678,9 @@ h3 {
   font-size: 70%;
 }
 
+.inverted {
+  background: #545454 linear-gradient(transparent, rgba(0, 0, 0, 0.05)) !important;
+  color: #fff !important;
+}
+
 /*# sourceMappingURL=style.css.map */
