@@ -23,11 +23,12 @@ use Ubiquity\devtools\cmd\commands\AuthCmd;
 use Ubiquity\devtools\cmd\commands\DAOCmd;
 use Ubiquity\devtools\cmd\commands\RestCmd;
 use Ubiquity\devtools\cmd\commands\RestApiCmd;
-use Ubiquity\devtools\cmd\commands\AddThemeCmd;
+use Ubiquity\devtools\cmd\commands\InstallThemeCmd;
+use Ubiquity\devtools\cmd\commands\NewThemeCmd;
 
 class Ubiquity {
 	use CmdTrait;
-	private static $version="1.1.7";
+	private static $version="1.1.7+";
 	private static $appName="Ubiquity devtools";
 	private static $configOptions;
 	private static $toolsConfig;
@@ -126,7 +127,7 @@ class Ubiquity {
 			$vendorCopies=[];
 			foreach ($themes as $theme){
 				if(isset($themesConfig[$theme])){
-					$vendorCopies=array_merge($vendorCopies,AddThemeCmd::addTheme($theme, $themesConfig[$theme], self::$activeDir,false,self::$toolsConfig["composer"]));
+					$vendorCopies[$theme]=InstallThemeCmd::addTheme($theme,$theme, $themesConfig[$theme], self::$activeDir,false,self::$toolsConfig["composer"]);
 					$hasThemes=true;
 				}else{
 					echo ConsoleFormatter::showMessage('The theme <b>'.$theme.'</b> does not exists!','warning','Themes installation');
@@ -153,9 +154,8 @@ class Ubiquity {
 				system("composer install");
 				require_once ROOT.'./../vendor/autoload.php';
 				$dir=getcwd();
-				foreach ($vendorCopies as $src=>$dest){
-					FileUtils::xcopy($dir.$src,$dir.$dest);
-					ConsoleFormatter::showInfo("Copy from <b>".$src."</b> to <b>".$dest."</b>...");
+				foreach ($vendorCopies as $theme=>$vCopies){
+					InstallThemeCmd::copyVendorFiles($theme, $vCopies, $dir);
 				}
 			}
 			$config=require_once 'app/config/config.php';
@@ -425,6 +425,16 @@ class Ubiquity {
 			case "restapi":case "restapi-controller":
 				$config=self::_init();
 				RestApiCmd::run($config, $options, $what, self::$activeDir);
+				break;
+
+			case "create-theme":case "create:theme":
+				$config=self::_init();
+				NewThemeCmd::run($config, $options, $what, self::$activeDir);
+				break;
+
+			case "install-theme":case "install:theme":case "theme":
+				$config=self::_init();
+				InstallThemeCmd::run($config, $options, $what, self::$activeDir);
 				break;
 
 			default:

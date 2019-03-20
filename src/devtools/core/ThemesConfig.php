@@ -3,8 +3,8 @@ return [
 		'bootstrap'=>[
 				'composer'=>['twitter/bootstrap'=>'^4.3','fortawesome/font-awesome'=>'^5.7'],
 				'vendor-copy'=>[
-						'/vendor/fortawesome/font-awesome/css/all.min.css'=>'/public/assets/bootstrap/css/all.min.css',
-						'/vendor/fortawesome/font-awesome/webfonts'=>'/public/assets/bootstrap/webfonts',
+						'/vendor/fortawesome/font-awesome/css/all.min.css'=>'/public/assets/%theme%/css/all.min.css',
+						'/vendor/fortawesome/font-awesome/webfonts'=>'/public/assets/%theme%/webfonts',
 				]
 		],
 		'foundation'=>[
@@ -13,8 +13,8 @@ return [
 		'semantic'=>[
 				'composer'=>['semantic/ui'=>'^2.4'],
 				'vendor-copy'=>[
-						'/vendor/semantic/ui/dist/semantic.min.css'=>'/public/assets/semantic/css/semantic.min.css',
-						'/vendor/semantic/ui/dist/semantic.min.js'=>'/public/assets/semantic/js/semantic.min.js'
+						'/vendor/semantic/ui/dist/semantic.min.css'=>'/public/assets/%theme%/css/semantic.min.css',
+						'/vendor/semantic/ui/dist/semantic.min.js'=>'/public/assets/%theme%/js/semantic.min.js'
 				]
 		]
 ];
