@@ -208,14 +208,14 @@ class Ubiquity {
 		echo ConsoleFormatter::showMessage($output."\n",'info','Command line arguments');
 	}
 
-	public static function createController($config,$controllerName,$indexContent=null,$view=false,$force=false){
+	public static function createController($config,$controllerName,$indexContent=null,$view=false,$theme=null,$force=false){
 		$controllerName=ucfirst($controllerName);
 		FileUtils::safeMkdir("app/controllers");
 		$filename="app/controllers/{$controllerName}.php";
 		if(file_exists($filename) && !$force){
 			$answer=Console::question("The file {$filename} exists.\nWould you like to replace it?",["y","n"]);
 			if(Console::isYes($answer))
-				self::createController($config,$controllerName,$indexContent,$view,true);
+				self::createController($config,$controllerName,$indexContent,$view,$theme,true);
 		}else{
 			$msg= "Creation of the Controller <b>{$controllerName}</b> at the location <b>{$filename}</b>\n";
 			$namespace="";
@@ -223,7 +223,14 @@ class Ubiquity {
 				$namespace="namespace ".$config["mvcNS"]["controllers"].";";
 			self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/controller.tpl", $filename, ["%controllerName%"=>$controllerName,"%indexContent%"=>$indexContent,"%namespace%"=>$namespace]);
 			if($view){
-				$viewFolder="app/views/".$controllerName;
+				$prefix="";
+				if ($theme==null) {
+					$theme = $config["templateEngineOptions"]["activeTheme"]??null;
+				}
+				if ($theme != null) {
+					$prefix = 'themes/'.$theme . '/';
+				}
+				$viewFolder="app/views/".$prefix.$controllerName;
 				FileUtils::safeMkdir($viewFolder);
 				$msg.= "Creation of the the associated view index.html at the location {$viewFolder}/index.html\n";
 				self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/view.tpl", $viewFolder."/index.html", ["%controllerName%"=>$controllerName]);
@@ -306,11 +313,12 @@ class Ubiquity {
 				$config=self::_init();
 				$what=self::requiredParam($what, 'controllerName');
 				$view=self::getOption($options, "v", "views",false);
+				$theme=self::getOption($options, "t", "theme");
 				$indexContent=null;
 				if($view){
 					$indexContent="\n\t\t".'$this->loadDefaultView();'."\n\t";
 				}
-				self::createController($config,$what,$indexContent,$view);
+				self::createController($config,$what,$indexContent,$view,$theme);
 				break;
 
 			case "crud":case "crud-controller":
