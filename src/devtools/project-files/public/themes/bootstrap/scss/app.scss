@@ -1,0 +1,17 @@
+//For compilation, run from the project root folder
+//ssass public/assets/bootstrap/scss/app.scss public/assets/bootstrap/css/style.css --load-path=vendor
+
+@import "twitter/bootstrap/scss/functions";
+@import '_myVariables';
+@import "twitter/bootstrap/scss/bootstrap";
+.version{
+	background-color: #D39D38!important;
+	color: white;
+	font-weight: 600;
+	font-size: 70%;
+}
+
+.inverted{
+	background: #545454 linear-gradient(transparent,rgba(0,0,0,.05))!important;
+	color: #fff!important;
+}
