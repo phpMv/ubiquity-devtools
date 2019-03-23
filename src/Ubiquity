@@ -136,10 +136,10 @@ class Ubiquity {
 			if(!$hasThemes){
 				self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/indexNoTheme.tpl", "app/views/index.html", self::$configOptions);
 				self::$configOptions["%cssFiles%"][]=self::includeCss('css/style.css');
-				FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/indexController.php", "app/controllers/indexController.php");
+				FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/IndexController.php", "app/controllers/IndexController.php");
 				self::$configOptions['%activeTheme%']='';
 			}else{
-				$activeTheme=current($themes);
+				$activeTheme=end($themes);
 				self::$configOptions['%activeTheme%']=',"activeTheme"=>"'.$activeTheme.'"';
 				FileUtils::xcopy(self::$activeDir."/devtools/project-files/templates/indexThemes.tpl", "app/views/index.html");
 				FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/IndexControllerThemes.php", "app/controllers/IndexController.php");
