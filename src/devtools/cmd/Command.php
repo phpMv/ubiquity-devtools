@@ -279,6 +279,23 @@ class Command {
 		]);
 	}
 
+	public static function newTheme(){
+		return new Command("create-theme", "themeName","Creates a new theme or installs an existing one.",["create:theme"],[
+				"x"=>Parameter::create("extend", "If specified, inherits from an existing theme (bootstrap,semantic or foundation).", ['bootstrap','semantic','foundation'])
+		],[
+				'Creates a new theme custom'=>'Ubiquity create-theme custom',
+				'Creates a new theme inheriting from Bootstrap'=>'Ubiquity theme myBootstrap -x=bootstrap'
+		]);
+	}
+
+	public static function installTheme(){
+		return new Command("theme", "themeName","Installs an existing theme or creates a new one if the specified theme does not exists.",["install-theme","install:theme"],[],
+				[
+				'Creates a new theme custom'=>'Ubiquity theme custom',
+				'Install bootstrap theme'=>'Ubiquity theme bootstrap'
+		]);
+	}
+
 	public static function getCommands(){
 		return [self::project(),
 				self::serve(),
@@ -302,7 +319,9 @@ class Command {
 				self::infoModels(),
 				self::infoValidation(),
 				self::configInfo(),
-				self::configSet()
+				self::configSet(),
+				self::installTheme(),
+				self::newTheme()
 		];
 	}
 	/**

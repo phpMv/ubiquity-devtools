@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+{% block header %}
+	<base href="{{config["siteUrl"]}}">
+	<meta charset="UTF-8">
+	<title>ubi-projects Bootstrap</title>
+{% endblock %}
+{% block css %}
+	{{css_('css/style.css')}}
+	{{css_('css/all.min.css')}}
+	<!-- {{css('https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.7.4/css/mdb.min.css')}} -->
+{% endblock %}
+</head>
+<body>
+{% block head %}
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+			<div class="container">
+			  <span class="navbar-brand mb-0 h1">Themes</span>
+			  <div class="collapse navbar-collapse">
+    			<ul class="navbar-nav">
+				  {% for theme in themes %}
+					  <a class="nav-item nav-link {{ activeTheme==theme ? 'active' }}" href="IndexController/ct/{{theme}}">
+					    {{theme}}
+					  </a>
+				  {% endfor %}
+				 </ul>
+			  </div>
+			  </div>
+			</nav>
+{% endblock %}
+{% block body %}
+
+{% endblock %}
+{% block footer %}
+
+{% endblock %}
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+{% endblock %}
+</body>
+</html>

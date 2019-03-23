@@ -22,14 +22,15 @@ class FileUtils {
 	}
 
 	public static function xcopy($source, $dest, $permissions = 0755){
+	    $path = pathinfo($dest);
+	    if (!file_exists($path['dirname'])) {
+	        mkdir($path['dirname'], 0777, true);
+	    } 
 		if (is_link($source)) {
 			return symlink(readlink($source), $dest);
 		}
 		if (is_file($source)) {
 			return copy($source, $dest);
-		}
-		if (!is_dir($dest)) {
-			mkdir($dest, $permissions,true);
 		}
 		$dir = dir($source);
 		while (false !== $entry = $dir->read()) {
