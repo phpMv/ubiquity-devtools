@@ -4,6 +4,7 @@ namespace Ubiquity\devtools\cmd\commands;
 
 use Ubiquity\devtools\core\ConsoleScaffoldController;
 use Ubiquity\devtools\cmd\ConsoleFormatter;
+use Ubiquity\controllers\rest\RestController;
 
 class RestCmd extends AbstractCmdModel{
 	public static function run(&$config,$options,$what,$activeDir){
@@ -11,7 +12,7 @@ class RestCmd extends AbstractCmdModel{
 		if(class_exists($resource)){
 			$scaffold=new ConsoleScaffoldController($activeDir);
 			$routePath=self::getOption($options, 'p', 'path','');
-			$scaffold->addRestController($what, $resource,$routePath);
+			$scaffold->addRestController($what,RestController::class, $resource,$routePath);
 		}else{
 			echo ConsoleFormatter::showMessage("The models class <b>{$resource}</b> does not exists!",'error','rest-controller');
 		}

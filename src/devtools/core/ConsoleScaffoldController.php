@@ -5,7 +5,6 @@ use Ubiquity\devtools\cmd\ConsoleFormatter;
 use Ubiquity\controllers\Startup;
 use Ubiquity\cache\CacheManager;
 use Ubiquity\scaffolding\creators\RestControllerCreator;
-use Ubiquity\controllers\rest\RestController;
 use Ubiquity\controllers\rest\api\jsonapi\JsonApiRestController;
 
 class ConsoleScaffoldController extends \Ubiquity\scaffolding\ScaffoldController {
@@ -37,8 +36,8 @@ class ConsoleScaffoldController extends \Ubiquity\scaffolding\ScaffoldController
 		echo ConsoleFormatter::showMessage("You need to re-init Router cache to apply this update with init-cache command\n");
 	}
 
-	public function addRestController($restControllerName, $resource, $routePath = "", $reInit = true) {
-		$restCreator = new RestControllerCreator( $restControllerName, RestController::class,$resource, $routePath );
+	public function addRestController($restControllerName, $baseClass,$resource, $routePath = "", $reInit = true) {
+		$restCreator = new RestControllerCreator( $restControllerName, $baseClass,$resource, $routePath );
 		$restCreator->create ( $this ,$reInit);
 	}
 
