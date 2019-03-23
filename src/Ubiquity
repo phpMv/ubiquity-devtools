@@ -57,7 +57,7 @@ class Ubiquity {
 
 	public static function create($projectName,$options,$force=false){
 		self::$activeDir=dirname(__FILE__);
-		self::$toolsConfig=include("devtools/core/toolsConfig.php");
+		self::$toolsConfig=include(self::$activeDir."/devtools/core/toolsConfig.php");
 		$arguments=[
 				["b","dbName",""],
 				["t","dbType","mysql"],
@@ -121,7 +121,7 @@ class Ubiquity {
 
 			$themes=self::$configOptions["%themes%"];
 			$themes=explode(',', $themes);
-			$themesConfig=include("devtools/core/themesConfig.php");
+			$themesConfig=include(self::$activeDir."devtools/core/themesConfig.php");
 			$hasThemes=false;$activeTheme="";
 
 			$vendorCopies=[];
