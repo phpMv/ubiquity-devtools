@@ -142,7 +142,7 @@ class Ubiquity {
 				$activeTheme=current($themes);
 				self::$configOptions['%activeTheme%']=',"activeTheme"=>"'.$activeTheme.'"';
 				FileUtils::xcopy(self::$activeDir."/devtools/project-files/templates/indexThemes.tpl", "app/views/index.html");
-				FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/indexControllerThemes.php", "app/controllers/indexController.php");
+				FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/IndexControllerThemes.php", "app/controllers/IndexController.php");
 			}
 			//-------------Add themes----------------
 
