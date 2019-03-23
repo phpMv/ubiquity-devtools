@@ -121,7 +121,7 @@ class Ubiquity {
 
 			$themes=self::$configOptions["%themes%"];
 			$themes=explode(',', $themes);
-			$themesConfig=include(self::$activeDir."devtools/core/themesConfig.php");
+			$themesConfig=include(self::$activeDir."/devtools/core/themesConfig.php");
 			$hasThemes=false;$activeTheme="";
 
 			$vendorCopies=[];
