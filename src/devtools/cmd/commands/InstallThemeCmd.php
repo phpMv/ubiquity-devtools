@@ -7,7 +7,7 @@ use Ubiquity\devtools\utils\FileUtils;
 use Ubiquity\devtools\cmd\ConsoleFormatter;
 use Ubiquity\devtools\cmd\Console;
 
-class InstallThemeCmd extends AbstractCmd{
+class InstallThemeCmd extends AbstractThemeCmd{
 
 	public static function run(&$config,$options,$what,$activeDir){
 		$what=self::requiredParam($what, 'themeName');
@@ -51,6 +51,7 @@ class InstallThemeCmd extends AbstractCmd{
 			}
 			return $vendorCopies;
 		}
+		self::saveActiveTheme($what);
 		echo ConsoleFormatter::showMessage(sprintf('This theme seems to be already installed in %s!',$dest),'warning','Theme installation');
 		return [];
 	}

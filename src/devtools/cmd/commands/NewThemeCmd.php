@@ -6,7 +6,7 @@ namespace Ubiquity\devtools\cmd\commands;
 use Ubiquity\devtools\utils\FileUtils;
 use Ubiquity\devtools\cmd\ConsoleFormatter;
 
-class NewThemeCmd extends AbstractCmd{
+class NewThemeCmd extends AbstractThemeCmd{
 
 	public static function run(&$config,$options,$what,$activeDir){
 		$what=self::requiredParam($what, 'themeName');
@@ -52,6 +52,7 @@ class NewThemeCmd extends AbstractCmd{
 		if($msg!==""){
 			echo ConsoleFormatter::showMessage($msg,"error","Theme creation");
 		}else{
+			self::saveActiveTheme($what);
 			echo ConsoleFormatter::showMessage(sprintf('Theme %s created with success!',$what),"success","Theme creation");
 		}
 	}

@@ -113,7 +113,6 @@ class Ubiquity {
 				self::adminInstall();
 			}
 
-			self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/config.tpl", "app/config/config.php", self::$configOptions);
 			FileUtils::xcopy(self::$activeDir."/devtools/project-files/templates/services.tpl", "app/config/services.php");
 			FileUtils::xcopy(self::$activeDir."/devtools/project-files/index.php", "index.php");
 
@@ -145,6 +144,7 @@ class Ubiquity {
 				FileUtils::xcopy(self::$activeDir."/devtools/project-files/templates/indexThemes.tpl", "app/views/index.html");
 			}
 			FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/IndexController.php", "app/controllers/IndexController.php");
+			self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/config.tpl", "app/config/config.php", self::$configOptions);
 
 			//-------------Add themes----------------
 

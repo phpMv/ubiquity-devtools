@@ -14,8 +14,8 @@ class IndexController extends ControllerBase{
 		$infos=Display::getPageInfos();
 
 		$activeTheme=ThemesManager::getActiveTheme();
-		if($activeTheme!=null){
-			$themes=Display::getThemes();
+		$themes=Display::getThemes();
+		if(sizeof($themes)>0){
 			$this->loadView('@activeTheme/main/vMenu.html',compact('themes','activeTheme'));
 		}
 		$this->loadView($defaultPage,compact('defaultPage','links','infos','activeTheme'));
