@@ -67,7 +67,7 @@ class Ubiquity {
 				["w","password",""],
 				["m","all-models",false],
 				["a","admin",false],
-				["h","themes","bootstrap,foundation,semantic"],
+				["h","themes",""],
 				["c","use-cdn",false],
 		];
 		if(($dir=basename(getcwd()))==$projectName || $projectName==null){
@@ -134,16 +134,16 @@ class Ubiquity {
 				}
 			}
 			if(!$hasThemes){
-				self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/indexNoTheme.tpl", "app/views/index.html", self::$configOptions);
-				self::$configOptions["%cssFiles%"][]=self::includeCss('css/style.css');
-				FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/IndexController.php", "app/controllers/IndexController.php");
+				self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/vHeader.tpl", "app/views/main/vHeader.html", self::$configOptions);
+				self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/vFooter.tpl", "app/views/main/vFooter.html", self::$configOptions);
 				self::$configOptions['%activeTheme%']='';
 			}else{
 				$activeTheme=end($themes);
 				self::$configOptions['%activeTheme%']=',"activeTheme"=>"'.$activeTheme.'"';
 				FileUtils::xcopy(self::$activeDir."/devtools/project-files/templates/indexThemes.tpl", "app/views/index.html");
-				FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/IndexControllerThemes.php", "app/controllers/IndexController.php");
 			}
+			FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/IndexController.php", "app/controllers/IndexController.php");
+
 			//-------------Add themes----------------
 
 			self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/config.tpl", "app/config/config.php", self::$configOptions);

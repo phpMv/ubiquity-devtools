@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+{% block header %}
+	<base href="{{config["siteUrl"]}}">
+	<meta charset="UTF-8">
+	<title>ubi-projects Bootstrap</title>
+{% endblock %}
+{% block css %}
+	{{css_('css/style.css')}}
+	{{css_('css/all.min.css')}}
+	<!-- {{css('https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.7.4/css/mdb.min.css')}} -->
+{% endblock %}
+</head>
+<body>
+{% block head %}
+{% endblock %}

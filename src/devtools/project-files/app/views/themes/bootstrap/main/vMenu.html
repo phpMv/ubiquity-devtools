@@ -1,0 +1,14 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<div class="container">
+  <span class="navbar-brand mb-0 h1">Themes</span>
+  <div class="collapse navbar-collapse">
+ 			<ul class="navbar-nav">
+	  {% for theme in themes %}
+		  <a class="nav-item nav-link {{ activeTheme==theme ? 'active' }}" href="IndexController/ct/{{theme}}">
+		    {{theme}}
+		  </a>
+	  {% endfor %}
+	 </ul>
+  </div>
+  </div>
+</nav>

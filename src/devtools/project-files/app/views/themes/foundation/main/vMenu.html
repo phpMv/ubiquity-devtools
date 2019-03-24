@@ -1,0 +1,14 @@
+<div class="top-bar">
+	<div class="grid-container">
+	 <div class="row">
+		<ul class="menu">
+		  <li class="menu-text">Themes</li>
+			  {% for theme in themes %}
+				  <li class="{{ activeTheme==theme ? 'is-active' }}"><a href="IndexController/ct/{{theme}}">
+				    {{theme}}
+				  </a></li>
+			  {% endfor %}
+		  </ul>
+		  </div>
+	  </div>
+  </div>
