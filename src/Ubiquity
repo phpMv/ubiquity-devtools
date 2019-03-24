@@ -136,6 +136,7 @@ class Ubiquity {
 				self::includeDefaultStyles();
 				self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/vHeader.tpl", "app/views/main/vHeader.html", self::$configOptions);
 				self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/vFooter.tpl", "app/views/main/vFooter.html", self::$configOptions);
+				FileUtils::xcopy(self::$activeDir."/devtools/project-files/views/themes/semantic/main/vMenu.tpl", "app/views/main/vMenu.html");
 				self::$configOptions['%activeTheme%']='';
 				FileUtils::xcopy(self::$activeDir."/devtools/project-files/public/themes/semantic/",  getcwd()."/public/assets/");
 			}else{

@@ -49,9 +49,10 @@ class InstallThemeCmd extends AbstractThemeCmd{
 			if($standalone){
 				self::copyVendorFiles($name, $vendorCopies, $baseDir);
 			}
+			self::saveActiveTheme($name);
 			return $vendorCopies;
 		}
-		self::saveActiveTheme($what);
+
 		echo ConsoleFormatter::showMessage(sprintf('This theme seems to be already installed in %s!',$dest),'warning','Theme installation');
 		return [];
 	}
