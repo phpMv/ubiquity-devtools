@@ -136,7 +136,7 @@ class Ubiquity {
 				self::includeDefaultStyles();
 				self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/vHeader.tpl", "app/views/main/vHeader.html", self::$configOptions);
 				self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/vFooter.tpl", "app/views/main/vFooter.html", self::$configOptions);
-				FileUtils::xcopy(self::$activeDir."/devtools/project-files/views/themes/semantic/main/vMenu.tpl", "app/views/main/vMenu.html");
+				FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/views/themes/semantic/main/vMenu.html", "app/views/main/vMenu.html");
 				self::$configOptions['%activeTheme%']='';
 				FileUtils::xcopy(self::$activeDir."/devtools/project-files/public/themes/semantic/",  getcwd()."/public/assets/");
 			}else{
@@ -145,7 +145,6 @@ class Ubiquity {
 				FileUtils::xcopy(self::$activeDir."/devtools/project-files/templates/indexThemes.tpl", "app/views/index.html");
 			}
 			FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/IndexController.php", "app/controllers/IndexController.php");
-			self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/config.tpl", "app/config/config.php", self::$configOptions);
 
 			//-------------Add themes----------------
 
