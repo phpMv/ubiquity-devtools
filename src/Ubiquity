@@ -185,10 +185,8 @@ class Ubiquity {
 	}
 
 	private static function includeDefaultStyles(){
-		self::$configOptions["%injections%"]="[\"@exec\"=>[\"jquery\"=>function(\$controller){
-				\t\t\$jquery=new \\Ajax\\php\\ubiquity\\JsUtils([\"defer\"=>true],\$controller);
-				\t\t\$jquery->semantic(new \\Ajax\\Semantic());
-				\t\treturn \$jquery;
+		self::$configOptions["%injections%"]="\"@exec\"=>[\"jquery\"=>function(\$controller){
+				\t\t\return \\Ubiquity\\core\\Framework::diSemantic(\$controller);
 				\t}]";
 		self::$configOptions["%cssFiles%"][]=self::includeCss(self::$toolsConfig["cdn"]["semantic"]["css"]);
 		self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["jquery"]);
