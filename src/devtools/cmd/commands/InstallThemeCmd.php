@@ -48,8 +48,8 @@ class InstallThemeCmd extends AbstractThemeCmd{
 			$vendorCopies=$themeConfig['vendor-copy']??[];
 			if($standalone){
 				self::copyVendorFiles($name, $vendorCopies, $baseDir);
+				self::saveActiveTheme($name);
 			}
-			self::saveActiveTheme($name);
 			return $vendorCopies;
 		}
 
