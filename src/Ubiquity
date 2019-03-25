@@ -103,6 +103,7 @@ class Ubiquity {
 			self::$configOptions["%projectName%"]=$projectName;
 			self::$configOptions["%cssFiles%"]=[];
 			self::$configOptions["%jsFiles%"]=[];
+			self::$configOptions["%injections%"]="";
 			foreach ($arguments as $argument){
 				self::$configOptions["%".$argument[1]."%"]=self::getOption($options,$argument[0], $argument[1],$argument[2]);
 			}
