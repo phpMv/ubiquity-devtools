@@ -5,7 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Updated
+### Added
+- Commands
+  - `install-theme` for installing Bootstrap, Semantic-UI or Foundation
+  - `create-theme` for creating a new theme (eventually based on a ref theme)
+### Changed
 - `services.tpl file`
 ### Fixed
 - An exception is thrown In case of problem with the Database connection (in `DataBase::connect` method) see https://github.com/phpMv/ubiquity/issues/12
