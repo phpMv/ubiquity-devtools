@@ -420,21 +420,25 @@ Ubiquity serve
 
 ### Models creation
 make sure that the database is configured properly in app/config/config.php file :
-```php
-<?php
-return array(
-		"siteUrl"=>"http://127.0.0.1/blog/",
-		"database"=>[
-				"dbName"=>"blog",
-				"serverName"=>"127.0.0.1",
-				"port"=>"3306",
-				"user"=>"root",
-				"password"=>"",
-				"cache"=>false
-		],
-...
-);
+```bash
+Ubiquity config -f=database
 ```
+
+```bash
+     ┌──────────┬─────────────────────────────┐
+     │ field    │ value                       │
+     ├──────────┼─────────────────────────────┤
+     │ database │ · type : 'mysql'            │
+     │          │ · dbName : 'blog'           │
+     │          │ · serverName : '127.0.0.1'  │
+     │          │ · port : 3306               │
+     │          │ · user : 'root'             │
+     │          │ · password : ''             │
+     │          │ · options : []              │
+     │          │ · cache : false             │
+     └──────────┴─────────────────────────────┘
+```
+
 Execute the command, make sure you are also in the project folder or one of its subfolders :
 ```bash
 Ubiquity all-models
