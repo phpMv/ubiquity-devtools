@@ -28,7 +28,7 @@ use Ubiquity\devtools\cmd\commands\NewThemeCmd;
 
 class Ubiquity {
 	use CmdTrait;
-	private static $version="1.1.7+";
+	private static $version="1.2.0";
 	private static $appName="Ubiquity devtools";
 	private static $configOptions;
 	private static $toolsConfig;

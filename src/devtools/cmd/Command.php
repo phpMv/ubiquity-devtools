@@ -84,10 +84,10 @@ class Command {
 				"p"=>Parameter::create("port", "Defines the db server port.", [],"3306"),
 				"u"=>Parameter::create("user", "Defines the db server user.", [],"root"),
 				"w"=>Parameter::create("password", "Defines the db server password.", [],""),
-				"q"=>Parameter::create("phpmv", "Integrates phpmv-UI Toolkit.", ["semantic","bootstrap","ui"],""),
+				"h"=>Parameter::create("themes", "Install themes.", ["semantic","bootstrap","foundation"],""),
 				"m"=>Parameter::create("all-models", "Creates all models from database.", [],""),
 				"a"=>Parameter::create("admin", "Adds UbiquityMyAdmin tool.", ["true","false"],"false"),
-		],['Creates a new project'=>'Ubiquity new blog','With admin interface'=>'Ubiquity new blog -q=semantic -a','and models generation'=>'Ubiquity new blog -q=semantic -a -m -b=blogDB']);
+		],['Creates a new project'=>'Ubiquity new blog','With admin interface'=>'Ubiquity new blog -a','and models generation'=>'Ubiquity new blog -a -m -b=blogDB']);
 	}
 
 	public static function controller(){

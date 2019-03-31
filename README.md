@@ -33,7 +33,7 @@ Ubiquity help
 This command should display something similar to:
 
 ```bash
-Ubiquity devtools (1.1.5)
+Ubiquity devtools (1.2.0)
 
 ■ project [projectName] =>
         · Creates a new #ubiquity project.
@@ -57,10 +57,10 @@ Ubiquity devtools (1.1.5)
                 -w      shortcut of --password
                         Defines the db server password.
 
-                -q      shortcut of --phpmv
-                        Integrates phpmv-UI Toolkit.
+                -h      shortcut of --themes
+                        Install themes.
                         Possibles values :
-                        semantic,bootstrap,ui
+                        semantic,bootstrap,foundation
 
                 -m      shortcut of --all-models
                         Creates all models from database.
@@ -75,9 +75,9 @@ Ubiquity devtools (1.1.5)
                 Creates a new project
                   · Ubiquity new blog
                 With admin interface
-                  · Ubiquity new blog -q=semantic -a
+                  · Ubiquity new blog -a
                 and models generation
-                  · Ubiquity new blog -q=semantic -a -m -b=blogDB
+                  · Ubiquity new blog -a -m -b=blogDB
 
 ■ serve [] =>
         · Start the php web server.
@@ -141,7 +141,7 @@ Ubiquity devtools (1.1.5)
                         The where part of the query
 
                 -i      shortcut of --included
-                        The associated members to load (boolean of array: client.*,commands)
+                        The associated members to load (boolean or array: client.*,commands)
 
                 -p      shortcut of --parameters
                         The parameters for a parameterized query
@@ -274,6 +274,17 @@ Ubiquity devtools (1.1.5)
                 Creates a REST controller for the class models\User
                   · Ubiquity rest RestUsers -r=User -p=/rest/users
 
+■ restapi [restControllerName] =>
+        · Creates a new REST API controller.
+        · Aliases : restapi-controller
+        · Parameters :
+                -p      shortcut of --path
+                        The associated route
+
+        × Samples :
+                Creates a REST API controller
+                  · Ubiquity restapi -p=/rest
+
 ■ action [controller.action] =>
         · Creates a new action in a controller.
         · Aliases : new-action
@@ -402,6 +413,29 @@ Ubiquity devtools (1.1.5)
                 Change the database name and port
                   · Ubiquity config:set --database.dbName=blog --database.port=3307
 
+■ theme [themeName] =>
+        · Installs an existing theme or creates a new one if the specified theme does not exists.
+        · Aliases : install-theme,install:theme
+        × Samples :
+                Creates a new theme custom
+                  · Ubiquity theme custom
+                Install bootstrap theme
+                  · Ubiquity theme bootstrap
+
+■ create-theme [themeName] =>
+        · Creates a new theme or installs an existing one.
+        · Aliases : create:theme
+        · Parameters :
+                -x      shortcut of --extend
+                        If specified, inherits from an existing theme (bootstrap,semantic or foundation).
+                        Possibles values :
+                        bootstrap,semantic,foundation
+
+        × Samples :
+                Creates a new theme custom
+                  · Ubiquity create-theme custom
+                Creates a new theme inheriting from Bootstrap
+                  · Ubiquity theme myBootstrap -x=bootstrap
 ```
 
 ### Project creation
