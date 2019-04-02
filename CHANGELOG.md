@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - Nothing
+
+## [1.2.2] - 2019-04-02
+ - Fix https://github.com/phpMv/ubiquity/issues/22 (install without -a option bug)
+ 
 ## [1.2.0] - 2019-04-01
 ### Added
 - Commands
