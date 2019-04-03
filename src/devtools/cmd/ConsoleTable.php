@@ -2,7 +2,7 @@
 namespace  Ubiquity\devtools\cmd;
 
 class ConsoleTable {
-	const TOP_LEFT='┌', TOP_RIGHT='┐';
+	const TOP_LEFT='╭', TOP_RIGHT='╮';
 
 	const H_LINE='─',V_LINE='│';
 
@@ -10,7 +10,7 @@ class ConsoleTable {
 
 	const M_ROW_LEFT='├',M_ROW_RIGHT='┤';
 
-	const BOTTOM_LEFT='└',BOTTOM_RIGHT='┘';
+	const BOTTOM_LEFT='╰',BOTTOM_RIGHT='╯';
 
 	const BINARY_VALUES=[
 			'0011'=>self::TOP_LEFT,
@@ -23,8 +23,7 @@ class ConsoleTable {
 			'1110'=>self::M_COL_BOTTOM,
 			'1100'=>self::BOTTOM_RIGHT,
 			'1010'=>self::H_LINE,
-			'0101'=>self::V_LINE,
-			'0000'=>' '
+			'0101'=>self::V_LINE
 	];
 
 
@@ -50,9 +49,13 @@ class ConsoleTable {
 
 	private $rowCount;
 
-	private $padding=1;
+	private $padding=5;
 
 	private $indent=0;
+
+	private $borderColor=ConsoleFormatter::LIGHT_GRAY;
+
+	private $preserveSpaceBefore=false;
 
 	/**
 	 * Get the printable cell content
@@ -68,23 +71,30 @@ class ConsoleTable {
 		if ($index === 0) {
 			$output .= str_repeat(' ', $this->indent);
 		}
-		$output .=($this->v_lines[$index]==1)? self::V_LINE:' ';
+		$output .=($this->v_lines[$index]==1)? $this->getVLine():' ';
 
 		$output .= $padding; # left padding
 		if(is_string($cell)){
-			$cell    = trim(preg_replace('/\s+/', ' ', $cell)); # remove line breaks
+			$cell    = rtrim(preg_replace('/\s+/', ' ', $cell)); # remove line breaks
+			if(!$this->preserveSpaceBefore){
+				$cell=ltrim($cell);
+			}
 		}else{
 			$cell='{}';
 		}
 		$content = preg_replace('#\x1b[[][^A-Za-z]*[A-Za-z]#', '', $cell);
-		$delta   = mb_strlen($cell,'UTF-8') - mb_strlen($content,'UTF-8')+$this->padding;
+
+		$delta   = -mb_strlen($cell,'UTF-8') + mb_strlen($content,'UTF-8')+$this->padding;
 		$output .= $this->mb_str_pad($cell, $width-$delta , $row ? ' ' : '-'); # cell content
 
-		//$output .= $padding; # right padding
 		if ($row && $index == count($row)-1) {
-			$output .= ($this->v_lines[count($row)]==1)?self::V_LINE:' ';
+			$output .= ($this->v_lines[count($row)]==1)?$this->getVLine():' ';
 		}
 		return $output;
+	}
+
+	private function getVLine(){
+		return ConsoleFormatter::colorize(self::V_LINE,$this->borderColor);
 	}
 
 	private function initializeBorders(){
@@ -103,17 +113,33 @@ class ConsoleTable {
 	 * @return string
 	 */
 	private function mb_str_pad($str, $pad_len, $pad_str = ' ', $dir = STR_PAD_RIGHT, $encoding = NULL){
-		$encoding = $encoding === NULL ? mb_internal_encoding() : $encoding;
-		$padBefore = $dir === STR_PAD_BOTH || $dir === STR_PAD_LEFT;
-		$padAfter = $dir === STR_PAD_BOTH || $dir === STR_PAD_RIGHT;
-		$pad_len -= mb_strlen($str, $encoding);
-		$targetLen = $padBefore && $padAfter ? $pad_len / 2 : $pad_len;
-		$strToRepeatLen = mb_strlen($pad_str, $encoding);
-		$repeatTimes = ceil($targetLen / $strToRepeatLen);
-		$repeatedString = str_repeat($pad_str, max(0, $repeatTimes)); // safe if used with valid utf-8 strings
-		$before = $padBefore ? mb_substr($repeatedString, 0, floor($targetLen), $encoding) : '';
-		$after = $padAfter ? mb_substr($repeatedString, 0, ceil($targetLen), $encoding) : '';
-		return $before . $str . $after;
+		$content = preg_replace('#\x1b[[][^A-Za-z]*[A-Za-z]#', '', $str);
+		$str_len = mb_strlen($content);
+		$pad_str_len = mb_strlen($pad_str);
+		if (!$str_len && ($dir == STR_PAD_RIGHT || $dir == STR_PAD_LEFT)) {
+			$str_len = 1; // @debug
+		}
+		if (!$pad_len || !$pad_str_len || $pad_len <= $str_len) {
+			return $str;
+		}
+
+		$result = null;
+		$repeat = ceil($str_len - $pad_str_len + $pad_len);
+		if ($dir == STR_PAD_RIGHT) {
+			$result = $str . str_repeat($pad_str, $repeat);
+			$result = mb_substr($result, 0, $pad_len);
+		} else if ($dir == STR_PAD_LEFT) {
+			$result = str_repeat($pad_str, $repeat) . $str;
+			$result = mb_substr($result, -$pad_len);
+		} else if ($dir == STR_PAD_BOTH) {
+			$length = ($pad_len - $str_len) / 2;
+			$repeat = ceil($length / $pad_str_len);
+			$result = mb_substr(str_repeat($pad_str, $repeat), 0, floor($length))
+			. $str
+			. mb_substr(str_repeat($pad_str, $repeat), 0, ceil($length));
+		}
+
+		return $result;
 	}
 
 	public function setDatas($datas){
@@ -198,7 +224,7 @@ class ConsoleTable {
 			$res.=str_repeat($line, $this->colWidths[$i]);
 		}
 		$res.=$this->getBorderValue($row, $this->colCount);
-		return $res;
+		return ConsoleFormatter::colorize($res,$this->borderColor);
 	}
 
 	private function getBorderValue($row,$col){
@@ -294,6 +320,47 @@ class ConsoleTable {
 	 */
 	public function setIndent($indent) {
 		$this->indent = $indent;
+	}
+
+	/**
+	 * @param string $borderColor
+	 */
+	public function setBorderColor($borderColor) {
+		$this->borderColor = $borderColor;
+	}
+
+	public static function borderColor($text,$color=ConsoleFormatter::LIGHT_GRAY){
+		$border=new ConsoleTable();
+		$border->setIndent(5);
+		$border->setBorderColor($color);
+		$border->setDatas($text);
+		$border->setPreserveSpaceBefore(true);
+		return $border->getTable();
+	}
+
+	public static function borderType($text,$type){
+		switch ($type){
+			case 'error':
+				$color=ConsoleFormatter::LIGHT_RED;
+				break;
+			case 'success':
+				$color=ConsoleFormatter::LIGHT_GREEN;
+				break;
+			case 'info':
+				$color=ConsoleFormatter::LIGHT_CYAN;
+				break;
+			case 'warning':
+				$color=ConsoleFormatter::LIGHT_GRAY;
+				break;
+
+		}
+		return self::borderColor($text,$color);
+	}
+	/**
+	 * @param boolean $preserveSpaceBefore
+	 */
+	public function setPreserveSpaceBefore($preserveSpaceBefore) {
+		$this->preserveSpaceBefore = $preserveSpaceBefore;
 	}
 
 }

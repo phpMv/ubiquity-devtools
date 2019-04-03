@@ -59,7 +59,7 @@ class ConsoleFormatter {
 		}
 	}
 
-	public static function formatContent($content,$prefix='    · '){
+	public static function formatContent($content,$prefix="    · "){
 		$content = str_replace ( "<br>", "\n", $content );
 		$content=self::formatHtml($content);
 		$content= strip_tags ( $content );
@@ -86,14 +86,15 @@ class ConsoleFormatter {
 				$header=self::colorize($header,self::LIGHT_GRAY);
 				break;
 		}
-		return $header.$result;
+		$result=rtrim($result,"\n");
+		return ConsoleTable::borderType([[$header.$result]], $type);
 	}
 
 	public static function formatHtml($str){
-		if(!self::isSupported()){
-			return $str;
-		}
 		$reg='@<(b)>(.+?)</\1>@i';
+		if(!self::isSupported()){
+			return preg_replace($reg, '$2', $str);
+		}
 		return preg_replace($reg, self::escape(self::BOLD).'$2'.self::escape(self::END_BOLD), $str);
 	}
 }
