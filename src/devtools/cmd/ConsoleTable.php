@@ -352,7 +352,7 @@ class ConsoleTable {
 			case 'warning':
 				$color=ConsoleFormatter::LIGHT_GRAY;
 				break;
-
+		$color=ConsoleFormatter::WHITE;
 		}
 		return self::borderColor($text,$color);
 	}
