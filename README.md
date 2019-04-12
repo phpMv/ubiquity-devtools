@@ -33,7 +33,7 @@ Ubiquity help
 This command should display something similar to:
 
 ```bash
-Ubiquity devtools (1.2.0)
+Ubiquity devtools (1.2.3)
 
 ■ project [projectName] =>
         · Creates a new #ubiquity project.
@@ -445,7 +445,7 @@ Ubiquity new blog
 ```
 You can see more options about installation by reading the [Project creation section](http://micro-framework.readthedocs.io/en/latest/install.html).
 
-### Testing
+### Running
 You can test with the php web server,
 from the root folder of your web application, run :
 ```
