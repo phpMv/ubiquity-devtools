@@ -1,6 +1,7 @@
 <?php
 namespace controllers;
 use Ubiquity\core\postinstall\Display;
+use Ubiquity\log\Logger;
 use Ubiquity\themes\ThemesManager;
 
 /**
@@ -23,8 +24,14 @@ class IndexController extends ControllerBase{
 
 
 	public function ct($theme){
-		$config=ThemesManager::saveActiveTheme($theme);
-		header("Location: ".$config['siteUrl']);
+		$themes=Display::getThemes();
+		if($theme!=null && array_search($theme, $themes)!==false){
+			$config=ThemesManager::saveActiveTheme($theme);
+			header("Location: ".$config['siteUrl']);
+		}else{
+			Logger::warn('Themes', sprintf('The theme %s does not exists!',$theme),'changeTheme(ct)');
+			$this->forward(IndexController::class);
+		}
 	}
 
 }
