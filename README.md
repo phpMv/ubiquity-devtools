@@ -52,7 +52,7 @@ Ubiquity help
 This command should display something similar to:
 
 ```bash
-Ubiquity devtools (1.2.3)
+Ubiquity devtools (1.2.4)
 
 ■ project [projectName] =>
         · Creates a new #ubiquity project.
@@ -99,7 +99,7 @@ Ubiquity devtools (1.2.3)
                   · Ubiquity new blog -a -m -b=blogDB
 
 ■ serve [] =>
-        · Start the php web server.
+        · Start a web server.
         · Parameters :
                 -h      shortcut of --host
                         Sets the host ip address.
@@ -109,9 +109,17 @@ Ubiquity devtools (1.2.3)
                         Sets the listen port number.
                         Default : [8090]
 
+                -t      shortcut of --type
+                        Sets the server type.
+                        Possibles values :
+                        php,react
+                        Default : [php]
+
         × Samples :
-                Starts the server at 127.0.0.1:8090
+                Starts a php server at 127.0.0.1:8090
                   · Ubiquity serve
+                Starts a reactPHP server at 127.0.0.1:8080
+                  · Ubiquity serve -t=react
 
 ■ help [?] =>
         · Get some help about a dev-tools command.
