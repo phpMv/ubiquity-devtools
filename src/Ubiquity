@@ -36,6 +36,10 @@ class Ubiquity {
 	private static $activeDir;
 	private static $checkProjectDir=".ubiquity";
 	private static $toolsPath="devtools/";
+	private static $servers=[
+			'php'=>['files'=>['/devtools/server/.htrouter.php'=>'.ubiquity/.htrouter.php','/devtools/server/_index.php'=>'.ubiquity/._index.php'],'config'=>'config.php'],
+			'react'=>['files'=>['/devtools/server/_react.php'=>'.ubiquity/_react.php'],'config'=>'react-config.php','checkClass'=>'\\Ubiquity\\servers\\react\\ReactServer','require'=>'phpmv/ubiquity-reactphp']
+	];
 
 	public static function createComposerFile(){
 		$composer=json_encode(self::$toolsConfig["composer"]);
@@ -383,17 +387,26 @@ class Ubiquity {
 				}
 				break;
 			case "serve":
-				$host=self::getOption($options, 'h', 'host','127.0.0.1');
-				if(!filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
-					echo ConsoleFormatter::showMessage($host." is not a valid ipv4 address!",'error');
-					exit(1);
+				$dPort=8095;
+				$type=self::getOption($options, 't', 'type','php');
+				if(isset(self::$servers[$type])){
+					$host=self::getOption($options, 'h', 'host','127.0.0.1');
+					if(!filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
+						echo ConsoleFormatter::showMessage($host." is not a valid ipv4 address!",'error');
+						exit(1);
+					}
+					if($type=='php'){
+						$dPort=8090;
+					}
+					$port=self::getOption($options, 'p', 'port',$dPort);
+					if(($p=(int)$port)!=$port || !($p>0 && $p<26000 )){
+						echo ConsoleFormatter::showMessage($port." is an invalid port number!",'error');
+						exit(1);
+					}
+					self::startServer($host, $port,$type);
+				}else{
+					echo ConsoleFormatter::showMessage(sprintf('The server %s does not exists!',$type),'error','Server starting');
 				}
-				$port=self::getOption($options, 'p', 'port',8090);
-				if(($p=(int)$port)!=$port || !($p>0 && $p<26000 )){
-					echo ConsoleFormatter::showMessage($port." is an invalid port number!",'error');
-					exit(1);
-				}
-				self::startServer($host, $port);
 				break;
 			case "version":
 				$v='PHP '. phpversion()."\n";
@@ -476,19 +489,29 @@ class Ubiquity {
 		}
 	}
 
-	private static function startServer($host,$port){
+	private static function startServer($host,$port,$type='php'){
+		$serverInfos=self::$servers[$type];
 		$what=$host.':'.$port;
 		self::_init();
-		echo ConsoleFormatter::showInfo("Starting php server at <b>".$what."</b>...\nPress Ctrl+C to stop it!\n");
-		if(!file_exists(".ubiquity/.htrouter.php")){
-			FileUtils::xcopy(self::$activeDir."/devtools/server/.htrouter.php",".ubiquity/.htrouter.php");
+		if(isset($serverInfos['checkClass'])){
+			$checkClass=$serverInfos['checkClass'];
+			if(!class_exists($checkClass,true)){
+				$require=$serverInfos['require'];
+				echo ConsoleFormatter::showInfo('composer require '.$require);
+				if (!system('composer require '.$require)){
+					die;
+				}
+			}
 		}
-		if(!file_exists(".ubiquity/_index.php")){
-			FileUtils::xcopy(self::$activeDir."/devtools/server/_index.php",".ubiquity/_index.php");
+		echo ConsoleFormatter::showInfo("Starting ".$type." server at <b>".$what."</b>...\nPress Ctrl+C to stop it!\n");
+		foreach ($serverInfos['files'] as $fileSrc=>$fileDest){
+			if(!file_exists($fileDest)){
+				FileUtils::xcopy(self::$activeDir.$fileSrc,$fileDest);
+			}
 		}
 
-		if(file_exists(".ubiquity/config.php")){
-			$config=include ".ubiquity/config.php";
+		if(file_exists(".ubiquity/".$serverInfos['config'])){
+			$config=include ".ubiquity/".$serverInfos['config'];
 			$updated=$config['host']!=$host || $config['port']!=$port;
 		}
 		if(!isset($config) || $updated){
@@ -496,11 +519,15 @@ class Ubiquity {
 			$config['port']=$port;
 			$config['sessionName']=uniqid('s');
 			$content="<?php\nreturn ".UArray::asPhpArray($config,'array').';';
-			if (@\file_put_contents('.ubiquity'.\DS.'config.php', $content, LOCK_EX) === false) {
-				throw new \Exception('Unable to write config file: .ubiquity'.\DS.'config.php');
+			if (@\file_put_contents('.ubiquity'.\DS.$serverInfos['config'], $content, LOCK_EX) === false) {
+				throw new \Exception('Unable to write config file: .ubiquity'.\DS.$serverInfos['config']);
 			}
 		}
-		system('php -S '.$what.' .ubiquity'.\DS.'.htrouter.php -t '.getcwd().' &');
+		if($type=='php'){
+			system('php -S '.$what.' .ubiquity'.\DS.'.htrouter.php -t '.getcwd().' &');
+		}elseif($type=='react'){
+			system('php .ubiquity'.\DS.'_react.php '.$what.' &');
+		}
 	}
 
 	private static function info(){

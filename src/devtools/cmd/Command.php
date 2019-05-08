@@ -141,9 +141,10 @@ class Command {
 	}
 
 	public static function serve(){
-		return new Command("serve", "","Start the php web server.",[],["h"=>Parameter::create("host", "Sets the host ip address.",[],'127.0.0.1'),
-				"p"=>Parameter::create("port", "Sets the listen port number.",[],8090)],
-				['Starts the server at 127.0.0.1:8090'=>'Ubiquity serve']);
+		return new Command("serve", "","Start a web server.",[],["h"=>Parameter::create("host", "Sets the host ip address.",[],'127.0.0.1'),
+				"p"=>Parameter::create("port", "Sets the listen port number.",[],8090),
+				"t"=>Parameter::create("type", "Sets the server type.",['php','react'],'php')],
+				['Starts a php server at 127.0.0.1:8090'=>'Ubiquity serve','Starts a reactPHP server at 127.0.0.1:8080'=>'Ubiquity serve -t=react']);
 	}
 
 	public static function selfUpdate(){
