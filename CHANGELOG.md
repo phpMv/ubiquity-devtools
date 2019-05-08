@@ -5,15 +5,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- nothing
+
+## [1.2.4] - 2019-05-09
 ### Added
 - **README.md** file for new projects
 - ReactPHP server: ```Ubiquity serve t=react```
+
+### Fixed
+- Change of theme without control in the ``ct`` action of ``IndexController`` for new projects : see Ubiquity issue [#38](https://github.com/phpMv/ubiquity/issues/38)
 
 ## [1.2.3] - 2019-04-03
  - relooking of the messages for clarity
  
 ## [1.2.2] - 2019-04-02
- - Fix https://github.com/phpMv/ubiquity/issues/22 (install without -a option bug)
+ - Fix issue [#22](https://github.com/phpMv/ubiquity/issues/22) (install without -a option bug)
  
 ## [1.2.0] - 2019-04-01
 ### Added
