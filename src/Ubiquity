@@ -391,10 +391,6 @@ class Ubiquity {
 				$type=self::getOption($options, 't', 'type','php');
 				if(isset(self::$servers[$type])){
 					$host=self::getOption($options, 'h', 'host','127.0.0.1');
-					if(!filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
-						echo ConsoleFormatter::showMessage($host." is not a valid ipv4 address!",'error');
-						exit(1);
-					}
 					if($type=='php'){
 						$dPort=8090;
 					}
