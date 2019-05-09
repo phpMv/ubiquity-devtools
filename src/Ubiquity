@@ -498,9 +498,7 @@ class Ubiquity {
 			if(!class_exists($checkClass,true)){
 				$require=$serverInfos['require'];
 				echo ConsoleFormatter::showInfo('composer require '.$require);
-				if (!system('composer require '.$require)){
-					die;
-				}
+				system('composer require '.$require);
 			}
 		}
 		echo ConsoleFormatter::showInfo("Starting ".$type." server at <b>".$what."</b>...\nPress Ctrl+C to stop it!\n");
