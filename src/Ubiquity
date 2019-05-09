@@ -37,7 +37,7 @@ class Ubiquity {
 	private static $checkProjectDir=".ubiquity";
 	private static $toolsPath="devtools/";
 	private static $servers=[
-			'php'=>['files'=>['/devtools/server/.htrouter.php'=>'.ubiquity/.htrouter.php','/devtools/server/_index.php'=>'.ubiquity/._index.php'],'config'=>'config.php'],
+			'php'=>['files'=>['/devtools/server/.htrouter.php'=>'.ubiquity/.htrouter.php','/devtools/server/_index.php'=>'.ubiquity/_index.php'],'config'=>'config.php'],
 			'react'=>['files'=>['/devtools/server/_react.php'=>'.ubiquity/_react.php'],'config'=>'react-config.php','checkClass'=>'\\Ubiquity\\servers\\react\\ReactServer','require'=>'phpmv/ubiquity-reactphp']
 	];
 
