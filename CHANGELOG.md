@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - nothing
+## [1.2.5] - 2019-05-10
+### Fixed
+- Warning in pages with php Web server Fix: [#5](https://github.com/phpMv/ubiquity-devtools/issues/5)
 
 ## [1.2.4] - 2019-05-09
 ### Added
