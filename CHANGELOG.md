@@ -5,7 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-- nothing
+### Added
+- Parameters for `new` command see [#45](https://github.com/phpMv/ubiquity/issues/45)
+  - `siteUrl (i)` : Sets the site base URL.
+  - `rewriteBase (w)` : Sets .htaccess file rewriteBase.
+
+Use
+```
+Ubiquity new fooProject -i=http://foo.local -w=foo
+```
+or
+```
+Ubiquity new fooProject --siteUrl=http://foo.local --rewriteBase=foo
+```
 ## [1.2.5] - 2019-05-10
 ### Fixed
 - Warning in pages with php Web server Fix: [#5](https://github.com/phpMv/ubiquity-devtools/issues/5)

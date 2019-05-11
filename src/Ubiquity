@@ -72,6 +72,8 @@ class Ubiquity {
 				["m","all-models",false],
 				["a","admin",false],
 				["h","themes",""],
+				["i","siteUrl","http://127.0.0.1/".$projectName."/"],
+				["w","rewriteBase",$projectName],
 				["c","use-cdn",false],
 		];
 		if(($dir=basename(getcwd()))==$projectName || $projectName==null){
@@ -102,8 +104,6 @@ class Ubiquity {
 
 
 			echo ConsoleFormatter::showInfo("Config files creation...\n");
-			self::openReplaceWrite(self::$activeDir."/devtools/project-files/.htaccess", getcwd()."/.htaccess", array("%rewriteBase%"=>$projectName));
-			self::$configOptions=["%siteUrl%"=>"http://127.0.0.1/".$projectName."/"];
 			self::$configOptions["%projectName%"]=$projectName;
 			self::$configOptions["%cssFiles%"]=[];
 			self::$configOptions["%jsFiles%"]=[];
@@ -112,6 +112,7 @@ class Ubiquity {
 				self::$configOptions["%".$argument[1]."%"]=self::getOption($options,$argument[0], $argument[1],$argument[2]);
 			}
 			self::showConfigOptions();
+			self::openReplaceWrite(self::$activeDir."/devtools/project-files/.htaccess", getcwd()."/.htaccess", array("%rewriteBase%"=>self::$configOptions["%rewriteBase%"]));
 
 
 			if(self::isBooleanTrue(self::$configOptions["%admin%"])){
