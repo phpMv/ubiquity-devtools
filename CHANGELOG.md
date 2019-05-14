@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Parameters for `new` command see [#45](https://github.com/phpMv/ubiquity/issues/45)
   - `siteUrl (i)` : Sets the site base URL.
-  - `rewriteBase (w)` : Sets .htaccess file rewriteBase.
+  - `rewriteBase (e)` : Sets .htaccess file rewriteBase.
 
 Use
 ```
