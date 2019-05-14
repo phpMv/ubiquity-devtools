@@ -88,7 +88,7 @@ class Command {
 				"m"=>Parameter::create("all-models", "Creates all models from database.", [],""),
 				"a"=>Parameter::create("admin", "Adds UbiquityMyAdmin tool.", ["true","false"],"false"),
 				"i"=>Parameter::create("siteUrl", "Sets the site base URL.", []),
-				"w"=>Parameter::create("rewriteBase", "Sets .htaccess file rewriteBase.", []),
+				"e"=>Parameter::create("rewriteBase", "Sets .htaccess file rewriteBase.", []),
 		],['Creates a new project'=>'Ubiquity new blog','With admin interface'=>'Ubiquity new blog -a','and models generation'=>'Ubiquity new blog -a -m -b=blogDB']);
 	}
 
