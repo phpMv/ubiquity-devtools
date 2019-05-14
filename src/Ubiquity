@@ -73,7 +73,7 @@ class Ubiquity {
 				["a","admin",false],
 				["h","themes",""],
 				["i","siteUrl","http://127.0.0.1/".$projectName."/"],
-				["w","rewriteBase",$projectName],
+				["e","rewriteBase",$projectName],
 				["c","use-cdn",false],
 		];
 		if(($dir=basename(getcwd()))==$projectName || $projectName==null){
