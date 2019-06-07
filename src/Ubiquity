@@ -28,7 +28,7 @@ use Ubiquity\devtools\cmd\commands\NewThemeCmd;
 
 class Ubiquity {
 	use CmdTrait;
-	private static $version="1.2.5";
+	private static $version="1.2.5+";
 	private static $appName="Ubiquity devtools";
 	private static $configOptions;
 	private static $toolsConfig;
@@ -38,7 +38,8 @@ class Ubiquity {
 	private static $toolsPath="devtools/";
 	private static $servers=[
 			'php'=>['files'=>['/devtools/server/.htrouter.php'=>'.ubiquity/.htrouter.php','/devtools/server/_index.php'=>'.ubiquity/_index.php'],'config'=>'config.php'],
-			'react'=>['files'=>['/devtools/server/_react.php'=>'.ubiquity/_react.php'],'config'=>'react-config.php','checkClass'=>'\\Ubiquity\\servers\\react\\ReactServer','require'=>'phpmv/ubiquity-reactphp']
+			'react'=>['files'=>['/devtools/server/_react.php'=>'.ubiquity/_react.php'],'config'=>'react-config.php','checkClass'=>'\\Ubiquity\\servers\\react\\ReactServer','require'=>'phpmv/ubiquity-reactphp',
+			'swoole'=>['files'=>['/devtools/server/_swoole.php'=>'.ubiquity/_swoole.php'],'config'=>'swoole-config.php','checkClass'=>'\\Ubiquity\\servers\\swoole\\SwooleServer','require'=>'phpmv/ubiquity-swoole']
 	];
 
 	public static function createComposerFile(){
@@ -518,10 +519,16 @@ class Ubiquity {
 				throw new \Exception('Unable to write config file: .ubiquity'.\DS.$serverInfos['config']);
 			}
 		}
-		if($type=='php'){
+		switch ($type){
+			case 'php':
 			system('php -S '.$what.' .ubiquity'.\DS.'.htrouter.php -t '.getcwd().' &');
-		}elseif($type=='react'){
+			break;
+		case 'react':
 			system('php .ubiquity'.\DS.'_react.php '.$what.' &');
+			break;
+		case 'swoole':
+			system('php .ubiquity'.\DS.'_swoole.php '.$what.' &');
+			break;
 		}
 	}
 
