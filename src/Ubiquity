@@ -502,7 +502,8 @@ class Ubiquity {
 				system('composer require '.$require);
 			}
 		}
-		echo ConsoleFormatter::showInfo("Starting ".$type." server at <b>".$what."</b>...\nPress Ctrl+C to stop it!\n");
+		$msg="Starting ".$type." server at <b>".$what."</b>...\n";
+
 		foreach ($serverInfos['files'] as $fileSrc=>$fileDest){
 			if(!file_exists($fileDest)){
 				FileUtils::xcopy(self::$activeDir.$fileSrc,$fileDest);
@@ -524,20 +525,23 @@ class Ubiquity {
 		}
 		switch ($type){
 			case 'php':
-			system('php -S '.$what.' .ubiquity'.\DS.'.htrouter.php -t '.getcwd().' &');
+				echo ConsoleFormatter::showInfo($msg."Press Ctrl+C to stop it!\n");
+				system('php -S '.$what.' .ubiquity'.\DS.'.htrouter.php -t '.getcwd().' &');
 			break;
 		case 'react':
+			echo ConsoleFormatter::showInfo($msg."Press Ctrl+C to stop it!\n");
 			system('php .ubiquity'.\DS.'_react.php '.$what.' &');
 			break;
 		case 'swoole':
-			system('php .ubiquity'.\DS.'_swoole.php '.$what.' &');
+			echo ConsoleFormatter::showInfo($msg."Use <b>Ubiquity serve:stop</b> to stop it!\n");
+			system('php .ubiquity'.\DS.'_swoole.php '.$what);
 			break;
 		}
 	}
 
 	private static function stopServer(){
 		$serverInfos=self::$servers['swoole'];
-		self::_init();
+		self::_init(true);
 		$checkClass=$serverInfos['checkClass'];
 		if(class_exists($checkClass,true)){
 			$server=new $checkClass();
@@ -547,16 +551,16 @@ class Ubiquity {
 			}
 			$server->setOptions($config);
 			try{
-			if($server->stop()){
-				ConsoleFormatter::showInfo('Swoole server stopped.');
-			}else{
-				ConsoleFormatter::showMessage('Swoole server is not stopped!','warning','Server stop');
-			}
+				if($server->stop()){
+					echo ConsoleFormatter::showInfo('Swoole server stopped.');
+				}else{
+					echo ConsoleFormatter::showMessage('Swoole server is not stopped!','warning','Server stop');
+				}
 			}catch(\Exception $e){
-				ConsoleFormatter::showMessage($e->getMessage(),'error','Server stop');
+				echo ConsoleFormatter::showMessage($e->getMessage(),'error','Server stop');
 			}
 		}else{
-			ConsoleFormatter::showMessage('Swoole server is not installed!','error','Server stop');
+			echo ConsoleFormatter::showMessage('Swoole server is not installed!','error','Server stop');
 		}
 	}
 
