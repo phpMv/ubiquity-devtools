@@ -15,4 +15,4 @@ require ROOT . './../vendor/autoload.php';
 require ROOT.'config/services.php';
 $reactServer=new \Ubiquity\servers\swoole\SwooleServer();
 $reactServer->init($config, __DIR__);
-$reactServer->run($sConfig['host'],$sConfig['port']);
+$reactServer->run($sConfig['host'],$sConfig['port'],$sConfig);

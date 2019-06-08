@@ -406,6 +406,9 @@ class Ubiquity {
 					echo ConsoleFormatter::showMessage(sprintf('The server %s does not exists!',$type),'error','Server starting');
 				}
 				break;
+			case "serve:stop":case "stop:server":
+				self::stopServer();
+				break;
 			case "version":
 				$v='PHP '. phpversion()."\n";
 				$v.=self::$appName." (".self::$version.")\n";
@@ -529,6 +532,31 @@ class Ubiquity {
 		case 'swoole':
 			system('php .ubiquity'.\DS.'_swoole.php '.$what.' &');
 			break;
+		}
+	}
+
+	private static function stopServer(){
+		$serverInfos=self::$servers['swoole'];
+		self::_init();
+		$checkClass=$serverInfos['checkClass'];
+		if(!class_exists($checkClass,true)){
+			$server=new $checkClass();
+			$config=[];
+			if(file_exists(".ubiquity/".$serverInfos['config'])){
+				$config=include ".ubiquity/".$serverInfos['config'];
+			}
+			$server->setOptions($config);
+			try{
+			if($server->stop()){
+				ConsoleFormatter::showInfo('Swoole server stopped.');
+			}else{
+				ConsoleFormatter::showMessage('Swoole server is not stopped!','warning','Server stop');
+			}
+			}catch(\Exception $e){
+				ConsoleFormatter::showMessage($e->getMessage(),'error','Server stop');
+			}
+		}else{
+			ConsoleFormatter::showMessage('Swoole server is not installed!','error','Server stop');
 		}
 	}
 
