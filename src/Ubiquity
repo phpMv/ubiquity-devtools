@@ -406,7 +406,7 @@ class Ubiquity {
 					echo ConsoleFormatter::showMessage(sprintf('The server %s does not exists!',$type),'error','Server starting');
 				}
 				break;
-			case "serve:stop":case "stop:server":
+			case "serve:stop":case "stop:serve":
 				self::stopServer();
 				break;
 			case "version":
@@ -539,7 +539,7 @@ class Ubiquity {
 		$serverInfos=self::$servers['swoole'];
 		self::_init();
 		$checkClass=$serverInfos['checkClass'];
-		if(!class_exists($checkClass,true)){
+		if(class_exists($checkClass,true)){
 			$server=new $checkClass();
 			$config=[];
 			if(file_exists(".ubiquity/".$serverInfos['config'])){
