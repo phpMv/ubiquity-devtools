@@ -533,7 +533,7 @@ class Ubiquity {
 			system('php .ubiquity'.\DS.'_react.php '.$what.' &');
 			break;
 		case 'swoole':
-			echo ConsoleFormatter::showInfo($msg."Use <b>Ubiquity serve:stop</b> to stop it!\n");
+			echo ConsoleFormatter::showMessage($msg."Use <b>Ubiquity serve:stop</b> to stop it!\n");
 			system('php .ubiquity'.\DS.'_swoole.php '.$what);
 			break;
 		}
