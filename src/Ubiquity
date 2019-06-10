@@ -552,7 +552,7 @@ class Ubiquity {
 			$server->setOptions($config);
 			try{
 				if($server->stop()){
-					echo ConsoleFormatter::showInfo('Swoole server stopped.');
+					echo ConsoleFormatter::showMessage('Swoole server stopped.');
 				}else{
 					echo ConsoleFormatter::showMessage('Swoole server is not stopped!','warning','Server stop');
 				}

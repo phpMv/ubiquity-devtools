@@ -10,7 +10,7 @@ $config=include ROOT.'config/config.php';
 $sConfig= include __DIR__.\DS.'react-config.php';
 $config["sessionName"]=$sConfig["sessionName"];
 $address=$sConfig['host'].':'.$sConfig['port'];
-$config ["siteUrl"] = 'http://'.$address;
+$config ["siteUrl"] = 'http://'.$address.'/';
 require ROOT . './../vendor/autoload.php';
 require ROOT.'config/services.php';
 $reactServer=new \Ubiquity\servers\react\ReactServer();
