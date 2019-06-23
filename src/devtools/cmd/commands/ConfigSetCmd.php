@@ -4,7 +4,7 @@ namespace Ubiquity\devtools\cmd\commands;
 
 use Ubiquity\utils\base\UString;
 use Ubiquity\devtools\cmd\ConsoleFormatter;
-use Ubiquity\controllers\admin\utils\CodeUtils;
+use Ubiquity\utils\base\CodeUtils;
 use Ubiquity\utils\base\UArray;
 use Ubiquity\controllers\Startup;
 
