@@ -200,14 +200,17 @@ class Ubiquity {
 		self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["jquery"]);
 		self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["semantic"]["js"]);
 		self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["semantic"]["state"]);//Semantic-ui bug see
-		self::$toolsConfig["composer"]["require"]["phpmv/php-mv-ui"]="^2.2.6";
+		self::$toolsConfig["composer"]["require"]["phpmv/php-mv-ui"]="^2.2.14";
 	}
 
 	private static function adminInstall($config=null){
+		if(!class_exists("\\Ubiquity\\controllers\\admin\\UbiquityMyAdminBaseController")){
+			self::$toolsConfig["composer"]["require-dev"]["phpmv/ubiquity-webtools"]="dev-master";
+		}
 		FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/Admin.php","app/controllers/Admin.php");
 		echo ConsoleFormatter::showInfo("Creating the Controller <b>Admin</b> at the location <b>app/controllers/Admin.php<:b>\n");
 		self::$toolsConfig["composer"]["require-dev"]["czproject/git-php"]="^3.13";
-		self::$toolsConfig["composer"]["require"]["phpmv/php-mv-ui"]="^2.2.6";
+		self::$toolsConfig["composer"]["require"]["phpmv/php-mv-ui"]="^2.2.14";
 	}
 
 	private static function includeCss($filename){
@@ -415,6 +418,9 @@ class Ubiquity {
 				$config=self::_init(true);
 				if(is_array($config)){
 					$v.='Ubiquity '.Framework::version."\n";
+				}
+				if(class_exists("\\Ubiquity\\controllers\\admin\\UbiquityMyAdminBaseController")){
+					$v.='Webtools '.\Ubiquity\controllers\admin\UbiquityMyAdminBaseController::version."\n";
 				}
 				echo ConsoleFormatter::showInfo($v);
 				break;
