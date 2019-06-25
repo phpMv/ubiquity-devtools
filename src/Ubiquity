@@ -420,7 +420,7 @@ class Ubiquity {
 					$v.='Ubiquity '.Framework::version."\n";
 				}
 				if(class_exists("\\Ubiquity\\controllers\\admin\\UbiquityMyAdminBaseController")){
-					$v.='Webtools '.\Ubiquity\controllers\admin\UbiquityMyAdminBaseController::version."\n";
+					$v.='Ubiquity Webtools ('.\Ubiquity\controllers\admin\UbiquityMyAdminBaseController::version.")\n";
 				}
 				echo ConsoleFormatter::showInfo($v);
 				break;
