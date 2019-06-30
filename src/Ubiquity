@@ -281,7 +281,6 @@ class Ubiquity {
 
 	private static function selfUpdate(){
 		self::_init();
-		define('ROOT', realpath('./app').DS);
 		echo ConsoleFormatter::showInfo("Files copy...\n");
 
 		$filename="app/controllers/Admin.php";
