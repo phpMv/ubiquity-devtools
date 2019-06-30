@@ -34,6 +34,7 @@ class Ubiquity {
 	private static $toolsConfig;
 	private static $indexContent="\n\t\$this->loadView(\"@framework/index/index.html\");\n";
 	private static $activeDir;
+	private static $activeProjectDir;
 	private static $checkProjectDir=".ubiquity";
 	private static $toolsPath="devtools/";
 	private static $servers=[
@@ -268,7 +269,8 @@ class Ubiquity {
 			$microDir=$dir.DIRECTORY_SEPARATOR.self::$checkProjectDir;
 			if(file_exists($microDir) && is_dir($microDir)){
 				chdir($dir);
-				echo ConsoleFormatter::showInfo("The project folder is <b>".FileUtils::cleanPathname($dir)."</b>");
+				self::$activeProjectDir=$dir;
+				echo ConsoleFormatter::showInfo("The project folder is <b>".FileUtils::cleanPathname(self::$activeProjectDir)."</b>");
 				return true;
 			}
 		}
@@ -281,7 +283,6 @@ class Ubiquity {
 
 	private static function selfUpdate(){
 		self::_init();
-		define('ROOT', realpath('./app').DS);
 		echo ConsoleFormatter::showInfo("Files copy...\n");
 
 		$filename="app/controllers/Admin.php";
@@ -289,12 +290,13 @@ class Ubiquity {
 			FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/views/Admin","app/views/Admin");
 			FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/views/Seo","app/views/Seo");
 		}
-		$answer=Console::question("Do you want to run composer update ?",["y","n"]);
-		if(Console::isYes($answer)){
-			system("composer global update");
+		if(Console::isYes(Console::question("Do you want to run composer update ?",["y","n"]))){
+			if(Console::isYes(Console::question("Do you want to run composer global update ?",["y","n"]))){
+				system("composer global update");
+			}
 			system("composer update");
 		}
-		echo ConsoleFormatter::showMessage("project in <b>".self::$activeDir."</b> successfully updated.",'success','self-update');
+		echo ConsoleFormatter::showMessage("project in <b>".self::$activeProjectDir."</b> successfully updated.",'success','self-update');
 	}
 
 	private static function displayResult($callback){
