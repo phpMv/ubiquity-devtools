@@ -618,6 +618,8 @@ class Ubiquity {
 }
 error_reporting(E_ALL);
 
-define('DS', DIRECTORY_SEPARATOR);
+if (!defined('DS')) {
+    define('DS', DIRECTORY_SEPARATOR);
+}
 
 Ubiquity::init(@$argv[1]);
