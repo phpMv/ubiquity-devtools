@@ -206,7 +206,7 @@ class Ubiquity {
 
 	private static function adminInstall($config=null){
 		if(!class_exists("\\Ubiquity\\controllers\\admin\\UbiquityMyAdminBaseController")){
-			self::$toolsConfig["composer"]["require-dev"]["phpmv/ubiquity-webtools"]="^2.1";
+			self::$toolsConfig["composer"]["require-dev"]["phpmv/ubiquity-webtools"]="^2.2";
 		}
 		FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/Admin.php","app/controllers/Admin.php");
 		echo ConsoleFormatter::showInfo("Creating the Controller <b>Admin</b> at the location <b>app/controllers/Admin.php<:b>\n");
@@ -283,20 +283,22 @@ class Ubiquity {
 
 	private static function selfUpdate(){
 		self::_init();
-		echo ConsoleFormatter::showInfo("Files copy...\n");
-
-		$filename="app/controllers/Admin.php";
-		if(file_exists($filename)){
-			FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/views/Admin","app/views/Admin");
-			FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/views/Seo","app/views/Seo");
-		}
-		if(Console::isYes(Console::question("Do you want to run composer update ?",["y","n"]))){
+		$updated=false;
+		if(\dirname(self::$activeDir)!==\dirname(self::$activeProjectDir)){
 			if(Console::isYes(Console::question("Do you want to run composer global update ?",["y","n"]))){
 				system("composer global update");
+				$updated=true;
 			}
-			system("composer update");
 		}
-		echo ConsoleFormatter::showMessage("project in <b>".self::$activeProjectDir."</b> successfully updated.",'success','self-update');
+		if(Console::isYes(Console::question("Do you want to run composer update ?",["y","n"]))){
+			system("composer update");
+			$updated=true;
+		}
+		if($updated){
+			echo ConsoleFormatter::showMessage("project in <b>".self::$activeProjectDir."</b> successfully updated.",'success','self-update');
+		}else{
+			echo ConsoleFormatter::showInfo("Update operation cancelled for project in <b>".self::$activeProjectDir."</b>.");
+		}
 	}
 
 	private static function displayResult($callback){
@@ -415,14 +417,14 @@ class Ubiquity {
 				self::stopServer();
 				break;
 			case "version":
-				$v='PHP '. phpversion()."\n";
+				$v='PHP '. \phpversion()."\n";
 				$v.=self::$appName." (".self::$version.")\n";
 				$config=self::_init(true);
 				if(is_array($config)){
+					if(class_exists("\\Ubiquity\\controllers\\admin\\UbiquityMyAdminBaseController")){
+						$v.='Ubiquity Webtools ('.\Ubiquity\controllers\admin\UbiquityMyAdminBaseController::version.")\n";
+					}
 					$v.='Ubiquity '.Framework::version."\n";
-				}
-				if(class_exists("\\Ubiquity\\controllers\\admin\\UbiquityMyAdminBaseController")){
-					$v.='Ubiquity Webtools ('.\Ubiquity\controllers\admin\UbiquityMyAdminBaseController::version.")\n";
 				}
 				echo ConsoleFormatter::showInfo($v);
 				break;
