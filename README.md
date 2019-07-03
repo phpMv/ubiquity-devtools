@@ -52,7 +52,7 @@ Ubiquity help
 This command should display something similar to:
 
 ```bash
-Ubiquity devtools (1.2.4)
+Ubiquity devtools (1.2.7)
 
 ■ project [projectName] =>
         · Creates a new #ubiquity project.
@@ -69,228 +69,107 @@ Ubiquity devtools (1.2.4)
                         Defines the db server port.
                         Default : [3306]
 
-                -u      shortcut of --user
-                        Defines the db server user.
+                -u      shortcut of --user                                                                                                                                                                                                                         Defines the db server user.
                         Default : [root]
 
                 -w      shortcut of --password
-                        Defines the db server password.
-
-                -h      shortcut of --themes
-                        Install themes.
-                        Possibles values :
-                        semantic,bootstrap,foundation
-
-                -m      shortcut of --all-models
+                        Defines the db server password.                                                                                                                                                                                                                                                                                                                                                                                                                                               -h      shortcut of --themes                                                                                                                                                                                                                       Install themes.
+                        Possibles values :                                                                                                                                                                                                                         semantic,bootstrap,foundation
+                                                                                                                                                                                                                                                           -m      shortcut of --all-models
                         Creates all models from database.
-
-                -a      shortcut of --admin
-                        Adds UbiquityMyAdmin tool.
-                        Possibles values :
-                        true,false
-                        Default : [false]
+                -a      shortcut of --admin                                                                                                                                                                                                                        Adds UbiquityMyAdmin tool.                                                                                                                                                                                                                 Possibles values :                                                                                                                                                                                                                         true,false                                                                                                                                                                                                                                 Default : [false]                                                                                                                                                                                                                                                                                                                                                                                                                                                             -i      shortcut of --siteUrl                                                                                                                                                                                                                      Sets the site base URL.                                                                                                                                                                                                                                                                                                                                                                                                                                                       -e      shortcut of --rewriteBase
+                        Sets .htaccess file rewriteBase.
 
         × Samples :
                 Creates a new project
                   · Ubiquity new blog
-                With admin interface
-                  · Ubiquity new blog -a
+                With admin interface                                                                                                                                                                                                                         · Ubiquity new blog -a
                 and models generation
                   · Ubiquity new blog -a -m -b=blogDB
-
-■ serve [] =>
-        · Start a web server.
-        · Parameters :
+                                                                                                                                                                                                                                           ■ serve [] =>
+        · Start a web server.                                                                                                                                                                                                                      · Parameters :
                 -h      shortcut of --host
-                        Sets the host ip address.
-                        Default : [127.0.0.1]
+                        Sets the host ip address.                                                                                                                                                                                                                  Default : [127.0.0.1]
 
                 -p      shortcut of --port
                         Sets the listen port number.
                         Default : [8090]
-
-                -t      shortcut of --type
+                                                                                                                                                                                                                                                           -t      shortcut of --type
                         Sets the server type.
                         Possibles values :
                         php,react
                         Default : [php]
-
-        × Samples :
-                Starts a php server at 127.0.0.1:8090
-                  · Ubiquity serve
-                Starts a reactPHP server at 127.0.0.1:8080
-                  · Ubiquity serve -t=react
-
-■ help [?] =>
-        · Get some help about a dev-tools command.
-        × Samples :
-                Get some help about crud
-                  · Ubiquity help crud
-
-■ version [] =>
-        · Return PHP, Framework and dev-tools versions.
-
-■ controller [controllerName] =>
-        · Creates a new controller.
-        · Aliases : create-controller
-        · Parameters :
+                                                                                                                                                                                                                                                   × Samples :                                                                                                                                                                                                                                        Starts a php server at 127.0.0.1:8090                                                                                                                                                                                                        · Ubiquity serve
+                Starts a reactPHP server at 127.0.0.1:8080                                                                                                                                                                                                   · Ubiquity serve -t=react
+                                                                                                                                                                                                                                           ■ help [?] =>
+        · Get some help about a dev-tools command.                                                                                                                                                                                                 × Samples :
+                Get some help about crud                                                                                                                                                                                                                     · Ubiquity help crud                                                                                                                                                                                                                                                                                                                                                                                                                                                ■ version [] =>                                                                                                                                                                                                                                    · Return PHP, Framework and dev-tools versions.                                                                                                                                                                                                                                                                                                                                                                                                                               ■ controller [controllerName] =>                                                                                                                                                                                                                   · Creates a new controller.                                                                                                                                                                                                                · Aliases : create-controller                                                                                                                                                                                                              · Parameters :
                 -v      shortcut of --views
-                        creates an associated view folder
-                        Possibles values :
-                        true,false
-
-        × Samples :
+                        creates an associated view folder                                                                                                                                                                                                          Possibles values :                                                                                                                                                                                                                         true,false
+                                                                                                                                                                                                                                                   × Samples :
                 Creates a controller
                   · Ubiquity controller UserController
                 with its associated view
                   · Ubiquity controller UserController -v
-
-■ model [tableName] =>
-        · Generates a new model.
-        · Aliases : create-model
-        × Samples :
-                  · Ubiquity model User
-
-■ all-models [] =>
-        · Generates all models from database.
-        · Aliases : create-all-models
-        × Samples :
-                  · Ubiquity all-models
-
-■ dao [command] =>
-        · Executes a DAO command (getAll,getOne,count,uGetAll,uGetOne,uCount).
-        · Aliases : DAO
-        · Parameters :
-                -r      shortcut of --resource
-                        The model used
-
+                                                                                                                                                                                                                                           ■ model [tableName] =>                                                                                                                                                                                                                             · Generates a new model.                                                                                                                                                                                                                   · Aliases : create-model
+        × Samples :                                                                                                                                                                                                                                          · Ubiquity model User
+                                                                                                                                                                                                                                           ■ all-models [] =>
+        · Generates all models from database.                                                                                                                                                                                                      · Aliases : create-all-models
+        × Samples :                                                                                                                                                                                                                                          · Ubiquity all-models                                                                                                                                                                                                                                                                                                                                                                                                                                               ■ dao [command] =>                                                                                                                                                                                                                                 · Executes a DAO command (getAll,getOne,count,uGetAll,uGetOne,uCount).                                                                                                                                                                     · Aliases : DAO                                                                                                                                                                                                                            · Parameters :                                                                                                                                                                                                                                     -r      shortcut of --resource                                                                                                                                                                                                                     The model used
                 -c      shortcut of --condition
-                        The where part of the query
-
-                -i      shortcut of --included
+                        The where part of the query                                                                                                                                                                                                                                                                                                                                                                                                                                                   -i      shortcut of --included
                         The associated members to load (boolean or array: client.*,commands)
-
                 -p      shortcut of --parameters
                         The parameters for a parameterized query
 
                 -f      shortcut of --fields
-                        The fields to display in the response
-
+                        The fields to display in the response                                                                                                                                                                                                                                                                                                                                                                                                                                 × Samples :                                                                                                                                                                                                                                        Returns all instances of models\User
+                  · Ubiquity dao getAll -r=User                                                                                                                                                                                                            Returns all instances of models\User and includes their commands
+                  · Ubiquity dao getAll -r=User -i=commands                                                                                                                                                                                                Returns the User with the id 5
+                  · Ubiquity dao getOne -c="id=5"-r=User                                                                                                                                                                                                   Returns the list of users belonging to the "Brittany" or "Normandy" regions
+                  · Ubiquity uGetAll -r=User -c="region.name= ? or region.name= ?" -p=Brittany,Normandy                                                                                                                                                                                                                                                                                                                                                                               ■ clear-cache [] =>                                                                                                                                                                                                                                · Clear models cache.                                                                                                                                                                                                                      · Parameters :                                                                                                                                                                                                                                     -t      shortcut of --type                                                                                                                                                                                                                         Defines the type of cache to reset.                                                                                                                                                                                                        Possibles values :                                                                                                                                                                                                                         all,annotations,controller,rest,models,queries,views
         × Samples :
-                Returns all instances of models\User
-                  · Ubiquity dao getAll -r=User
-                Returns all instances of models\User and includes their commands
-                  · Ubiquity dao getAll -r=User -i=commands
-                Returns the User with the id 5
-                  · Ubiquity dao getOne -c="id=5"-r=User
-                Returns the list of users belonging to the "Brittany" or "Normandy" regions
-                  · Ubiquity uGetAll -r=User -c="region.name= ? or region.name= ?" -p=Brittany,Normandy
-
-■ clear-cache [] =>
-        · Clear models cache.
-        · Parameters :
-                -t      shortcut of --type
-                        Defines the type of cache to reset.
-                        Possibles values :
-                        all,annotations,controller,rest,models,queries,views
-
-        × Samples :
-                Clear all caches
-                  · Ubiquity clear-cache -t=all
-                Clear models cache
-                  · Ubiquity clear-cache -t=models
-
-■ init-cache [] =>
-        · Init the cache for models, router, rest.
-        · Parameters :
+                Clear all caches                                                                                                                                                                                                                             · Ubiquity clear-cache -t=all                                                                                                                                                                                                            Clear models cache
+                  · Ubiquity clear-cache -t=models                                                                                                                                                                                                                                                                                                                                                                                                                                    ■ init-cache [] =>
+        · Init the cache for models, router, rest.                                                                                                                                                                                                 · Parameters :
                 -t      shortcut of --type
                         Defines the type of cache to create.
                         Possibles values :
                         all,controller,rest,models
 
-        × Samples :
-                Init all caches
-                  · Ubiquity init-cache
-                Init models cache
+        × Samples :                                                                                                                                                                                                                                        Init all caches                                                                                                                                                                                                                              · Ubiquity init-cache                                                                                                                                                                                                                    Init models cache
                   · Ubiquity init-cache -t=models
-
-■ self-update [] =>
-        · Updates Ubiquity framework for the current project.
-
-■ admin [] =>
-        · Add UbiquityMyAdmin webtools to the current project.
-
-■ crud [crudControllerName] =>
-        · Creates a new CRUD controller.
-        · Aliases : crud-controller
-        · Parameters :
-                -r      shortcut of --resource
-                        The model used
-
-                -d      shortcut of --datas
+■ self-update [] =>                                                                                                                                                                                                                                · Updates Ubiquity framework for the current project.
+                                                                                                                                                                                                                                           ■ admin [] =>
+        · Add UbiquityMyAdmin webtools to the current project.                                                                                                                                                                                                                                                                                                                                                                                                                        ■ crud [crudControllerName] =>                                                                                                                                                                                                                     · Creates a new CRUD controller.                                                                                                                                                                                                           · Aliases : crud-controller                                                                                                                                                                                                                · Parameters :                                                                                                                                                                                                                                     -r      shortcut of --resource                                                                                                                                                                                                                     The model used                                                                                                                                                                                                                                                                                                                                                                                                                                                                -d      shortcut of --datas
                         The associated Datas class
-                        Possibles values :
-                        true,false
-                        Default : [true]
+                        Possibles values :                                                                                                                                                                                                                         true,false                                                                                                                                                                                                                                 Default : [true]
 
                 -v      shortcut of --viewer
                         The associated Viewer class
                         Possibles values :
                         true,false
+                        Default : [true]                                                                                                                                                                                                                                                                                                                                                                                                                                                              -e      shortcut of --events                                                                                                                                                                                                                       The associated Events class
+                        Possibles values :                                                                                                                                                                                                                         true,false
                         Default : [true]
-
-                -e      shortcut of --events
-                        The associated Events class
-                        Possibles values :
-                        true,false
-                        Default : [true]
-
-                -t      shortcut of --templates
-                        The templates to modify
-                        Possibles values :
-                        index,form,display
-                        Default : [index,form,display]
-
-                -p      shortcut of --path
-                        The associated route
-
-        × Samples :
-                Creates a crud controller for the class models\User
-                  · Ubiquity crud CrudUsers -r=User
+                -t      shortcut of --templates                                                                                                                                                                                                                    The templates to modify
+                        Possibles values :                                                                                                                                                                                                                         index,form,display                                                                                                                                                                                                                         Default : [index,form,display]                                                                                                                                                                                                                                                                                                                                                                                                                                                -p      shortcut of --path                                                                                                                                                                                                                         The associated route                                                                                                                                                                                                                                                                                                                                                                                                                                                  × Samples :                                                                                                                                                                                                                                        Creates a crud controller for the class models\User                                                                                                                                                                                          · Ubiquity crud CrudUsers -r=User
                 and associates a route to it
                   · Ubiquity crud CrudUsers -r=User -p=/users
-                allows customization of index and form templates
-                  · Ubiquity crud CrudUsers -r=User -t=index,form
-
+                allows customization of index and form templates                                                                                                                                                                                             · Ubiquity crud CrudUsers -r=User -t=index,form
 ■ auth [authControllerName] =>
         · Creates a new controller for authentification.
         · Aliases : auth-controller
-        · Parameters :
-                -e      shortcut of --extends
+        · Parameters :                                                                                                                                                                                                                                     -e      shortcut of --extends
                         The base class of the controller (must derived from AuthController)
                         Default : [Ubiquity\controllers\auth\AuthController]
 
                 -t      shortcut of --templates
-                        The templates to modify
-                        Possibles values :
-                        index,info,noAccess,disconnected,message,baseTemplate
-                        Default : [index,info,noAccess,disconnected,message,baseTemplate]
-
-                -p      shortcut of --path
+                        The templates to modify                                                                                                                                                                                                                    Possibles values :                                                                                                                                                                                                                         index,info,noAccess,disconnected,message,baseTemplate                                                                                                                                                                                      Default : [index,info,noAccess,disconnected,message,baseTemplate]
+                                                                                                                                                                                                                                                           -p      shortcut of --path
                         The associated route
-
-        × Samples :
-                Creates a new controller for authentification
-                  · Ubiquity auth AdminAuthController
-                and associates a route to it
-                  · Ubiquity auth AdminAuthController -p=/admin/auth
-                allows customization of index and info templates
-                  · Ubiquity auth AdminAuthController -t=index,info
-
-■ rest [restControllerName] =>
-        · Creates a new REST controller.
-        · Aliases : rest-controller
-        · Parameters :
+        × Samples :                                                                                                                                                                                                                                        Creates a new controller for authentification
+                  · Ubiquity auth AdminAuthController                                                                                                                                                                                                      and associates a route to it                                                                                                                                                                                                                 · Ubiquity auth AdminAuthController -p=/admin/auth                                                                                                                                                                                       allows customization of index and info templates                                                                                                                                                                                             · Ubiquity auth AdminAuthController -t=index,info                                                                                                                                                                                                                                                                                                                                                                                                                   ■ rest [restControllerName] =>                                                                                                                                                                                                                     · Creates a new REST controller.                                                                                                                                                                                                           · Aliases : rest-controller                                                                                                                                                                                                                · Parameters :
                 -r      shortcut of --resource
                         The model used
 
@@ -305,26 +184,11 @@ Ubiquity devtools (1.2.4)
         · Creates a new REST API controller.
         · Aliases : restapi-controller
         · Parameters :
-                -p      shortcut of --path
-                        The associated route
-
-        × Samples :
-                Creates a REST API controller
-                  · Ubiquity restapi -p=/rest
-
-■ action [controller.action] =>
-        · Creates a new action in a controller.
-        · Aliases : new-action
-        · Parameters :
-                -p      shortcut of --params
-                        The action parameters (or arguments)
-
-                -r      shortcut of --route
-                        The associated route path
-
-                -v      shortcut of --create-view
-                        Creates the associated view
-                        Default : [false]
+                -p      shortcut of --path                                                                                                                                                                                                                         The associated route                                                                                                                                                                                                                                                                                                                                                                                                                                                  × Samples :
+                Creates a REST API controller                                                                                                                                                                                                                · Ubiquity restapi -p=/rest
+                                                                                                                                                                                                                                           ■ action [controller.action] =>
+        · Creates a new action in a controller.                                                                                                                                                                                                    · Aliases : new-action
+        · Parameters :                                                                                                                                                                                                                                     -p      shortcut of --params                                                                                                                                                                                                                       The action parameters (or arguments)                                                                                                                                                                                                                                                                                                                                                                                                                                          -r      shortcut of --route                                                                                                                                                                                                                        The associated route path                                                                                                                                                                                                                                                                                                                                                                                                                                                     -v      shortcut of --create-view                                                                                                                                                                                                                  Creates the associated view                                                                                                                                                                                                                Default : [false]
 
         × Samples :
                 Adds the action all in controller Users
