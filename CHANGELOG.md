@@ -9,7 +9,7 @@ Nothing
 
 ## [1.2.6] - 2019-06-13
 ### Added
-- Uiquity Swoole server: ``Ubiquity serve -t=swoole``
+- Ubiquity Swoole server: ``Ubiquity serve -t=swoole``
 - Parameters for `new` command see [#45](https://github.com/phpMv/ubiquity/issues/45)
   - `siteUrl (i)` : Sets the site base URL.
   - `rewriteBase (e)` : Sets .htaccess file rewriteBase.
