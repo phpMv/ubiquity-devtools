@@ -284,7 +284,7 @@ class Ubiquity {
 	private static function selfUpdate(){
 		self::_init();
 		$updated=false;
-		if(\dirname(self::$activeDir)!==\dirname(self::$activeProjectDir)){
+		if(\dirname(self::$activeDir,4)!==self::$activeProjectDir){
 			if(Console::isYes(Console::question("Do you want to run composer global update ?",["y","n"]))){
 				system("composer global update");
 				$updated=true;
