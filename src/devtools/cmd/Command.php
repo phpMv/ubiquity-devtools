@@ -101,8 +101,8 @@ class Command {
 	}
 
 	public static function model(){
-		return new Command("model", "tableName","Generates a new model.",["create-model"],[],
-				['Ubiquity model User']);
+		return new Command("model", "tableName","Generates a new model.",["create-model"],['d'=>Parameter::create('database', 'The database connection to use', 'default')],
+				['Ubiquity model User','Ubiquity model Author -d=projects']);
 	}
 
 	public static function routes(){
@@ -121,8 +121,8 @@ class Command {
 	}
 
 	public static function allModels(){
-		return new Command("all-models", "","Generates all models from database.",["create-all-models"],[],
-				['Ubiquity all-models']);
+		return new Command("all-models", "","Generates all models from database.",["create-all-models"],['d'=>Parameter::create('database', 'The database connection to use', 'default')],
+				['Ubiquity all-models','Ubiquity all-models -d=projects']);
 	}
 
 	public static function clearCache(){
@@ -173,7 +173,8 @@ class Command {
 		],[
 				'Creates a crud controller for the class models\User'=>'Ubiquity crud CrudUsers -r=User',
 				'and associates a route to it'=>'Ubiquity crud CrudUsers -r=User -p=/users',
-				'allows customization of index and form templates'=>'Ubiquity crud CrudUsers -r=User -t=index,form'
+				'allows customization of index and form templates'=>'Ubiquity crud CrudUsers -r=User -t=index,form',
+				'Creates a crud controller for the class models\projects\Author'=>'Ubiquity crud Authors -r=models\projects\Author'
 		]);
 	}
 

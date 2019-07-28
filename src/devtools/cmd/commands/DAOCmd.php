@@ -20,7 +20,7 @@ class DAOCmd extends AbstractCmd{
 		if(class_exists($resource)){
 			$datas=null;
 			CacheManager::startProd($config);
-			DAO::startDatabase($config);
+			DAO::start();
 			$start=microtime(true);
 			$objects=null;
 			switch ($what){
