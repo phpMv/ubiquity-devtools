@@ -370,12 +370,12 @@ class Ubiquity {
 			case "crud":case "crud-controller":
 				$config=self::_init();
 				$what=self::requiredParam($what, 'controllerName');
-				CrudCmd::run($config, $options, $what, self::$activeDir);
+				CrudCmd::run($config, $options, $what);
 				break;
 
 			case "auth": case "auth-controller":
 				self::_init();
-				AuthCmd::run($config, $options, $what, self::$activeDir);
+				AuthCmd::run($config, $options, $what);
 				break;
 
 			case "clear-cache":
@@ -385,7 +385,7 @@ class Ubiquity {
 				break;
 			case "action": case "new-action":
 				$config=self::_init();
-				NewActionCmd::run($config, $options, $what, self::$activeDir);
+				NewActionCmd::run($config, $options, $what);
 				break;
 
 			case "init-cache":
@@ -484,12 +484,12 @@ class Ubiquity {
 
 			case "rest":case "rest-controller":
 				$config=self::_init();
-				RestCmd::run($config, $options, $what, self::$activeDir);
+				RestCmd::run($config, $options, $what);
 				break;
 
 			case "restapi":case "restapi-controller":
 				$config=self::_init();
-				RestApiCmd::run($config, $options, $what, self::$activeDir);
+				RestApiCmd::run($config, $options, $what);
 				break;
 
 			case "create-theme":case "create:theme":
