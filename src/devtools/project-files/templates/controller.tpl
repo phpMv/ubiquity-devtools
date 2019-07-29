@@ -1,11 +1,10 @@
 <?php
 %namespace%
+
  /**
  * Controller %controllerName%
  **/
-class %controllerName% extends %baseClass%{
+class %controllerName% extends ControllerBase{
+	public function index(){%indexContent%}
 
-	public function index(){
-		%indexContent%
-	}
 }
