@@ -6,9 +6,9 @@ use Ubiquity\devtools\core\ConsoleScaffoldController;
 use Ubiquity\devtools\cmd\ConsoleFormatter;
 
 class NewActionCmd extends AbstractCmd{
-	public static function run(&$config,$options,$what,$activeDir){
+	public static function run(&$config,$options,$what){
 		$what=self::requiredParam($what, 'controller.action');
-		$scaffold=new ConsoleScaffoldController($activeDir);
+		$scaffold=new ConsoleScaffoldController();
 		$scaffold->setConfig($config);
 		@list($controller,$action)=explode('.', $what);
 		if($controller!=null && $action!=null){

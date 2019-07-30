@@ -8,12 +8,7 @@ use Ubiquity\scaffolding\creators\RestControllerCreator;
 use Ubiquity\controllers\rest\api\jsonapi\JsonApiRestController;
 
 class ConsoleScaffoldController extends \Ubiquity\scaffolding\ScaffoldController {
-	private $activeDir;
 	const DELIMITER = '─';
-
-	public function __construct($activeDir) {
-		$this->activeDir = $activeDir;
-	}
 
 	protected function storeControllerNameInSession($controller) {
 	}
@@ -28,9 +23,6 @@ class ConsoleScaffoldController extends \Ubiquity\scaffolding\ScaffoldController
 		return ConsoleFormatter::showMessage($content, $type,$title);
 	}
 
-	public function getTemplateDir() {
-		return $this->activeDir . "/devtools/project-files/templates/";
-	}
 
 	protected function _addMessageForRouteCreation($path, $jsCallback = "") {
 		echo ConsoleFormatter::showMessage("You need to re-init Router cache to apply this update with init-cache command\n");

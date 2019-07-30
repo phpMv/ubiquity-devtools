@@ -25,10 +25,11 @@ use Ubiquity\devtools\cmd\commands\RestCmd;
 use Ubiquity\devtools\cmd\commands\RestApiCmd;
 use Ubiquity\devtools\cmd\commands\InstallThemeCmd;
 use Ubiquity\devtools\cmd\commands\NewThemeCmd;
+use Ubiquity\orm\DAO;
 
 class Ubiquity {
 	use CmdTrait;
-	private static $version="1.2.7";
+	private static $version="1.2.8";
 	private static $appName="Ubiquity devtools";
 	private static $configOptions;
 	private static $toolsConfig;
@@ -206,12 +207,12 @@ class Ubiquity {
 
 	private static function adminInstall($config=null){
 		if(!class_exists("\\Ubiquity\\controllers\\admin\\UbiquityMyAdminBaseController")){
-			self::$toolsConfig["composer"]["require-dev"]["phpmv/ubiquity-webtools"]="^2.2";
+			self::$toolsConfig["composer"]["require-dev"]["phpmv/ubiquity-webtools"]="dev-multi-db";
 		}
 		FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/Admin.php","app/controllers/Admin.php");
 		echo ConsoleFormatter::showInfo("Creating the Controller <b>Admin</b> at the location <b>app/controllers/Admin.php<:b>\n");
 		self::$toolsConfig["composer"]["require-dev"]["czproject/git-php"]="^3.13";
-		self::$toolsConfig["composer"]["require"]["phpmv/php-mv-ui"]="^2.2.14";
+		self::$toolsConfig["composer"]["require"]["phpmv/php-mv-ui"]="^2.2.17";
 	}
 
 	private static function includeCss($filename){
@@ -308,6 +309,20 @@ class Ubiquity {
 		echo ConsoleFormatter::showInfo($res);
 	}
 
+	private static function checkDatabase($part,$config,$dbOffset='default'){
+		$offsets=DAO::getDatabases();
+		if(!\in_array($dbOffset,$offsets)){
+			echo ConsoleFormatter::showMessage('The connection '.$dbOffset.' does not exists in config file!','error',$part);
+			return false;
+		}
+		$dbConfig=DAO::getDbOffset($config,$dbOffset);
+		if(!isset($dbConfig["dbName"])){
+			echo ConsoleFormatter::showMessage('The connection '.$dbOffset.' has no dbName value in config file!','error',$part);
+			return false;
+		}
+		return true;
+	}
+
 	public static function init($command,$current=2){
 		global $argv;
 		set_exception_handler(array(Ubiquity::class,"error"));
@@ -324,17 +339,20 @@ class Ubiquity {
 			break;
 			case "all-models":case "create-all-models":
 				$config=self::_init();
-				$base=self::getOption($options, "b", "dbName",$config["database"]["dbName"]);
-				$config["database"]["dbName"]=self::requiredParam($base, 'dbName');
-				self::displayResult(function()use($config){(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config);});
+				$offset=self::getOption($options, "d", "database",'default');
+
+				if(self::checkDatabase('create-all-models', $config,$offset)){
+					self::displayResult(function()use($config,$offset){(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config,true,null,$offset);});
+				}
 				break;
 
 			case "model":case "create-model":
 				$config=self::_init();
+				$offset=self::getOption($options, "d", "database",'default');
 				$what=self::requiredParam($what, 'tableName');
-				$base=self::getOption($options, "b", "dbName",$config["database"]["dbName"]);
-				$config["database"]["dbName"]=self::requiredParam($base, 'dbName');
-				self::displayResult(function()use($config,$what){(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config,true,$what);});
+				if(self::checkDatabase('create-model', $config,$offset)){
+					self::displayResult(function()use($config,$what,$offset){(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config,true,$what,$offset);});
+				}
 				break;
 
 			case "controller":case "create-controller":
@@ -352,12 +370,12 @@ class Ubiquity {
 			case "crud":case "crud-controller":
 				$config=self::_init();
 				$what=self::requiredParam($what, 'controllerName');
-				CrudCmd::run($config, $options, $what, self::$activeDir);
+				CrudCmd::run($config, $options, $what);
 				break;
 
 			case "auth": case "auth-controller":
 				self::_init();
-				AuthCmd::run($config, $options, $what, self::$activeDir);
+				AuthCmd::run($config, $options, $what);
 				break;
 
 			case "clear-cache":
@@ -367,7 +385,7 @@ class Ubiquity {
 				break;
 			case "action": case "new-action":
 				$config=self::_init();
-				NewActionCmd::run($config, $options, $what, self::$activeDir);
+				NewActionCmd::run($config, $options, $what);
 				break;
 
 			case "init-cache":
@@ -466,12 +484,12 @@ class Ubiquity {
 
 			case "rest":case "rest-controller":
 				$config=self::_init();
-				RestCmd::run($config, $options, $what, self::$activeDir);
+				RestCmd::run($config, $options, $what);
 				break;
 
 			case "restapi":case "restapi-controller":
 				$config=self::_init();
-				RestApiCmd::run($config, $options, $what, self::$activeDir);
+				RestApiCmd::run($config, $options, $what);
 				break;
 
 			case "create-theme":case "create:theme":

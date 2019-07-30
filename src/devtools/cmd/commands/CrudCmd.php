@@ -6,10 +6,10 @@ use Ubiquity\devtools\core\ConsoleScaffoldController;
 use Ubiquity\devtools\cmd\ConsoleFormatter;
 
 class CrudCmd extends AbstractCmdModel{
-	public static function run(&$config,$options,$what,$activeDir){
+	public static function run(&$config,$options,$what){
 		$resource=self::answerModel($options, 'r', 'resource', 'crud-controller', $config);
 		if(class_exists($resource)){
-			$scaffold=new ConsoleScaffoldController($activeDir);
+			$scaffold=new ConsoleScaffoldController();
 			$crudDatas=self::getOption($options, 'd', 'datas',true);
 			$crudViewer=self::getOption($options, 'v', 'viewer',true);
 			$crudEvents=self::getOption($options, 'e', 'events',true);
