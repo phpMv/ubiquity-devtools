@@ -207,7 +207,7 @@ class Ubiquity {
 
 	private static function adminInstall($config=null){
 		if(!class_exists("\\Ubiquity\\controllers\\admin\\UbiquityMyAdminBaseController")){
-			self::$toolsConfig["composer"]["require-dev"]["phpmv/ubiquity-webtools"]="dev-multi-db";
+			self::$toolsConfig["composer"]["require-dev"]["phpmv/ubiquity-webtools"]="dev-master";
 		}
 		FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/Admin.php","app/controllers/Admin.php");
 		echo ConsoleFormatter::showInfo("Creating the Controller <b>Admin</b> at the location <b>app/controllers/Admin.php<:b>\n");
