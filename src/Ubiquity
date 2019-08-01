@@ -202,12 +202,12 @@ class Ubiquity {
 		self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["jquery"]);
 		self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["semantic"]["js"]);
 		self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["semantic"]["state"]);//Semantic-ui bug see
-		self::$toolsConfig["composer"]["require"]["phpmv/php-mv-ui"]="^2.2.14";
+		self::$toolsConfig["composer"]["require"]["phpmv/php-mv-ui"]="^2.2.17";
 	}
 
 	private static function adminInstall($config=null){
 		if(!class_exists("\\Ubiquity\\controllers\\admin\\UbiquityMyAdminBaseController")){
-			self::$toolsConfig["composer"]["require-dev"]["phpmv/ubiquity-webtools"]="dev-master";
+			self::$toolsConfig["composer"]["require-dev"]["phpmv/ubiquity-webtools"]="^2.3";
 		}
 		FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/Admin.php","app/controllers/Admin.php");
 		echo ConsoleFormatter::showInfo("Creating the Controller <b>Admin</b> at the location <b>app/controllers/Admin.php<:b>\n");
