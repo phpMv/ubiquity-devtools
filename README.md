@@ -495,13 +495,3 @@ Execute the command, make sure you are also in the project folder or one of its 
 ```bash
 Ubiquity all-models
 ```
-
-# Versions
-Ubiquity Framework, devtools & webtools compatibility
-
-| Framework | devtools | webtools | Ubiquity-dev |
-| --------- | -------- | -------- | ------------ |
-| 2.3.0     | 1.2.8    | 2.3.0    | 0.0.3        |
-| 2.2.0     | 1.2.7    | 2.2.0    |
-| 2.1.x     | 1.2.6  |
-| 2.0.x     | 1.1.6  |
