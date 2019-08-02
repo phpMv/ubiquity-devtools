@@ -30,7 +30,7 @@ Make use of the many generators for code, try `Ubiquity help` for more details
 ### Optimization for production
 
 Run:
-`composer dump-autoload --optimize --no-dev --classmap-authoritative`
+`composer install --optimize --no-dev --classmap-authoritative`
 
 ### Deploying
 

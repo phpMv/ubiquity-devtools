@@ -101,7 +101,7 @@ class Command {
 	}
 
 	public static function model(){
-		return new Command("model", "tableName","Generates a new model.",["create-model"],['d'=>Parameter::create('database', 'The database connection to use', 'default')],
+		return new Command("model", "tableName","Generates a new model.",["create-model"],['d'=>Parameter::create('database', 'The database connection to use', [],'default')],
 				['Ubiquity model User','Ubiquity model Author -d=projects']);
 	}
 
@@ -121,7 +121,7 @@ class Command {
 	}
 
 	public static function allModels(){
-		return new Command("all-models", "","Generates all models from database.",["create-all-models"],['d'=>Parameter::create('database', 'The database connection to use', ['default'])],
+		return new Command("all-models", "","Generates all models from database.",["create-all-models"],['d'=>Parameter::create('database', 'The database connection to use', [],'default')],
 				['Ubiquity all-models','Ubiquity all-models -d=projects']);
 	}
 
