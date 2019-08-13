@@ -169,21 +169,23 @@ class Ubiquity {
 				foreach ($vendorCopies as $theme=>$vCopies){
 					InstallThemeCmd::copyVendorFiles($theme, $vCopies, $dir);
 				}
-			}
-			$config=require_once 'app/config/config.php';
-			\Ubiquity\controllers\Startup::setConfig($config);
+				$config=require_once 'app/config/config.php';
+				\Ubiquity\controllers\Startup::setConfig($config);
 
-			if(self::isBooleanTrue(self::$configOptions["%all-models%"])){
+				if(self::isBooleanTrue(self::$configOptions["%all-models%"])){
+					ob_start();
+					(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config);
+					$res=ob_get_clean();
+					echo ConsoleFormatter::showMessage($res,'success','models generation');
+				}
 				ob_start();
-				(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config);
+				\Ubiquity\cache\CacheManager::checkCache($config);
 				$res=ob_get_clean();
-				echo ConsoleFormatter::showMessage($res,'success','models generation');
+				echo ConsoleFormatter::showMessage($res,'info','cache initialization');
+				echo ConsoleFormatter::showMessage("project <b>{$projectName}</b> successfully created.",'success','new-project');
+			} else {
+				echo ConsoleFormatter::showMessage("Project <b>{$projectName}</b> is partialy created.\nYou will need to run `composer install` in the root folder of the project.\nThen `Ubiquity init-cache` to initialize the cache folders.\n",'info');
 			}
-			ob_start();
-			\Ubiquity\cache\CacheManager::checkCache($config);
-			$res=ob_get_clean();
-			echo ConsoleFormatter::showMessage($res,'info','cache initialization');
-			echo ConsoleFormatter::showMessage("project <b>{$projectName}</b> successfully created.",'success','new-project');
 		}else{
 			echo ConsoleFormatter::showInfo("The <b>{$projectName}</b> folder already exists !\n");
 			$answer=Console::question("Would you like to continue ?",["y","n"]);
