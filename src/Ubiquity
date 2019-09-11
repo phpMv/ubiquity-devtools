@@ -419,6 +419,8 @@ class Ubiquity {
 			case "bootstrap":case "boot":
 				$config=self::_init();
 				$what=self::requiredParam($what, 'mode');
+				self::bootstrap($config, $what);
+				break;
 
 			case "admin":
 				$config=self::_init();
