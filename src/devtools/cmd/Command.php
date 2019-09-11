@@ -300,9 +300,18 @@ class Command {
 		]);
 	}
 
+	public static function bootstrap(){
+		return new Command("bootstrap", "command","Executes a command created in app/config/_bootstrap.php file for bootstraping the app.",["boot"],[],
+			[
+				'Bootstrap for dev mode'=>'Ubiquity bootstrap dev',
+				'Bootstrap for prod mode'=>'Ubiquity bootstrap prod'
+			]);
+	}
+
 	public static function getCommands(){
 		return [self::project(),
 				self::serve(),
+				self::bootstrap(),
 				self::help(),
 				self::version(),
 				self::controller(),

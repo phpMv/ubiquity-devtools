@@ -29,7 +29,7 @@ use Ubiquity\orm\DAO;
 
 class Ubiquity {
 	use CmdTrait;
-	private static $version="1.2.8";
+	private static $version="1.2.8+";
 	private static $appName="Ubiquity devtools";
 	private static $configOptions;
 	private static $toolsConfig;
@@ -44,11 +44,24 @@ class Ubiquity {
 			'swoole'=>['files'=>['/devtools/server/_swoole.php'=>'.ubiquity/_swoole.php'],'config'=>'swoole-config.php','checkClass'=>'\\Ubiquity\\servers\\swoole\\SwooleServer','require'=>'phpmv/ubiquity-swoole']
 	];
 
+	protected static function addAdminDependencies(){
+		self::addComposerDependencies(self::$toolsConfig['composer']['require-dev'],' --dev');
+		self::addComposerDependencies(self::$toolsConfig['composer']['require']);
+	}
+
+	protected static function addComposerDependencies($parts,$options=''){
+		$result=0;
+		foreach ($parts as $composer=>$version){
+			system("composer require {$composer}:{$version}{$options}",$result);
+		}
+	}
+
 	public static function createComposerFile(){
-		$composer=json_encode(self::$toolsConfig["composer"]);
+		$composer=\json_encode(self::$toolsConfig["composer"],\JSON_PRETTY_PRINT);
 		echo ConsoleFormatter::showInfo("Composer file creation...\n");
 		FileUtils::writeFile("composer.json", $composer);
 	}
+
 
 	public static function replaceAll($array,$subject){
 		array_walk($array, function(&$item){if(is_array($item)) $item=implode("\n", $item);});
@@ -77,7 +90,6 @@ class Ubiquity {
 				["h","themes",""],
 				["i","siteUrl","http://127.0.0.1/".$projectName."/"],
 				["e","rewriteBase",$projectName],
-				["c","use-cdn",false],
 		];
 		if(($dir=basename(getcwd()))==$projectName || $projectName==null){
 			$answer=Console::question("Do you want to create the new project in this folder ($dir) ?",["y","n"]);
@@ -123,6 +135,7 @@ class Ubiquity {
 			}
 
 			FileUtils::xcopy(self::$activeDir."/devtools/project-files/templates/services.tpl", "app/config/services.php");
+			FileUtils::xcopy(self::$activeDir."/devtools/project-files/templates/bootstrap.tpl", "app/config/bootstrap.php");
 			FileUtils::xcopy(self::$activeDir."/devtools/project-files/index.php", "index.php");
 
 			//-------------Add themes----------------
@@ -403,9 +416,14 @@ class Ubiquity {
 				self::selfUpdate();
 				break;
 
+			case "bootstrap":case "boot":
+				$config=self::_init();
+				$what=self::requiredParam($what, 'mode');
+
 			case "admin":
 				$config=self::_init();
 				self::adminInstall($config);
+				self::addAdminDependencies();
 				break;
 
 			case "help":
@@ -600,6 +618,27 @@ class Ubiquity {
 		foreach ($commands as $command){
 			echo ConsoleFormatter::formatHtml($command->longString());
 			echo "\n";
+		}
+	}
+
+	private static function bootstrap(&$config,$mode){
+		$file=ROOT.DS.'app/config/bootstrap.php';
+		if(\file_exists($file)){
+			include $file;
+			$function_name='_'.$mode;
+			if(\function_exists($function_name)){
+				try{
+					echo ConsoleFormatter::showInfo("Try to execute {$function_name} function...");
+					\call_user_func($function_name);
+					echo ConsoleFormatter::showMessage("Bootstrap for {$mode} is ok!",'success');
+				}catch (\Exception $e){
+					echo ConsoleFormatter::showMessage($e->getMessage(),'error','Exception '.$e->getCode());
+				}
+			}else{
+				echo ConsoleFormatter::showMessage("Function {$function_name} does not exists!",'error','Bootstrap');
+			}
+		}else{
+			echo ConsoleFormatter::showMessage("File {$file} does not exists!",'error','Bootstrap');
 		}
 	}
 
