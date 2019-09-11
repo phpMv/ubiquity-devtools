@@ -624,7 +624,7 @@ class Ubiquity {
 	}
 
 	private static function bootstrap(&$config,$mode){
-		$file=ROOT.DS.'app/config/bootstrap.php';
+		$file=ROOT.DS.'config/bootstrap.php';
 		if(\file_exists($file)){
 			include $file;
 			$function_name='_'.$mode;
