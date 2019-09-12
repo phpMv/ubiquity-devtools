@@ -4,11 +4,22 @@ use Ubiquity\devtools\cmd\ConsoleFormatter as Console;
 //Comments
 
 //For development mode initialization
-function _dev(){
+function _dev($devtools,$config){
 		echo Console::showInfo("Development mode");
 }
 
 //For Production mode initialization
-function _prod(){
+function _prod($devtools,$config){
 	echo Console::showInfo("Production mode");
+}
+
+//Executed before all modes
+function bs_before($devtools,$config){
+
+}
+
+//Executed after all modes
+function bs_after($devtools,$config){
+	//Initialize all caches
+	$devtools->run('init-cache');
 }

@@ -338,6 +338,11 @@ class Ubiquity {
 		return true;
 	}
 
+	public static function run($command,$options=[]){
+		$_SERVER['argv']=$GLOBALS['argv']=$options;
+		self::init($command);
+	}
+
 	public static function init($command,$current=2){
 		global $argv;
 		set_exception_handler(array(Ubiquity::class,"error"));
@@ -629,9 +634,16 @@ class Ubiquity {
 			include $file;
 			$function_name='_'.$mode;
 			if(\function_exists($function_name)){
+				$self=new self();
 				try{
+					if(\function_exists('bs_before')){
+						bs_before($self,$config);
+					}
 					echo ConsoleFormatter::showInfo("Try to execute {$function_name} function...");
-					\call_user_func($function_name);
+					\call_user_func($function_name,$self,$config);
+					if(\function_exists('bs_after')){
+						bs_after($self,$config);
+					}
 					echo ConsoleFormatter::showMessage("Bootstrap for {$mode} is ok!",'success');
 				}catch (\Exception $e){
 					echo ConsoleFormatter::showMessage($e->getMessage(),'error','Exception '.$e->getCode());
@@ -665,10 +677,16 @@ class Ubiquity {
 			echo ConsoleFormatter::showMessage("Failed to locate project root folder\nAn Ubiquity project must contain the <b>".self::$checkProjectDir."</b> folder.",'error');
 			die();
 		}
-		define('ROOT', realpath('./app').DS);
-		$config=require_once 'app/config/config.php';
+		if (!defined('ROOT')) {
+			define('ROOT', realpath('./app').DS);
+		}
 		require_once ROOT.'./../vendor/autoload.php';
-		\Ubiquity\controllers\Startup::setConfig($config);
+		if(isset(\Ubiquity\controllers\Startup::$config)){
+			$config=\Ubiquity\controllers\Startup::$config;
+		}else{
+			$config=require_once 'app/config/config.php';
+			\Ubiquity\controllers\Startup::setConfig($config);
+		}
 		return $config;
 	}
 
