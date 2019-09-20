@@ -308,6 +308,15 @@ class Command {
 			]);
 	}
 
+	public static function composer(){
+		return new Command("composer", "command","Executes a composer command.",["compo"],[],
+			[
+				'composer update'=>'Ubiquity composer update',
+				'composer update with no-dev'=>'Ubiquity composer nodev',
+				'composer optimization for production'=>'Ubiquity composer optimize'
+			]);
+	}
+
 	public static function getCommands(){
 		return [self::project(),
 				self::serve(),
@@ -321,6 +330,7 @@ class Command {
 				self::clearCache(),
 				self::initCache(),
 				self::selfUpdate(),
+				self::composer(),
 				self::admin(),
 				self::crudController(),
 				self::authController(),
