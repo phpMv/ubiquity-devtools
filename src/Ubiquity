@@ -42,7 +42,7 @@ class Ubiquity {
 		'php'=>['files'=>['/devtools/server/.htrouter.php'=>'.ubiquity/.htrouter.php','/devtools/server/_index.php'=>'.ubiquity/_index.php'],'config'=>'config.php'],
 		'react'=>['files'=>['/devtools/server/_react.php'=>'.ubiquity/_react.php'],'config'=>'react-config.php','checkClass'=>'\\Ubiquity\\servers\\react\\ReactServer','require'=>'phpmv/ubiquity-reactphp'],
 		'swoole'=>['files'=>['/devtools/server/_swoole.php'=>'.ubiquity/_swoole.php'],'config'=>'swoole-config.php','checkClass'=>'\\Ubiquity\\servers\\swoole\\SwooleServer','require'=>'phpmv/ubiquity-swoole'],
-		'workerman'=>['files'=>['/devtools/server/_workerman.php'=>'.ubiquity/_workerman.php'],'config'=>'workerman-config.php','checkClass'=>'\\Ubiquity\\servers\\swoole\\WorkermanServer','require'=>'phpmv/ubiquity-workerman']
+		'workerman'=>['files'=>['/devtools/server/_workerman.php'=>'.ubiquity/_workerman.php'],'config'=>'workerman-config.php','checkClass'=>'\\Ubiquity\\servers\\workerman\\WorkermanServer','require'=>'phpmv/ubiquity-workerman']
 	];
 
 	protected static function addAdminDependencies(){
