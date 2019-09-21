@@ -39,10 +39,10 @@ class Ubiquity {
 	private static $checkProjectDir=".ubiquity";
 	private static $toolsPath="devtools/";
 	private static $servers=[
-		'php'=>['files'=>['/devtools/server/.htrouter.php'=>'.ubiquity/.htrouter.php','/devtools/server/_index.php'=>'.ubiquity/_index.php'],'config'=>'config.php'],
-		'react'=>['files'=>['/devtools/server/_react.php'=>'.ubiquity/_react.php'],'config'=>'react-config.php','checkClass'=>'\\Ubiquity\\servers\\react\\ReactServer','require'=>'phpmv/ubiquity-reactphp'],
-		'swoole'=>['files'=>['/devtools/server/_swoole.php'=>'.ubiquity/_swoole.php'],'config'=>'swoole-config.php','checkClass'=>'\\Ubiquity\\servers\\swoole\\SwooleServer','require'=>'phpmv/ubiquity-swoole'],
-		'workerman'=>['files'=>['/devtools/server/_workerman.php'=>'.ubiquity/_workerman.php'],'config'=>'workerman-config.php','checkClass'=>'\\Ubiquity\\servers\\workerman\\WorkermanServer','require'=>'phpmv/ubiquity-workerman']
+		'php'=>['files'=>['/devtools/server/.htrouter.php'=>'.ubiquity/.htrouter.php','/devtools/server/_index.php'=>'.ubiquity/_index.php'],'config'=>'config.php','start'=>'.htrouter.php'],
+		'react'=>['files'=>['/devtools/server/_react.php'=>'.ubiquity/_react.php'],'config'=>'react-config.php','checkClass'=>'\\Ubiquity\\servers\\react\\ReactServer','require'=>'phpmv/ubiquity-reactphp','start'=>'_react.php'],
+		'swoole'=>['files'=>['/devtools/server/_swoole.php'=>'.ubiquity/_swoole.php'],'config'=>'swoole-config.php','checkClass'=>'\\Ubiquity\\servers\\swoole\\SwooleServer','require'=>'phpmv/ubiquity-swoole','start'=>'_swoole.php'],
+		'workerman'=>['files'=>['/devtools/server/_workerman.php'=>'.ubiquity/_workerman.php'],'config'=>'workerman-config.php','checkClass'=>'\\Ubiquity\\servers\\workerman\\WorkermanServer','require'=>'phpmv/ubiquity-workerman','start'=>'_workerman.php']
 	];
 
 	protected static function addAdminDependencies(){
@@ -460,7 +460,8 @@ class Ubiquity {
 				}
 				break;
 			case "serve:stop":case "stop:serve":
-				self::stopServer();
+				$what=self::requiredParam($what, 'type');
+				self::stopServer($what);
 				break;
 			case "version":
 				$v='PHP '. \phpversion()."\n";
@@ -589,14 +590,15 @@ class Ubiquity {
 			system('php .ubiquity'.\DS.'_react.php '.$what.' &');
 			break;
 		case 'swoole':
-			echo ConsoleFormatter::showMessage($msg."Use <b>Ubiquity serve:stop</b> to stop it!\n");
-			system('php .ubiquity'.\DS.'_swoole.php '.$what);
+		case 'workerman':
+			echo ConsoleFormatter::showMessage($msg."Use <b>Ubiquity serve:stop</b> {$type} to stop it!\n");
+			system('php .ubiquity'.\DS.$serverInfos['start'].' '.$what);
 			break;
 		}
 	}
 
-	private static function stopServer(){
-		$serverInfos=self::$servers['swoole'];
+	private static function stopServer($type){
+		$serverInfos=self::$servers[$type];
 		self::_init(true);
 		$checkClass=$serverInfos['checkClass'];
 		if(class_exists($checkClass,true)){
@@ -608,15 +610,15 @@ class Ubiquity {
 			$server->setOptions($config);
 			try{
 				if($server->stop()){
-					echo ConsoleFormatter::showMessage('Swoole server stopped.');
+					echo ConsoleFormatter::showMessage($type.' server stopped.');
 				}else{
-					echo ConsoleFormatter::showMessage('Swoole server is not stopped!','warning','Server stop');
+					echo ConsoleFormatter::showMessage($type.' server is not stopped!','warning','Server stop');
 				}
 			}catch(\Exception $e){
 				echo ConsoleFormatter::showMessage($e->getMessage(),'error','Server stop');
 			}
 		}else{
-			echo ConsoleFormatter::showMessage('Swoole server is not installed!','error','Server stop');
+			echo ConsoleFormatter::showMessage($type.' server is not installed!','error','Server stop');
 		}
 	}
 
