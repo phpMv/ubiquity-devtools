@@ -35,7 +35,7 @@ class ConfigSetCmd extends AbstractCmd{
 		if($modified){
 			$content="<?php\nreturn ".UArray::asPhpArray($config,"array",1,true).";";
 			if(CodeUtils::isValidCode($content)){
-				if(Startup::saveConfig($content)){
+				if(Startup::saveConfig($config)){
 					echo ConsoleFormatter::showMessage("The configuration file has been successfully modified!", 'success','config:set');
 				}else{
 					echo ConsoleFormatter::showMessage("Impossible to write the configuration file.", 'error','config:set');
