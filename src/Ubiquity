@@ -553,7 +553,7 @@ class Ubiquity {
 		self::_init();
 		if(isset($serverInfos['checkClass'])){
 			$checkClass=$serverInfos['checkClass'];
-			if(!class_exists($checkClass,true)){
+			if(!\class_exists($checkClass,true)){
 				$require=$serverInfos['require'];
 				echo ConsoleFormatter::showInfo('composer require '.$require);
 				system('composer require '.$require);
@@ -562,12 +562,12 @@ class Ubiquity {
 		$msg="Starting ".$type." server at <b>".$what."</b>...\n";
 
 		foreach ($serverInfos['files'] as $fileSrc=>$fileDest){
-			if(!file_exists($fileDest)){
+			if(!\file_exists($fileDest)){
 				FileUtils::xcopy(self::$activeDir.$fileSrc,$fileDest);
 			}
 		}
 
-		if(file_exists(".ubiquity/".$serverInfos['config'])){
+		if(\file_exists(".ubiquity/".$serverInfos['config'])){
 			$config=include ".ubiquity/".$serverInfos['config'];
 			$updated=$config['host']!=$host || $config['port']!=$port;
 		}
@@ -592,7 +592,7 @@ class Ubiquity {
 		case 'swoole':
 		case 'workerman':
 			echo ConsoleFormatter::showMessage($msg."Use <b>Ubiquity serve:stop</b> {$type} to stop it!\n");
-			system('php .ubiquity'.\DS.$serverInfos['start'].' '.$what);
+			system('php .ubiquity'.\DS.$serverInfos['start']);
 			break;
 		}
 	}
