@@ -64,7 +64,7 @@ class Ubiquity {
 	}
 
 	public static function composer($command){
-		$cmd='php composer.phar ';
+		$cmd='composer ';
 		switch ($command){
 			case 'update': case 'upt':
 				$cmd.='update';
@@ -79,7 +79,7 @@ class Ubiquity {
 				$cmd.='install';
 				break;
 		}
-		system($cmd);
+		\system($cmd);
 	}
 
 
