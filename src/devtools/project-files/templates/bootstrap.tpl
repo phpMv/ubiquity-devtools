@@ -11,6 +11,7 @@ function _dev($devtools,$config){
 //For Production mode initialization
 function _prod($devtools,$config){
 	echo Console::showInfo("Production mode");
+	$devtools->run('composer','optimize');
 }
 
 //Executed before all modes
