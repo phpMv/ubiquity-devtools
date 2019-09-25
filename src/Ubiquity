@@ -29,7 +29,7 @@ use Ubiquity\orm\DAO;
 
 class Ubiquity {
 	use CmdTrait;
-	private static $version="1.2.8+";
+	private static $version="1.2.9";
 	private static $appName="Ubiquity devtools";
 	private static $configOptions;
 	private static $toolsConfig;
@@ -61,6 +61,25 @@ class Ubiquity {
 		$composer=\json_encode(self::$toolsConfig["composer"],\JSON_PRETTY_PRINT);
 		echo ConsoleFormatter::showInfo("Composer file creation...\n");
 		FileUtils::writeFile("composer.json", $composer);
+	}
+
+	public static function composer($command){
+		$cmd='php composer.phar ';
+		switch ($command){
+			case 'update': case 'upt':
+				$cmd.='update';
+				break;
+			case 'optimize':case 'opt':
+				$cmd.=' install --optimize-autoloader --classmap-authoritative --no-dev';
+				break;
+			case 'nodev':case 'no-dev':
+				$cmd.=' update --no-dev';
+				break;
+			default:
+				$cmd.='install';
+				break;
+		}
+		system($cmd);
 	}
 
 
@@ -339,7 +358,7 @@ class Ubiquity {
 		return true;
 	}
 
-	public static function run($command,$options=[]){
+	public static function run($command,...$options){
 		$_SERVER['argv']=$GLOBALS['argv']=$options;
 		self::init($command);
 	}
@@ -422,16 +441,22 @@ class Ubiquity {
 				self::selfUpdate();
 				break;
 
-			case "bootstrap":case "boot":
+			case 'bootstrap':case 'boot':
 				$config=self::_init();
 				$what=self::requiredParam($what, 'mode');
 				self::bootstrap($config, $what);
 				break;
 
-			case "admin":
+			case 'admin':
 				$config=self::_init();
 				self::adminInstall($config);
 				self::addAdminDependencies();
+				break;
+
+			case 'composer': case 'compo':
+				$config=self::_init();
+				$what=self::requiredParam($what, 'command');
+				self::composer($what);
 				break;
 
 			case "help":
