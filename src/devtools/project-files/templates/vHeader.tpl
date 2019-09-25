@@ -4,6 +4,7 @@
 {% block header %}
 	<base href="{{config["siteUrl"]}}">
 	<meta charset="UTF-8">
+	<link rel="icon" href="data:;base64,iVBORw0KGgo=">
 	<title>%projectName%</title>
 {% endblock %}
 {% block css %}
