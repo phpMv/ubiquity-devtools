@@ -227,6 +227,8 @@ class Ubiquity {
 				} else {
 					echo ConsoleFormatter::showMessage("Project <b>{$projectName}</b> is partialy created.\nYou will need to run `composer install` in the root folder of the project.\nThen `Ubiquity init-cache` to initialize the cache folders.\n",'info');
 				}
+			}else{
+				echo ConsoleFormatter::showMessage("project <b>{$projectName}</b> successfully created.",'success','new-project from composer');
 			}
 		}else{
 			echo ConsoleFormatter::showInfo("The <b>{$projectName}</b> folder already exists !\n");
@@ -392,6 +394,7 @@ class Ubiquity {
 				break;
 			case "composer-create-project":
 				self::composerCreateProject();
+				break;
 			case "all-models":case "create-all-models":
 				$config=self::_init();
 				$offset=self::getOption($options, "d", "database",'default');
