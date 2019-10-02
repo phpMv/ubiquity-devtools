@@ -125,7 +125,7 @@ class Ubiquity {
 					}
 				}
 			}
-		}else{
+		}elseif(!$force){
 			chdir("..");
 			self::create($projectName,$options,true,$composerCreateProject);
 			return;
