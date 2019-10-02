@@ -112,7 +112,7 @@ class Ubiquity {
 				["i","siteUrl","http://127.0.0.1/".$projectName."/"],
 				["e","rewriteBase",$projectName],
 		];
-		if(($dir=basename(getcwd()))==$projectName || $projectName==null){
+		if(!$composerCreateProject && (($dir=basename(getcwd()))==$projectName || $projectName==null)){
 			$answer=Console::question("Do you want to create the new project in this folder ($dir) ?",["y","n"]);
 			if(Console::isYes($answer)){
 				if(chdir("..")){
