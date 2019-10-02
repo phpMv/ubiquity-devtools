@@ -112,17 +112,23 @@ class Ubiquity {
 				["i","siteUrl","http://127.0.0.1/".$projectName."/"],
 				["e","rewriteBase",$projectName],
 		];
-		if(!$composerCreateProject && (($dir=basename(getcwd()))==$projectName || $projectName==null)){
-			$answer=Console::question("Do you want to create the new project in this folder ($dir) ?",["y","n"]);
-			if(Console::isYes($answer)){
-				if(chdir("..")){
-					self::create($projectName,$options,true,$composerCreateProject);
-					return;
-				}else{
-					ConsoleFormatter::showMessage( "Unable to return to parent folder!\n",'error');
-					return;
+		if(!$composerCreateProject){
+			if(($dir=basename(getcwd()))==$projectName || $projectName==null){
+				$answer=Console::question("Do you want to create the new project in this folder ($dir) ?",["y","n"]);
+				if(Console::isYes($answer)){
+					if(chdir("..")){
+						self::create($projectName,$options,true,$composerCreateProject);
+						return;
+					}else{
+						ConsoleFormatter::showMessage( "Unable to return to parent folder!\n",'error');
+						return;
+					}
 				}
 			}
+		}else{
+			chdir("..");
+			self::create($projectName,$options,true,$composerCreateProject);
+			return;
 		}
 		if(!is_dir($projectName) || $force){
 			if(!$force)
