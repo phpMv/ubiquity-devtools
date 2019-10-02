@@ -366,9 +366,7 @@ class Ubiquity {
 		self::init($command);
 	}
 
-	public static function composerCreateProject(InstallerEvent $event){
-		$vendorDir = $event->getComposer()->getConfig()->get('vendor-dir');
-		require $vendorDir . '/autoload.php';
+	public static function composerCreateProject(){
 		self::create(\basename(getcwd()), ['a'=>true],false,true);
 	}
 
@@ -386,6 +384,8 @@ class Ubiquity {
 			case "project":case "create-project":case "new":
 				self::create($what,$options);
 				break;
+			case "composer-create-project":
+				self::composerCreateProject();
 			case "all-models":case "create-all-models":
 				$config=self::_init();
 				$offset=self::getOption($options, "d", "database",'default');
