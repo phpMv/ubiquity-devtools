@@ -51,9 +51,9 @@ class ConsoleFormatter {
 			if (\function_exists('sapi_windows_vt100_support') && @sapi_windows_vt100_support(STDOUT)) {
 				return true;
 			} elseif ('10.0.10586' === PHP_WINDOWS_VERSION_MAJOR.'.'.PHP_WINDOWS_VERSION_MINOR.'.'.PHP_WINDOWS_VERSION_BUILD
-				|| false !== getenv('ANSICON')
-				|| 'ON' === getenv('ConEmuANSI')
-				|| 'xterm' === getenv('TERM')) {
+				|| false !== \getenv('ANSICON')
+				|| 'ON' === \getenv('ConEmuANSI')
+				|| 'xterm' === \getenv('TERM')) {
 				return true;
 			}
 			return false;

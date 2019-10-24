@@ -359,6 +359,7 @@ class Ubiquity {
 	}
 
 	public static function run($command,...$options){
+		$options=array_merge([__FILE__,$command],$options);
 		$_SERVER['argv']=$GLOBALS['argv']=$options;
 		self::init($command);
 	}
