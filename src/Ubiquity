@@ -30,7 +30,7 @@ use Composer\Installer\InstallerEvent;
 
 class Ubiquity {
 	use CmdTrait;
-	private static $version="1.2.9";
+	private static $version="1.2.10";
 	private static $appName="Ubiquity devtools";
 	private static $configOptions;
 	private static $toolsConfig;
@@ -370,18 +370,19 @@ class Ubiquity {
 	}
 
 	public static function run($command,...$options){
+		$options=array_merge([__FILE__,$command],$options);
 		$_SERVER['argv']=$GLOBALS['argv']=$options;
 		self::init($command);
 	}
 
 	public static function composerCreateProject(){
+		\putenv('ANSICON=1');
 		self::create(\basename(getcwd()), ['a'=>true],false,true);
 	}
 
 	public static function init($command,$current=2){
 		global $argv;
 		set_exception_handler(array(Ubiquity::class,"error"));
-		//ob_start ( array (__class__,'error' ) );
 
 		$what=$argv[$current]??null;
 		if($what!=null && strpos($what, '=')!==false){
