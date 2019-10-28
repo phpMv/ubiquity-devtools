@@ -26,6 +26,7 @@ use Ubiquity\devtools\cmd\commands\RestApiCmd;
 use Ubiquity\devtools\cmd\commands\InstallThemeCmd;
 use Ubiquity\devtools\cmd\commands\NewThemeCmd;
 use Ubiquity\orm\DAO;
+use Composer\Installer\InstallerEvent;
 
 class Ubiquity {
 	use CmdTrait;
@@ -95,7 +96,7 @@ class Ubiquity {
 	}
 
 
-	public static function create($projectName,$options,$force=false){
+	public static function create($projectName,$options,$force=false,$composerCreateProject=false){
 		self::$activeDir=dirname(__FILE__);
 		self::$toolsConfig=include(self::$activeDir."/devtools/core/toolsConfig.php");
 		$arguments=[
@@ -111,17 +112,23 @@ class Ubiquity {
 				["i","siteUrl","http://127.0.0.1/".$projectName."/"],
 				["e","rewriteBase",$projectName],
 		];
-		if(($dir=basename(getcwd()))==$projectName || $projectName==null){
-			$answer=Console::question("Do you want to create the new project in this folder ($dir) ?",["y","n"]);
-			if(Console::isYes($answer)){
-				if(chdir("..")){
-					self::create($projectName,$options,true);
-					return;
-				}else{
-					ConsoleFormatter::showMessage( "Unable to return to parent folder!\n",'error');
-					return;
+		if(!$composerCreateProject){
+			if(($dir=basename(getcwd()))==$projectName || $projectName==null){
+				$answer=Console::question("Do you want to create the new project in this folder ($dir) ?",["y","n"]);
+				if(Console::isYes($answer)){
+					if(chdir("..")){
+						self::create($projectName,$options,true,$composerCreateProject);
+						return;
+					}else{
+						ConsoleFormatter::showMessage( "Unable to return to parent folder!\n",'error');
+						return;
+					}
 				}
 			}
+		}elseif(!$force){
+			chdir("..");
+			self::create($projectName,$options,true,$composerCreateProject);
+			return;
 		}
 		if(!is_dir($projectName) || $force){
 			if(!$force)
@@ -193,31 +200,35 @@ class Ubiquity {
 			self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/config.tpl", "app/config/config.php", self::$configOptions);
 			self::openReplaceWrite(self::$activeDir."/devtools/project-files/README.md", getcwd()."/README.md", self::$configOptions);
 
-			self::createComposerFile();
-			$answer=Console::question("Do you want to run composer install ?",["y","n"]);
-			if(Console::isYes($answer)){
-				system("composer install");
-				require_once ROOT.'./../vendor/autoload.php';
-				$dir=getcwd();
-				foreach ($vendorCopies as $theme=>$vCopies){
-					InstallThemeCmd::copyVendorFiles($theme, $vCopies, $dir);
-				}
-				$config=require_once 'app/config/config.php';
-				\Ubiquity\controllers\Startup::setConfig($config);
+			if(!$composerCreateProject){
+				self::createComposerFile();
+				$answer=Console::question("Do you want to run composer install ?",["y","n"]);
+				if(Console::isYes($answer)){
+					system("composer install");
+					require_once ROOT.'./../vendor/autoload.php';
+					$dir=getcwd();
+					foreach ($vendorCopies as $theme=>$vCopies){
+						InstallThemeCmd::copyVendorFiles($theme, $vCopies, $dir);
+					}
+					$config=require_once 'app/config/config.php';
+					\Ubiquity\controllers\Startup::setConfig($config);
 
-				if(self::isBooleanTrue(self::$configOptions["%all-models%"])){
+					if(self::isBooleanTrue(self::$configOptions["%all-models%"])){
+						ob_start();
+						(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config);
+						$res=ob_get_clean();
+						echo ConsoleFormatter::showMessage($res,'success','models generation');
+					}
 					ob_start();
-					(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config);
+					\Ubiquity\cache\CacheManager::checkCache($config);
 					$res=ob_get_clean();
-					echo ConsoleFormatter::showMessage($res,'success','models generation');
+					echo ConsoleFormatter::showMessage($res,'info','cache initialization');
+					echo ConsoleFormatter::showMessage("project <b>{$projectName}</b> successfully created.",'success','new-project');
+				} else {
+					echo ConsoleFormatter::showMessage("Project <b>{$projectName}</b> is partialy created.\nYou will need to run `composer install` in the root folder of the project.\nThen `Ubiquity init-cache` to initialize the cache folders.\n",'info');
 				}
-				ob_start();
-				\Ubiquity\cache\CacheManager::checkCache($config);
-				$res=ob_get_clean();
-				echo ConsoleFormatter::showMessage($res,'info','cache initialization');
-				echo ConsoleFormatter::showMessage("project <b>{$projectName}</b> successfully created.",'success','new-project');
-			} else {
-				echo ConsoleFormatter::showMessage("Project <b>{$projectName}</b> is partialy created.\nYou will need to run `composer install` in the root folder of the project.\nThen `Ubiquity init-cache` to initialize the cache folders.\n",'info');
+			}else{
+				echo ConsoleFormatter::showMessage("project <b>{$projectName}</b> successfully created.",'success','new-project from composer');
 			}
 		}else{
 			echo ConsoleFormatter::showInfo("The <b>{$projectName}</b> folder already exists !\n");
@@ -380,8 +391,11 @@ class Ubiquity {
 		$options=self::parseArguments();
 		switch ($command) {
 			case "project":case "create-project":case "new":
-			self::create($what,$options);
-			break;
+				self::create($what,$options);
+				break;
+			case "composer-create-project":
+				self::composerCreateProject();
+				break;
 			case "all-models":case "create-all-models":
 				$config=self::_init();
 				$offset=self::getOption($options, "d", "database",'default');
