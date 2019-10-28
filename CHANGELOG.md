@@ -5,6 +5,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 - Nothing
+## [1.2.10] - 2019-10-28
+#### Added
+- Composer create-project
+```
+composer create-project phpmv/ubiquity-project {projectName}
+```
+## [1.2.9] - 2019-09-25
+### Fixed
+- [Cannot set database](https://github.com/phpMv/ubiquity/issues/74)
+- https://github.com/phpMv/ubiquity/issues/72
+- Fix https://github.com/phpMv/ubiquity-devtools/commit/c06b6704126a4bf56b2a6a52c60aa1d40edcfcdb
+### Added
+#### Commands
+- `composer` [cmd]
+ 
+Samples:
+```
+Ubiquity composer update
+Ubiquity composer nodev
+Ubiquity composer optimize
+```
+- `bootstrap` [cmd]
+
+Execute the `cmd` method from the `.ubiquity/_bootstrap.php` file to prepare an environment.
+
+Sample:
+```
+Ubiquity bootstrap prod
+Ubiquity bootstrap dev
+```
 ## [1.2.8] - 2019-08-01
 ### Changed
 - `model` (`create-model`) command
