@@ -26,7 +26,6 @@ use Ubiquity\devtools\cmd\commands\RestApiCmd;
 use Ubiquity\devtools\cmd\commands\InstallThemeCmd;
 use Ubiquity\devtools\cmd\commands\NewThemeCmd;
 use Ubiquity\orm\DAO;
-use Composer\Installer\InstallerEvent;
 
 class Ubiquity {
 	use CmdTrait;
