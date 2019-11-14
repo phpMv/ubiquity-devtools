@@ -29,15 +29,15 @@ use Ubiquity\orm\DAO;
 
 class Ubiquity {
 	use CmdTrait;
-	private static $version="1.2.10";
-	private static $appName="Ubiquity devtools";
+	private static $version='1.2.10+';
+	private static $appName='Ubiquity devtools';
 	private static $configOptions;
 	private static $toolsConfig;
 	private static $indexContent="\n\t\$this->loadView(\"@framework/index/index.html\");\n";
 	private static $activeDir;
 	private static $activeProjectDir;
-	private static $checkProjectDir=".ubiquity";
-	private static $toolsPath="devtools/";
+	private static $checkProjectDir='.ubiquity';
+	private static $toolsPath='devtools/';
 	private static $servers=[
 		'php'=>['files'=>['/devtools/server/.htrouter.php'=>'.ubiquity/.htrouter.php','/devtools/server/_index.php'=>'.ubiquity/_index.php'],'config'=>'config.php','start'=>'.htrouter.php'],
 		'react'=>['files'=>['/devtools/server/_react.php'=>'.ubiquity/_react.php'],'config'=>'react-config.php','checkClass'=>'\\Ubiquity\\servers\\react\\ReactServer','require'=>'phpmv/ubiquity-reactphp','start'=>'_react.php'],
@@ -58,7 +58,7 @@ class Ubiquity {
 	}
 
 	public static function createComposerFile(){
-		$composer=\json_encode(self::$toolsConfig["composer"],\JSON_PRETTY_PRINT);
+		$composer=\json_encode(self::$toolsConfig['composer'],\JSON_PRETTY_PRINT);
 		echo ConsoleFormatter::showInfo("Composer file creation...\n");
 		FileUtils::writeFile("composer.json", $composer);
 	}
@@ -381,7 +381,7 @@ class Ubiquity {
 
 	public static function init($command,$current=2){
 		global $argv;
-		set_exception_handler(array(Ubiquity::class,"error"));
+		\set_exception_handler(array(Ubiquity::class,"error"));
 
 		$what=$argv[$current]??null;
 		if($what!=null && strpos($what, '=')!==false){

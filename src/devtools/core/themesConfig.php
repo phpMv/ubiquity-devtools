@@ -11,10 +11,10 @@ return [
 				'composer'=>['zurb/foundation'=>'^6.5']
 		],
 		'semantic'=>[
-				'composer'=>['semantic/ui'=>'^2.4','frameworks/jquery'=> '~2.1'],
+				'composer'=>['fomantic/ui'=>'^2.7','frameworks/jquery'=> '~2.1'],
 				'vendor-copy'=>[
-						'/vendor/semantic/ui/dist/semantic.min.css'=>'/public/assets/%theme%/css/semantic.min.css',
-						'/vendor/semantic/ui/dist/semantic.min.js'=>'/public/assets/%theme%/js/semantic.min.js',
+						'/vendor/fomantic/ui/dist/semantic.min.css'=>'/public/assets/%theme%/css/semantic.min.css',
+						'/vendor/fomantic/ui/dist/semantic.min.js'=>'/public/assets/%theme%/js/semantic.min.js',
 						'/vendor/frameworks/jquery/jquery.min.js'=>'/public/assets/%theme%/js/jquery.min.js'
 				]
 		]
