@@ -4,7 +4,7 @@ return [ "cdn" => [ "jquery" => "https://cdnjs.cloudflare.com/ajax/libs/jquery/3
 		"semantic" => [ "css" => "https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.7.8/semantic.min.css","js" => "https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.7.8/semantic.min.js" ],
 		"diff2html"=>["css"=>"https://cdnjs.cloudflare.com/ajax/libs/diff2html/2.12.1/diff2html.min.css"]],
 		"composer" => [ "require" =>
-				[ "php"=>"^7.1","twig/twig" => "^2.0","phpmv/ubiquity" => "^2.3" ],
+				[ "php"=>"^7.2","twig/twig" => "^2.0","phpmv/ubiquity" => "^2.3" ],
 			"require-dev"=>["monolog/monolog" => "^1.24","mindplay/annotations" => "^1.3","phpmv/ubiquity-dev"=>"^0.0"],
 				"autoload"=>["psr-4"=>[""=>"app/"]
 				]
