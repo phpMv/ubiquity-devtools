@@ -29,7 +29,7 @@ use Ubiquity\orm\DAO;
 
 class Ubiquity {
 	use CmdTrait;
-	private static $version='1.2.11';
+	private static $version='1.2.11+';
 	private static $appName='Ubiquity devtools';
 	private static $configOptions;
 	private static $toolsConfig;
@@ -750,4 +750,4 @@ if (!defined('DS')) {
     define('DS', DIRECTORY_SEPARATOR);
 }
 
-Ubiquity::init(@$argv[1]);
+Ubiquity::init($argv[1]??'help');
