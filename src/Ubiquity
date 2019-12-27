@@ -162,7 +162,10 @@ class Ubiquity {
 
 			FileUtils::xcopy(self::$activeDir."/devtools/project-files/templates/services.tpl", "app/config/services.php");
 			FileUtils::xcopy(self::$activeDir."/devtools/project-files/templates/bootstrap.tpl", "app/config/bootstrap.php");
+			FileUtils::xcopy(self::$activeDir."/devtools/project-files/templates/preloader.script.tpl", "app/config/preloader.script.php");
+			self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/preloader.config.tpl", "app/config/preloader.config.php",['hasDatabase'=>self::$configOptions['%dbName%']!=null]);
 			FileUtils::xcopy(self::$activeDir."/devtools/project-files/index.php", "index.php");
+			FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/.htaccess", "app/.htaccess");
 
 			//-------------Add themes----------------
 
