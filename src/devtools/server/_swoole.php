@@ -12,7 +12,7 @@ $config["sessionName"]=$sConfig["sessionName"];
 $address=$sConfig['host'].':'.$sConfig['port'];
 $config ["siteUrl"] = 'http://'.$address;
 require ROOT . './../vendor/autoload.php';
-require ROOT.'config/services.php';
 $swooleServer=new \Ubiquity\servers\swoole\SwooleServer();
 $swooleServer->init($config, __DIR__);
+require ROOT.'config/services.php';
 $swooleServer->run($sConfig['host'],$sConfig['port'],$sConfig);
