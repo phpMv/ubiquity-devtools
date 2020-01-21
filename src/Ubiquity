@@ -1,6 +1,5 @@
 #!/usr/bin/env php
 <?php
-
 require __DIR__ . '/../../../../vendor/autoload.php';
 
 use Ubiquity\cache\CacheManager;
@@ -26,111 +25,206 @@ use Ubiquity\devtools\cmd\commands\RestApiCmd;
 use Ubiquity\devtools\cmd\commands\InstallThemeCmd;
 use Ubiquity\devtools\cmd\commands\NewThemeCmd;
 use Ubiquity\orm\DAO;
+use Ubiquity\devtools\cmd\commands\InfoMailerCmd;
+use Ubiquity\devtools\cmd\commands\SendMailQueueCmd;
+use Ubiquity\devtools\cmd\commands\NewMailCmd;
 
 class Ubiquity {
 	use CmdTrait;
-	private static $version='1.2.11+';
-	private static $appName='Ubiquity devtools';
+
+	private static $version = '1.2.11+';
+
+	private static $appName = 'Ubiquity devtools';
+
 	private static $configOptions;
+
 	private static $toolsConfig;
-	private static $indexContent="\n\t\$this->loadView(\"@framework/index/index.html\");\n";
+
+	private static $indexContent = "\n\t\$this->loadView(\"@framework/index/index.html\");\n";
+
 	private static $activeDir;
+
 	private static $activeProjectDir;
-	private static $checkProjectDir='.ubiquity';
-	private static $toolsPath='devtools/';
-	private static $servers=[
-		'php'=>['files'=>['/devtools/server/.htrouter.php'=>'.ubiquity/.htrouter.php','/devtools/server/_index.php'=>'.ubiquity/_index.php'],'config'=>'config.php','start'=>'.htrouter.php'],
-		'react'=>['files'=>['/devtools/server/_react.php'=>'.ubiquity/_react.php'],'config'=>'react-config.php','checkClass'=>'\\Ubiquity\\servers\\react\\ReactServer','require'=>'phpmv/ubiquity-reactphp','start'=>'_react.php'],
-		'swoole'=>['files'=>['/devtools/server/_swoole.php'=>'.ubiquity/_swoole.php'],'config'=>'swoole-config.php','checkClass'=>'\\Ubiquity\\servers\\swoole\\SwooleServer','require'=>'phpmv/ubiquity-swoole','start'=>'_swoole.php'],
-		'workerman'=>['files'=>['/devtools/server/_workerman.php'=>'.ubiquity/_workerman.php'],'config'=>'workerman-config.php','checkClass'=>'\\Ubiquity\\servers\\workerman\\WorkermanServer','require'=>'phpmv/ubiquity-workerman','start'=>'_workerman.php start']
+
+	private static $checkProjectDir = '.ubiquity';
+
+	private static $toolsPath = 'devtools/';
+
+	private static $servers = [
+		'php' => [
+			'files' => [
+				'/devtools/server/.htrouter.php' => '.ubiquity/.htrouter.php',
+				'/devtools/server/_index.php' => '.ubiquity/_index.php'
+			],
+			'config' => 'config.php',
+			'start' => '.htrouter.php'
+		],
+		'react' => [
+			'files' => [
+				'/devtools/server/_react.php' => '.ubiquity/_react.php'
+			],
+			'config' => 'react-config.php',
+			'checkClass' => '\\Ubiquity\\servers\\react\\ReactServer',
+			'require' => 'phpmv/ubiquity-reactphp',
+			'start' => '_react.php'
+		],
+		'swoole' => [
+			'files' => [
+				'/devtools/server/_swoole.php' => '.ubiquity/_swoole.php'
+			],
+			'config' => 'swoole-config.php',
+			'checkClass' => '\\Ubiquity\\servers\\swoole\\SwooleServer',
+			'require' => 'phpmv/ubiquity-swoole',
+			'start' => '_swoole.php'
+		],
+		'workerman' => [
+			'files' => [
+				'/devtools/server/_workerman.php' => '.ubiquity/_workerman.php'
+			],
+			'config' => 'workerman-config.php',
+			'checkClass' => '\\Ubiquity\\servers\\workerman\\WorkermanServer',
+			'require' => 'phpmv/ubiquity-workerman',
+			'start' => '_workerman.php start'
+		]
 	];
 
-	protected static function addAdminDependencies(){
-		self::addComposerDependencies(self::$toolsConfig['composer']['require-dev'],' --dev');
+	protected static function addAdminDependencies() {
+		self::addComposerDependencies(self::$toolsConfig['composer']['require-dev'], ' --dev');
 		self::addComposerDependencies(self::$toolsConfig['composer']['require']);
 	}
 
-	protected static function addComposerDependencies($parts,$options=''){
-		$result=0;
-		foreach ($parts as $composer=>$version){
-			system("composer require {$composer}:{$version}{$options}",$result);
+	protected static function addComposerDependencies($parts, $options = '') {
+		$result = 0;
+		foreach ($parts as $composer => $version) {
+			system("composer require {$composer}:{$version}{$options}", $result);
 		}
 	}
 
-	public static function createComposerFile(){
-		$composer=\json_encode(self::$toolsConfig['composer'],\JSON_PRETTY_PRINT);
+	public static function createComposerFile() {
+		$composer = \json_encode(self::$toolsConfig['composer'], \JSON_PRETTY_PRINT);
 		echo ConsoleFormatter::showInfo("Composer file creation...\n");
 		FileUtils::writeFile("composer.json", $composer);
 	}
 
-	public static function composer($command){
-		$cmd='composer ';
-		switch ($command){
-			case 'update': case 'upt':
-				$cmd.='update';
+	public static function composer($command) {
+		$cmd = 'composer ';
+		switch ($command) {
+			case 'update':
+			case 'upt':
+				$cmd .= 'update';
 				break;
-			case 'optimize':case 'opt':
-				$cmd.=' install --optimize-autoloader --classmap-authoritative --no-dev';
+			case 'optimize':
+			case 'opt':
+				$cmd .= ' install --optimize-autoloader --classmap-authoritative --no-dev';
 				break;
-			case 'nodev':case 'no-dev':
-				$cmd.=' update --no-dev';
+			case 'nodev':
+			case 'no-dev':
+				$cmd .= ' update --no-dev';
 				break;
 			default:
-				$cmd.='install';
+				$cmd .= 'install';
 				break;
 		}
 		\system($cmd);
 	}
 
-
-	public static function replaceAll($array,$subject){
-		array_walk($array, function(&$item){if(is_array($item)) $item=implode("\n", $item);});
+	public static function replaceAll($array, $subject) {
+		array_walk($array, function (&$item) {
+			if (is_array($item))
+				$item = implode("\n", $item);
+		});
 		return str_replace(array_keys($array), array_values($array), $subject);
 	}
 
-	public static function openReplaceWrite($source,$destination,$keyAndValues){
-		$str=FileUtils::openFile($source);
-		$str=self::replaceAll($keyAndValues,$str);
-		return FileUtils::writeFile($destination,$str);
+	public static function openReplaceWrite($source, $destination, $keyAndValues) {
+		$str = FileUtils::openFile($source);
+		$str = self::replaceAll($keyAndValues, $str);
+		return FileUtils::writeFile($destination, $str);
 	}
 
-
-	public static function create($projectName,$options,$force=false,$composerCreateProject=false){
-		self::$activeDir=dirname(__FILE__);
-		self::$toolsConfig=include(self::$activeDir."/devtools/core/toolsConfig.php");
-		$arguments=[
-				["b","dbName",""],
-				["t","dbType","mysql"],
-				["s","serverName","127.0.0.1"],
-				["p","port","3306"],
-				["u","user","root"],
-				["w","password",""],
-				["m","all-models",false],
-				["a","admin",false],
-				["h","themes",""],
-				["i","siteUrl","http://127.0.0.1/".$projectName."/"],
-				["e","rewriteBase",$projectName],
+	public static function create($projectName, $options, $force = false, $composerCreateProject = false) {
+		self::$activeDir = dirname(__FILE__);
+		self::$toolsConfig = include (self::$activeDir . "/devtools/core/toolsConfig.php");
+		$arguments = [
+			[
+				"b",
+				"dbName",
+				""
+			],
+			[
+				"t",
+				"dbType",
+				"mysql"
+			],
+			[
+				"s",
+				"serverName",
+				"127.0.0.1"
+			],
+			[
+				"p",
+				"port",
+				"3306"
+			],
+			[
+				"u",
+				"user",
+				"root"
+			],
+			[
+				"w",
+				"password",
+				""
+			],
+			[
+				"m",
+				"all-models",
+				false
+			],
+			[
+				"a",
+				"admin",
+				false
+			],
+			[
+				"h",
+				"themes",
+				""
+			],
+			[
+				"i",
+				"siteUrl",
+				"http://127.0.0.1/" . $projectName . "/"
+			],
+			[
+				"e",
+				"rewriteBase",
+				$projectName
+			]
 		];
-		if(!$composerCreateProject){
-			if(($dir=basename(getcwd()))==$projectName || $projectName==null){
-				$answer=Console::question("Do you want to create the new project in this folder ($dir) ?",["y","n"]);
-				if(Console::isYes($answer)){
-					if(chdir("..")){
-						self::create($projectName,$options,true,$composerCreateProject);
+		if (! $composerCreateProject) {
+			if (($dir = basename(getcwd())) == $projectName || $projectName == null) {
+				$answer = Console::question("Do you want to create the new project in this folder ($dir) ?", [
+					"y",
+					"n"
+				]);
+				if (Console::isYes($answer)) {
+					if (chdir("..")) {
+						self::create($projectName, $options, true, $composerCreateProject);
 						return;
-					}else{
-						ConsoleFormatter::showMessage( "Unable to return to parent folder!\n",'error');
+					} else {
+						ConsoleFormatter::showMessage("Unable to return to parent folder!\n", 'error');
 						return;
 					}
 				}
 			}
-		}elseif(!$force){
+		} elseif (! $force) {
 			chdir("..");
-			self::create($projectName,$options,true,$composerCreateProject);
+			self::create($projectName, $options, true, $composerCreateProject);
 			return;
 		}
-		if(!is_dir($projectName) || $force){
-			if(!$force)
+		if (! is_dir($projectName) || $force) {
+			if (! $force)
 				FileUtils::safeMkdir($projectName);
 			chdir($projectName);
 			FileUtils::safeMkdir(self::$checkProjectDir);
@@ -139,600 +233,677 @@ class Ubiquity {
 			FileUtils::safeMkdir("app/controllers");
 			FileUtils::safeMkdir("app/models");
 			FileUtils::safeMkdir("app/config");
-			define('ROOT', realpath('./app').DS);
+			define('ROOT', realpath('./app') . DS);
 			echo ConsoleFormatter::showInfo("Files copy...");
-			FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/ControllerBase.php", "app/controllers/ControllerBase.php");
-
+			FileUtils::xcopy(self::$activeDir . "/devtools/project-files/app/controllers/ControllerBase.php", "app/controllers/ControllerBase.php");
 
 			echo ConsoleFormatter::showInfo("Config files creation...\n");
-			self::$configOptions["%projectName%"]=$projectName;
-			self::$configOptions["%cssFiles%"]=[];
-			self::$configOptions["%jsFiles%"]=[];
-			self::$configOptions["%injections%"]="";
-			foreach ($arguments as $argument){
-				self::$configOptions["%".$argument[1]."%"]=self::getOption($options,$argument[0], $argument[1],$argument[2]);
+			self::$configOptions["%projectName%"] = $projectName;
+			self::$configOptions["%cssFiles%"] = [];
+			self::$configOptions["%jsFiles%"] = [];
+			self::$configOptions["%injections%"] = "";
+			foreach ($arguments as $argument) {
+				self::$configOptions["%" . $argument[1] . "%"] = self::getOption($options, $argument[0], $argument[1], $argument[2]);
 			}
 			self::showConfigOptions();
-			self::openReplaceWrite(self::$activeDir."/devtools/project-files/.htaccess", getcwd()."/.htaccess", array("%rewriteBase%"=>self::$configOptions["%rewriteBase%"]));
+			self::openReplaceWrite(self::$activeDir . "/devtools/project-files/.htaccess", getcwd() . "/.htaccess", array(
+				"%rewriteBase%" => self::$configOptions["%rewriteBase%"]
+			));
 
-
-			if(self::isBooleanTrue(self::$configOptions["%admin%"])){
+			if (self::isBooleanTrue(self::$configOptions["%admin%"])) {
 				self::adminInstall();
 			}
 
-			FileUtils::xcopy(self::$activeDir."/devtools/project-files/templates/services.tpl", "app/config/services.php");
-			FileUtils::xcopy(self::$activeDir."/devtools/project-files/templates/bootstrap.tpl", "app/config/bootstrap.php");
-			FileUtils::xcopy(self::$activeDir."/devtools/project-files/templates/preloader.script.tpl", "app/config/preloader.script.php");
-			self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/preloader.config.tpl", "app/config/preloader.config.php",['%hasDatabase%'=>self::$configOptions['%dbName%']!=null]);
-			FileUtils::xcopy(self::$activeDir."/devtools/project-files/index.php", "index.php");
-			FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/.htaccess", "app/.htaccess");
+			FileUtils::xcopy(self::$activeDir . "/devtools/project-files/templates/services.tpl", "app/config/services.php");
+			FileUtils::xcopy(self::$activeDir . "/devtools/project-files/templates/bootstrap.tpl", "app/config/bootstrap.php");
+			FileUtils::xcopy(self::$activeDir . "/devtools/project-files/templates/preloader.script.tpl", "app/config/preloader.script.php");
+			self::openReplaceWrite(self::$activeDir . "/devtools/project-files/templates/preloader.config.tpl", "app/config/preloader.config.php", [
+				'%hasDatabase%' => self::$configOptions['%dbName%'] != null
+			]);
+			FileUtils::xcopy(self::$activeDir . "/devtools/project-files/index.php", "index.php");
+			FileUtils::xcopy(self::$activeDir . "/devtools/project-files/app/.htaccess", "app/.htaccess");
 
-			//-------------Add themes----------------
+			// -------------Add themes----------------
 
-			$themes=self::$configOptions["%themes%"];
-			$themes=array_filter(explode(',', $themes));
-			$themesConfig=include(self::$activeDir."/devtools/core/themesConfig.php");
-			$hasThemes=false;$activeTheme="";
+			$themes = self::$configOptions["%themes%"];
+			$themes = array_filter(explode(',', $themes));
+			$themesConfig = include (self::$activeDir . "/devtools/core/themesConfig.php");
+			$hasThemes = false;
+			$activeTheme = "";
 
-			$vendorCopies=[];
-			foreach ($themes as $theme){
-				if(isset($themesConfig[$theme])){
-					$vendorCopies[$theme]=InstallThemeCmd::addTheme($theme,$theme, $themesConfig[$theme], self::$activeDir,false,self::$toolsConfig["composer"]);
-					$hasThemes=true;
-				}else{
-					echo ConsoleFormatter::showMessage('The theme <b>'.$theme.'</b> does not exists!','warning','Themes installation');
+			$vendorCopies = [];
+			foreach ($themes as $theme) {
+				if (isset($themesConfig[$theme])) {
+					$vendorCopies[$theme] = InstallThemeCmd::addTheme($theme, $theme, $themesConfig[$theme], self::$activeDir, false, self::$toolsConfig["composer"]);
+					$hasThemes = true;
+				} else {
+					echo ConsoleFormatter::showMessage('The theme <b>' . $theme . '</b> does not exists!', 'warning', 'Themes installation');
 				}
 			}
-			if(!$hasThemes){
+			if (! $hasThemes) {
 				self::includeDefaultStyles();
-				self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/vHeader.tpl", "app/views/main/vHeader.html", self::$configOptions);
-				self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/vFooter.tpl", "app/views/main/vFooter.html", self::$configOptions);
-				FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/views/themes/semantic/main/vMenu.html", "app/views/main/vMenu.html");
-				self::$configOptions['%activeTheme%']='';
-				FileUtils::xcopy(self::$activeDir."/devtools/project-files/public/themes/semantic/",  getcwd()."/public/assets/");
-			}else{
-				$activeTheme=end($themes);
-				self::$configOptions['%activeTheme%']=',"activeTheme"=>"'.$activeTheme.'"';
-				FileUtils::xcopy(self::$activeDir."/devtools/project-files/templates/indexThemes.tpl", "app/views/index.html");
+				self::openReplaceWrite(self::$activeDir . "/devtools/project-files/templates/vHeader.tpl", "app/views/main/vHeader.html", self::$configOptions);
+				self::openReplaceWrite(self::$activeDir . "/devtools/project-files/templates/vFooter.tpl", "app/views/main/vFooter.html", self::$configOptions);
+				FileUtils::xcopy(self::$activeDir . "/devtools/project-files/app/views/themes/semantic/main/vMenu.html", "app/views/main/vMenu.html");
+				self::$configOptions['%activeTheme%'] = '';
+				FileUtils::xcopy(self::$activeDir . "/devtools/project-files/public/themes/semantic/", getcwd() . "/public/assets/");
+			} else {
+				$activeTheme = end($themes);
+				self::$configOptions['%activeTheme%'] = ',"activeTheme"=>"' . $activeTheme . '"';
+				FileUtils::xcopy(self::$activeDir . "/devtools/project-files/templates/indexThemes.tpl", "app/views/index.html");
 			}
-			FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/IndexController.php", "app/controllers/IndexController.php");
+			FileUtils::xcopy(self::$activeDir . "/devtools/project-files/app/controllers/IndexController.php", "app/controllers/IndexController.php");
 
-			//-------------Add themes----------------
+			// -------------Add themes----------------
 
-			self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/config.tpl", "app/config/config.php", self::$configOptions);
-			self::openReplaceWrite(self::$activeDir."/devtools/project-files/README.md", getcwd()."/README.md", self::$configOptions);
+			self::openReplaceWrite(self::$activeDir . "/devtools/project-files/templates/config.tpl", "app/config/config.php", self::$configOptions);
+			self::openReplaceWrite(self::$activeDir . "/devtools/project-files/README.md", getcwd() . "/README.md", self::$configOptions);
 
-			if(!$composerCreateProject){
+			if (! $composerCreateProject) {
 				self::createComposerFile();
-				$answer=Console::question("Do you want to run composer install ?",["y","n"]);
-				if(Console::isYes($answer)){
+				$answer = Console::question("Do you want to run composer install ?", [
+					"y",
+					"n"
+				]);
+				if (Console::isYes($answer)) {
 					system("composer install");
-					require_once ROOT.'./../vendor/autoload.php';
-					$dir=getcwd();
-					foreach ($vendorCopies as $theme=>$vCopies){
+					require_once ROOT . './../vendor/autoload.php';
+					$dir = getcwd();
+					foreach ($vendorCopies as $theme => $vCopies) {
 						InstallThemeCmd::copyVendorFiles($theme, $vCopies, $dir);
 					}
-					$config=require_once 'app/config/config.php';
+					$config = require_once 'app/config/config.php';
 					\Ubiquity\controllers\Startup::setConfig($config);
 
-					if(self::isBooleanTrue(self::$configOptions["%all-models%"])){
+					if (self::isBooleanTrue(self::$configOptions["%all-models%"])) {
 						ob_start();
 						(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config);
-						$res=ob_get_clean();
-						echo ConsoleFormatter::showMessage($res,'success','models generation');
+						$res = ob_get_clean();
+						echo ConsoleFormatter::showMessage($res, 'success', 'models generation');
 					}
 					ob_start();
 					\Ubiquity\cache\CacheManager::checkCache($config);
-					$res=ob_get_clean();
-					echo ConsoleFormatter::showMessage($res,'info','cache initialization');
-					echo ConsoleFormatter::showMessage("project <b>{$projectName}</b> successfully created.",'success','new-project');
+					$res = ob_get_clean();
+					echo ConsoleFormatter::showMessage($res, 'info', 'cache initialization');
+					echo ConsoleFormatter::showMessage("project <b>{$projectName}</b> successfully created.", 'success', 'new-project');
 				} else {
-					echo ConsoleFormatter::showMessage("Project <b>{$projectName}</b> is partialy created.\nYou will need to run `composer install` in the root folder of the project.\nThen `Ubiquity init-cache` to initialize the cache folders.\n",'info');
+					echo ConsoleFormatter::showMessage("Project <b>{$projectName}</b> is partialy created.\nYou will need to run `composer install` in the root folder of the project.\nThen `Ubiquity init-cache` to initialize the cache folders.\n", 'info');
 				}
-			}else{
-				echo ConsoleFormatter::showMessage("project <b>{$projectName}</b> successfully created.",'success','new-project from composer');
+			} else {
+				echo ConsoleFormatter::showMessage("project <b>{$projectName}</b> successfully created.", 'success', 'new-project from composer');
 			}
-		}else{
+		} else {
 			echo ConsoleFormatter::showInfo("The <b>{$projectName}</b> folder already exists !\n");
-			$answer=Console::question("Would you like to continue ?",["y","n"]);
-			if(Console::isYes($answer)){
-				self::create($projectName,$options,true);
-			}else
+			$answer = Console::question("Would you like to continue ?", [
+				"y",
+				"n"
+			]);
+			if (Console::isYes($answer)) {
+				self::create($projectName, $options, true);
+			} else
 				die();
 		}
 	}
 
-	private static function includeDefaultStyles(){
-		self::$configOptions["%injections%"]="\"@exec\"=>[\"jquery\"=>function(\$controller){
+	private static function includeDefaultStyles() {
+		self::$configOptions["%injections%"] = "\"@exec\"=>[\"jquery\"=>function(\$controller){
 				\t\treturn \\Ubiquity\\core\\Framework::diSemantic(\$controller);
 				\t}]";
-		self::$configOptions["%cssFiles%"][]=self::includeCss(self::$toolsConfig["cdn"]["semantic"]["css"]);
-		self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["jquery"]);
-		self::$configOptions["%jsFiles%"][]=self::includeJs(self::$toolsConfig["cdn"]["semantic"]["js"]);
-		self::$toolsConfig["composer"]["require"]["phpmv/php-mv-ui"]="^2.3";
+		self::$configOptions["%cssFiles%"][] = self::includeCss(self::$toolsConfig["cdn"]["semantic"]["css"]);
+		self::$configOptions["%jsFiles%"][] = self::includeJs(self::$toolsConfig["cdn"]["jquery"]);
+		self::$configOptions["%jsFiles%"][] = self::includeJs(self::$toolsConfig["cdn"]["semantic"]["js"]);
+		self::$toolsConfig["composer"]["require"]["phpmv/php-mv-ui"] = "^2.3";
 	}
 
-	private static function adminInstall($config=null){
-		if(!class_exists("\\Ubiquity\\controllers\\admin\\UbiquityMyAdminBaseController")){
-			self::$toolsConfig["composer"]["require-dev"]["phpmv/ubiquity-webtools"]="^2.3";
+	private static function adminInstall($config = null) {
+		if (! class_exists("\\Ubiquity\\controllers\\admin\\UbiquityMyAdminBaseController")) {
+			self::$toolsConfig["composer"]["require-dev"]["phpmv/ubiquity-webtools"] = "^2.3";
 		}
-		FileUtils::xcopy(self::$activeDir."/devtools/project-files/app/controllers/Admin.php","app/controllers/Admin.php");
+		FileUtils::xcopy(self::$activeDir . "/devtools/project-files/app/controllers/Admin.php", "app/controllers/Admin.php");
 		echo ConsoleFormatter::showInfo("Creating the Controller <b>Admin</b> at the location <b>app/controllers/Admin.php<:b>\n");
-		self::$toolsConfig["composer"]["require-dev"]["czproject/git-php"]="^3.13";
-		self::$toolsConfig["composer"]["require"]["phpmv/php-mv-ui"]="^2.2.17";
+		self::$toolsConfig["composer"]["require-dev"]["czproject/git-php"] = "^3.13";
+		self::$toolsConfig["composer"]["require"]["phpmv/php-mv-ui"] = "^2.2.17";
 	}
 
-	private static function includeCss($filename){
-		return "{{ css('".$filename."') }}";
+	private static function includeCss($filename) {
+		return "{{ css('" . $filename . "') }}";
 	}
 
-	private static function includeJs($filename){
-		return "{{ js('".$filename."') }}";
+	private static function includeJs($filename) {
+		return "{{ js('" . $filename . "') }}";
 	}
 
-	private static function showConfigOptions(){
-		$output = implode("\n", array_map(
-		function ($v, $k) {if(is_array($v))
-			$v=implode(",",$v );
-			return sprintf("%s='%s'", str_ireplace("%", "", $k), $v); },
-		self::$configOptions,
-		array_keys(self::$configOptions)
-		));
-		echo ConsoleFormatter::showMessage($output."\n",'info','Command line arguments');
+	private static function showConfigOptions() {
+		$output = implode("\n", array_map(function ($v, $k) {
+			if (is_array($v))
+				$v = implode(",", $v);
+			return sprintf("%s='%s'", str_ireplace("%", "", $k), $v);
+		}, self::$configOptions, array_keys(self::$configOptions)));
+		echo ConsoleFormatter::showMessage($output . "\n", 'info', 'Command line arguments');
 	}
 
-	public static function createController($config,$controllerName,$indexContent=null,$view=false,$theme=null,$force=false){
-		$controllerName=ucfirst($controllerName);
+	public static function createController($config, $controllerName, $indexContent = null, $view = false, $theme = null, $force = false) {
+		$controllerName = ucfirst($controllerName);
 		FileUtils::safeMkdir("app/controllers");
-		$filename="app/controllers/{$controllerName}.php";
-		if(file_exists($filename) && !$force){
-			$answer=Console::question("The file {$filename} exists.\nWould you like to replace it?",["y","n"]);
-			if(Console::isYes($answer))
-				self::createController($config,$controllerName,$indexContent,$view,$theme,true);
-		}else{
-			$msg= "Creation of the Controller <b>{$controllerName}</b> at the location <b>{$filename}</b>\n";
-			$namespace="";
-			if(isset($config["mvcNS"]["controllers"]) && $config["mvcNS"]["controllers"]!=="")
-				$namespace="namespace ".$config["mvcNS"]["controllers"].";";
-			self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/controller.tpl", $filename, ["%controllerName%"=>$controllerName,"%indexContent%"=>$indexContent,"%namespace%"=>$namespace]);
-			if($view){
-				$prefix="";
-				if ($theme==null) {
-					$theme = $config["templateEngineOptions"]["activeTheme"]??null;
+		$filename = "app/controllers/{$controllerName}.php";
+		if (file_exists($filename) && ! $force) {
+			$answer = Console::question("The file {$filename} exists.\nWould you like to replace it?", [
+				"y",
+				"n"
+			]);
+			if (Console::isYes($answer))
+				self::createController($config, $controllerName, $indexContent, $view, $theme, true);
+		} else {
+			$msg = "Creation of the Controller <b>{$controllerName}</b> at the location <b>{$filename}</b>\n";
+			$namespace = "";
+			if (isset($config["mvcNS"]["controllers"]) && $config["mvcNS"]["controllers"] !== "")
+				$namespace = "namespace " . $config["mvcNS"]["controllers"] . ";";
+			self::openReplaceWrite(self::$activeDir . "/devtools/project-files/templates/controller.tpl", $filename, [
+				"%controllerName%" => $controllerName,
+				"%indexContent%" => $indexContent,
+				"%namespace%" => $namespace
+			]);
+			if ($view) {
+				$prefix = "";
+				if ($theme == null) {
+					$theme = $config["templateEngineOptions"]["activeTheme"] ?? null;
 				}
 				if ($theme != null) {
-					$prefix = 'themes/'.$theme . '/';
+					$prefix = 'themes/' . $theme . '/';
 				}
-				$viewFolder="app/views/".$prefix.$controllerName;
+				$viewFolder = "app/views/" . $prefix . $controllerName;
 				FileUtils::safeMkdir($viewFolder);
-				$msg.= "Creation of the the associated view index.html at the location {$viewFolder}/index.html\n";
-				self::openReplaceWrite(self::$activeDir."/devtools/project-files/templates/view.tpl", $viewFolder."/index.html", ["%controllerName%"=>$controllerName]);
+				$msg .= "Creation of the the associated view index.html at the location {$viewFolder}/index.html\n";
+				self::openReplaceWrite(self::$activeDir . "/devtools/project-files/templates/view.tpl", $viewFolder . "/index.html", [
+					"%controllerName%" => $controllerName
+				]);
 			}
-			echo ConsoleFormatter::showMessage($msg, "success","Controller creation");
+			echo ConsoleFormatter::showMessage($msg, "success", "Controller creation");
 		}
 	}
 
-	private static function setDir($dir=null){
-		if(file_exists($dir) && is_dir($dir)){
-			$microDir=$dir.DIRECTORY_SEPARATOR.self::$checkProjectDir;
-			if(file_exists($microDir) && is_dir($microDir)){
+	private static function setDir($dir = null) {
+		if (file_exists($dir) && is_dir($dir)) {
+			$microDir = $dir . DIRECTORY_SEPARATOR . self::$checkProjectDir;
+			if (file_exists($microDir) && is_dir($microDir)) {
 				chdir($dir);
-				self::$activeProjectDir=$dir;
-				echo ConsoleFormatter::showInfo("The project folder is <b>".FileUtils::cleanPathname(self::$activeProjectDir)."</b>");
+				self::$activeProjectDir = $dir;
+				echo ConsoleFormatter::showInfo("The project folder is <b>" . FileUtils::cleanPathname(self::$activeProjectDir) . "</b>");
 				return true;
 			}
 		}
-		$newDir=dirname($dir);
-		if($newDir===$dir)
+		$newDir = dirname($dir);
+		if ($newDir === $dir)
 			return false;
 		else
 			return self::setDir($newDir);
 	}
 
-	private static function selfUpdate(){
+	private static function selfUpdate() {
 		self::_init();
-		$updated=false;
-		if(\dirname(self::$activeDir,4)!==self::$activeProjectDir){
-			if(Console::isYes(Console::question("Do you want to run composer global update ?",["y","n"]))){
+		$updated = false;
+		if (\dirname(self::$activeDir, 4) !== self::$activeProjectDir) {
+			if (Console::isYes(Console::question("Do you want to run composer global update ?", [
+				"y",
+				"n"
+			]))) {
 				system("composer global update");
-				$updated=true;
+				$updated = true;
 			}
 		}
-		if(Console::isYes(Console::question("Do you want to run composer update ?",["y","n"]))){
+		if (Console::isYes(Console::question("Do you want to run composer update ?", [
+			"y",
+			"n"
+		]))) {
 			system("composer update");
-			$updated=true;
+			$updated = true;
 		}
-		if($updated){
-			echo ConsoleFormatter::showMessage("project in <b>".self::$activeProjectDir."</b> successfully updated.",'success','self-update');
-		}else{
-			echo ConsoleFormatter::showInfo("Update operation cancelled for project in <b>".self::$activeProjectDir."</b>.");
+		if ($updated) {
+			echo ConsoleFormatter::showMessage("project in <b>" . self::$activeProjectDir . "</b> successfully updated.", 'success', 'self-update');
+		} else {
+			echo ConsoleFormatter::showInfo("Update operation cancelled for project in <b>" . self::$activeProjectDir . "</b>.");
 		}
 	}
 
-	private static function displayResult($callback){
+	private static function displayResult($callback) {
 		ob_start();
 		$callback();
-		$res=ob_get_clean();
+		$res = ob_get_clean();
 		echo ConsoleFormatter::showInfo($res);
 	}
 
-	private static function checkDatabase($part,$config,$dbOffset='default'){
-		$offsets=DAO::getDatabases();
-		if(!\in_array($dbOffset,$offsets)){
-			echo ConsoleFormatter::showMessage('The connection '.$dbOffset.' does not exists in config file!','error',$part);
+	private static function checkDatabase($part, $config, $dbOffset = 'default') {
+		$offsets = DAO::getDatabases();
+		if (! \in_array($dbOffset, $offsets)) {
+			echo ConsoleFormatter::showMessage('The connection ' . $dbOffset . ' does not exists in config file!', 'error', $part);
 			return false;
 		}
-		$dbConfig=DAO::getDbOffset($config,$dbOffset);
-		if(!isset($dbConfig["dbName"])){
-			echo ConsoleFormatter::showMessage('The connection '.$dbOffset.' has no dbName value in config file!','error',$part);
+		$dbConfig = DAO::getDbOffset($config, $dbOffset);
+		if (! isset($dbConfig["dbName"])) {
+			echo ConsoleFormatter::showMessage('The connection ' . $dbOffset . ' has no dbName value in config file!', 'error', $part);
 			return false;
 		}
 		return true;
 	}
 
-	public static function run($command,...$options){
-		$options=array_merge([__FILE__,$command],$options);
-		$_SERVER['argv']=$GLOBALS['argv']=$options;
+	public static function run($command, ...$options) {
+		$options = array_merge([
+			__FILE__,
+			$command
+		], $options);
+		$_SERVER['argv'] = $GLOBALS['argv'] = $options;
 		self::init($command);
 	}
 
-	public static function composerCreateProject(){
+	public static function composerCreateProject() {
 		\putenv('ANSICON=1');
-		self::create(\basename(getcwd()), ['a'=>true],false,true);
+		self::create(\basename(getcwd()), [
+			'a' => true
+		], false, true);
 	}
 
-	public static function init($command,$current=2){
+	public static function init($command, $current = 2) {
 		global $argv;
-		\set_exception_handler(array(Ubiquity::class,"error"));
+		\set_exception_handler(array(
+			Ubiquity::class,
+			"error"
+		));
 
-		$what=$argv[$current]??null;
-		if($what!=null && strpos($what, '=')!==false){
-			$what=null;
+		$what = $argv[$current] ?? null;
+		if ($what != null && strpos($what, '=') !== false) {
+			$what = null;
 		}
-		$options=self::parseArguments();
+		$options = self::parseArguments();
 		switch ($command) {
-			case "project":case "create-project":case "new":
-				self::create($what,$options);
+			case "mailer":
+				$config = self::_init();
+				$what = self::requiredParam($what, 'queue');
+				if($what=='send'){
+					SendMailQueueCmd::run($config, $options, $what);
+				}else{
+					InfoMailerCmd::run($config, $options, $what);
+				}
+				break;
+			case "new-mail": case "newMail": case "new:mail":
+				$config = self::_init();
+				$what = self::requiredParam($what, 'classname');
+				NewMailCmd::run($config, $options, $what);
+				break;
+			case "project":
+			case "create-project":
+			case "new":
+				self::create($what, $options);
 				break;
 			case "composer-create-project":
 				self::composerCreateProject();
 				break;
-			case "all-models":case "create-all-models":
-				$config=self::_init();
-				$offset=self::getOption($options, "d", "database",'default');
+			case "all-models":
+			case "create-all-models":
+				$config = self::_init();
+				$offset = self::getOption($options, "d", "database", 'default');
 
-				if(self::checkDatabase('create-all-models', $config,$offset)){
-					self::displayResult(function()use($config,$offset){(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config,true,null,$offset);});
+				if (self::checkDatabase('create-all-models', $config, $offset)) {
+					self::displayResult(function () use ($config, $offset) {
+						(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config, true, null, $offset);
+					});
 				}
 				break;
 
-			case "model":case "create-model":
-				$config=self::_init();
-				$offset=self::getOption($options, "d", "database",'default');
-				$what=self::requiredParam($what, 'tableName');
-				if(self::checkDatabase('create-model', $config,$offset)){
-					self::displayResult(function()use($config,$what,$offset){(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config,true,$what,$offset);});
+			case "model":
+			case "create-model":
+				$config = self::_init();
+				$offset = self::getOption($options, "d", "database", 'default');
+				$what = self::requiredParam($what, 'tableName');
+				if (self::checkDatabase('create-model', $config, $offset)) {
+					self::displayResult(function () use ($config, $what, $offset) {
+						(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config, true, $what, $offset);
+					});
 				}
 				break;
 
-			case "controller":case "create-controller":
-				$config=self::_init();
-				$what=self::requiredParam($what, 'controllerName');
-				$view=self::getOption($options, "v", "views",false);
-				$theme=self::getOption($options, "t", "theme");
-				$indexContent=null;
-				if($view){
-					$indexContent="\n\t\t".'$this->loadDefaultView();'."\n\t";
+			case "controller":
+			case "create-controller":
+				$config = self::_init();
+				$what = self::requiredParam($what, 'controllerName');
+				$view = self::getOption($options, "v", "views", false);
+				$theme = self::getOption($options, "t", "theme");
+				$indexContent = null;
+				if ($view) {
+					$indexContent = "\n\t\t" . '$this->loadDefaultView();' . "\n\t";
 				}
-				self::createController($config,$what,$indexContent,$view,$theme);
+				self::createController($config, $what, $indexContent, $view, $theme);
 				break;
 
-			case "crud":case "crud-controller":
-				$config=self::_init();
-				$what=self::requiredParam($what, 'controllerName');
+			case "crud":
+			case "crud-controller":
+				$config = self::_init();
+				$what = self::requiredParam($what, 'controllerName');
 				CrudCmd::run($config, $options, $what);
 				break;
 
-			case "auth": case "auth-controller":
+			case "auth":
+			case "auth-controller":
 				self::_init();
 				AuthCmd::run($config, $options, $what);
 				break;
 
 			case "clear-cache":
-				$type=self::getOption($options, "t", "type","all");
-				$config=self::_init();
-				CacheManager::clearCache($config,$type);
+				$type = self::getOption($options, "t", "type", "all");
+				$config = self::_init();
+				CacheManager::clearCache($config, $type);
 				break;
-			case "action": case "new-action":
-				$config=self::_init();
+			case "action":
+			case "new-action":
+				$config = self::_init();
 				NewActionCmd::run($config, $options, $what);
 				break;
 
 			case "init-cache":
-				$type=self::getOption($options, "t", "type","all");
-				$config=self::_init();
+				$type = self::getOption($options, "t", "type", "all");
+				$config = self::_init();
 				ob_start();
-				CacheManager::initCache($config,$type);
-				$res=ob_get_clean();
-				echo ConsoleFormatter::showMessage($res,'success','init-cache:'.$type);
+				CacheManager::initCache($config, $type);
+				$res = ob_get_clean();
+				echo ConsoleFormatter::showMessage($res, 'success', 'init-cache:' . $type);
 				break;
 
 			case "self-update":
 				self::selfUpdate();
 				break;
 
-			case 'bootstrap':case 'boot':
-				$config=self::_init();
-				$what=self::requiredParam($what, 'mode');
+			case 'bootstrap':
+			case 'boot':
+				$config = self::_init();
+				$what = self::requiredParam($what, 'mode');
 				self::bootstrap($config, $what);
 				break;
 
 			case 'admin':
-				$config=self::_init();
+				$config = self::_init();
 				self::adminInstall($config);
 				self::addAdminDependencies();
 				break;
 
-			case 'composer': case 'compo':
-				$config=self::_init();
-				$what=self::requiredParam($what, 'command');
+			case 'composer':
+			case 'compo':
+				$config = self::_init();
+				$what = self::requiredParam($what, 'command');
 				self::composer($what);
 				break;
 
 			case "help":
-				if(isset($what)){
+				if (isset($what)) {
 					self::infoCmd($what);
-				}else{
+				} else {
 					self::info();
 				}
 				break;
 			case "serve":
-				$dPort=8095;
-				$type=self::getOption($options, 't', 'type','php');
-				if(isset(self::$servers[$type])){
-					$host=self::getOption($options, 'h', 'host','127.0.0.1');
-					if($type=='php'){
-						$dPort=8090;
+				$dPort = 8095;
+				$type = self::getOption($options, 't', 'type', 'php');
+				if (isset(self::$servers[$type])) {
+					$host = self::getOption($options, 'h', 'host', '127.0.0.1');
+					if ($type == 'php') {
+						$dPort = 8090;
 					}
-					$port=self::getOption($options, 'p', 'port',$dPort);
-					if(($p=(int)$port)!=$port || !($p>0 && $p<26000 )){
-						echo ConsoleFormatter::showMessage($port." is an invalid port number!",'error');
+					$port = self::getOption($options, 'p', 'port', $dPort);
+					if (($p = (int) $port) != $port || ! ($p > 0 && $p < 26000)) {
+						echo ConsoleFormatter::showMessage($port . " is an invalid port number!", 'error');
 						exit(1);
 					}
-					self::startServer($host, $port,$type);
-				}else{
-					echo ConsoleFormatter::showMessage(sprintf('The server %s does not exists!',$type),'error','Server starting');
+					self::startServer($host, $port, $type);
+				} else {
+					echo ConsoleFormatter::showMessage(sprintf('The server %s does not exists!', $type), 'error', 'Server starting');
 				}
 				break;
-			case "serve:stop":case "stop:serve":
-				$what=self::requiredParam($what, 'type');
+			case "serve:stop":
+			case "stop:serve":
+				$what = self::requiredParam($what, 'type');
 				self::stopServer($what);
 				break;
 			case "version":
-				$v='PHP '. \phpversion()."\n";
-				$v.=self::$appName." (".self::$version.")\n";
-				$config=self::_init(true);
-				if(is_array($config)){
-					if(class_exists("\\Ubiquity\\controllers\\admin\\UbiquityMyAdminBaseController")){
-						$v.='Ubiquity Webtools ('.\Ubiquity\controllers\admin\UbiquityMyAdminBaseController::version.")\n";
+				$v = 'PHP ' . \phpversion() . "\n";
+				$v .= self::$appName . " (" . self::$version . ")\n";
+				$config = self::_init(true);
+				if (is_array($config)) {
+					if (class_exists("\\Ubiquity\\controllers\\admin\\UbiquityMyAdminBaseController")) {
+						$v .= 'Ubiquity Webtools (' . \Ubiquity\controllers\admin\UbiquityMyAdminBaseController::version . ")\n";
 					}
-					$v.='Ubiquity '.Framework::version."\n";
+					$v .= 'Ubiquity ' . Framework::version . "\n";
 				}
 				echo ConsoleFormatter::showInfo($v);
 				break;
 
-			case "info:routes":case "info:r":case "info::routes":
-				$config=self::_init();
+			case "info:routes":
+			case "info:r":
+			case "info::routes":
+				$config = self::_init();
 				InfoRoutesCmd::run($config, $options, $what);
 				break;
 
-			case "info:model":case "info-model":
-				$config=self::_init();
+			case "info:model":
+			case "info-model":
+				$config = self::_init();
 				InfoModelCmd::run($config, $options, $what);
 				break;
 
-			case "info:models":case "info-models":
-				$config=self::_init();
+			case "info:models":
+			case "info-models":
+				$config = self::_init();
 				InfoModelsCmd::run($config, $options, $what);
 				break;
 
-			case "config": case "info:config":case "info-config":
-				$config=self::_init();
+			case "config":
+			case "info:config":
+			case "info-config":
+				$config = self::_init();
 				ConfigCmd::run($config, $options, $what);
 				break;
 
-			case "info:validators":case "info:validation":
-				$config=self::_init();
+			case "info:validators":
+			case "info:validation":
+				$config = self::_init();
 				InfoValidationCmd::run($config, $options, $what);
 				break;
 
-			case "config:set":case "config-set":
-				$config=self::_init();
+			case "config:set":
+			case "config-set":
+				$config = self::_init();
 				ConfigSetCmd::run($config, $options);
 				break;
 
-			case "dao":case "DAO":
-				$config=self::_init();
+			case "dao":
+			case "DAO":
+				$config = self::_init();
 				DAOCmd::run($config, $options, $what);
 				break;
 
-			case "rest":case "rest-controller":
-				$config=self::_init();
+			case "rest":
+			case "rest-controller":
+				$config = self::_init();
 				RestCmd::run($config, $options, $what);
 				break;
 
-			case "restapi":case "restapi-controller":
-				$config=self::_init();
+			case "restapi":
+			case "restapi-controller":
+				$config = self::_init();
 				RestApiCmd::run($config, $options, $what);
 				break;
 
-			case "create-theme":case "create:theme":
-				$config=self::_init();
+			case "create-theme":
+			case "create:theme":
+				$config = self::_init();
 				NewThemeCmd::run($config, $options, $what, self::$activeDir);
 				break;
 
-			case "install-theme":case "install:theme":case "theme":
-				$config=self::_init();
+			case "install-theme":
+			case "install:theme":
+			case "theme":
+				$config = self::_init();
 				InstallThemeCmd::run($config, $options, $what, self::$activeDir);
 				break;
 
 			default:
-				$commands=Command::getInfo($command);
-				echo ConsoleFormatter::showMessage("The command {$command} does not exists!",'warning');
-				if(sizeof($commands)>0){
-					$cmd=current($commands)["cmd"];
-					$answer=Console::question("Did you mean {$cmd->getName()}?",["y","n"]);
-					if(Console::isYes($answer)){
+				$commands = Command::getInfo($command);
+				echo ConsoleFormatter::showMessage("The command {$command} does not exists!", 'warning');
+				if (sizeof($commands) > 0) {
+					$cmd = current($commands)["cmd"];
+					$answer = Console::question("Did you mean {$cmd->getName()}?", [
+						"y",
+						"n"
+					]);
+					if (Console::isYes($answer)) {
 						self::init($cmd->getName());
-					}else{
+					} else {
 						exit(1);
 					}
 				}
-			break;
+				break;
 		}
 	}
 
-	private static function startServer($host,$port,$type='php'){
-		$serverInfos=self::$servers[$type];
-		$what=$host.':'.$port;
+	private static function startServer($host, $port, $type = 'php') {
+		$serverInfos = self::$servers[$type];
+		$what = $host . ':' . $port;
 		self::_init();
-		if(isset($serverInfos['checkClass'])){
-			$checkClass=$serverInfos['checkClass'];
-			if(!\class_exists($checkClass,true)){
-				$require=$serverInfos['require'];
-				echo ConsoleFormatter::showInfo('composer require '.$require);
-				system('composer require '.$require);
+		if (isset($serverInfos['checkClass'])) {
+			$checkClass = $serverInfos['checkClass'];
+			if (! \class_exists($checkClass, true)) {
+				$require = $serverInfos['require'];
+				echo ConsoleFormatter::showInfo('composer require ' . $require);
+				system('composer require ' . $require);
 			}
 		}
-		$msg="Starting ".$type." server at <b>".$what."</b>...\n";
+		$msg = "Starting " . $type . " server at <b>" . $what . "</b>...\n";
 
-		foreach ($serverInfos['files'] as $fileSrc=>$fileDest){
-			if(!\file_exists($fileDest)){
-				FileUtils::xcopy(self::$activeDir.$fileSrc,$fileDest);
+		foreach ($serverInfos['files'] as $fileSrc => $fileDest) {
+			if (! \file_exists($fileDest)) {
+				FileUtils::xcopy(self::$activeDir . $fileSrc, $fileDest);
 			}
 		}
 
-		if(\file_exists(".ubiquity/".$serverInfos['config'])){
-			$config=include ".ubiquity/".$serverInfos['config'];
-			$updated=$config['host']!=$host || $config['port']!=$port;
+		if (\file_exists(".ubiquity/" . $serverInfos['config'])) {
+			$config = include ".ubiquity/" . $serverInfos['config'];
+			$updated = $config['host'] != $host || $config['port'] != $port;
 		}
-		if(!isset($config) || $updated){
-			$config['host']=$host;
-			$config['port']=$port;
-			$config['sessionName']=uniqid('s');
-			$content="<?php\nreturn ".UArray::asPhpArray($config,'array').';';
-			if (@\file_put_contents('.ubiquity'.\DS.$serverInfos['config'], $content, LOCK_EX) === false) {
-				throw new \Exception('Unable to write config file: .ubiquity'.\DS.$serverInfos['config']);
+		if (! isset($config) || $updated) {
+			$config['host'] = $host;
+			$config['port'] = $port;
+			$config['sessionName'] = uniqid('s');
+			$content = "<?php\nreturn " . UArray::asPhpArray($config, 'array') . ';';
+			if (@\file_put_contents('.ubiquity' . \DS . $serverInfos['config'], $content, LOCK_EX) === false) {
+				throw new \Exception('Unable to write config file: .ubiquity' . \DS . $serverInfos['config']);
 			}
 		}
-		switch ($type){
+		switch ($type) {
 			case 'php':
-				echo ConsoleFormatter::showInfo($msg."Press Ctrl+C to stop it!\n");
-				system('php -S '.$what.' .ubiquity'.\DS.'.htrouter.php -t '.getcwd().' &');
-			break;
-		case 'react':
-			echo ConsoleFormatter::showInfo($msg."Press Ctrl+C to stop it!\n");
-			system('php .ubiquity'.\DS.'_react.php '.$what.' &');
-			break;
-		case 'swoole':
-		case 'workerman':
-			echo ConsoleFormatter::showMessage($msg."Use <b>Ubiquity serve:stop</b> {$type} to stop it!\n");
-			system('php .ubiquity'.\DS.$serverInfos['start']);
-			break;
+				echo ConsoleFormatter::showInfo($msg . "Press Ctrl+C to stop it!\n");
+				system('php -S ' . $what . ' .ubiquity' . \DS . '.htrouter.php -t ' . getcwd() . ' &');
+				break;
+			case 'react':
+				echo ConsoleFormatter::showInfo($msg . "Press Ctrl+C to stop it!\n");
+				system('php .ubiquity' . \DS . '_react.php ' . $what . ' &');
+				break;
+			case 'swoole':
+			case 'workerman':
+				echo ConsoleFormatter::showMessage($msg . "Use <b>Ubiquity serve:stop</b> {$type} to stop it!\n");
+				system('php .ubiquity' . \DS . $serverInfos['start']);
+				break;
 		}
 	}
 
-	private static function stopServer($type){
-		$serverInfos=self::$servers[$type];
+	private static function stopServer($type) {
+		$serverInfos = self::$servers[$type];
 		self::_init(true);
-		$checkClass=$serverInfos['checkClass'];
-		if(class_exists($checkClass,true)){
-			$server=new $checkClass();
-			$config=[];
-			if(file_exists(".ubiquity/".$serverInfos['config'])){
-				$config=include ".ubiquity/".$serverInfos['config'];
+		$checkClass = $serverInfos['checkClass'];
+		if (class_exists($checkClass, true)) {
+			$server = new $checkClass();
+			$config = [];
+			if (file_exists(".ubiquity/" . $serverInfos['config'])) {
+				$config = include ".ubiquity/" . $serverInfos['config'];
 			}
 			$server->setOptions($config);
-			try{
-				if($server->stop()){
-					echo ConsoleFormatter::showMessage($type.' server stopped.');
-				}else{
-					echo ConsoleFormatter::showMessage($type.' server is not stopped!','warning','Server stop');
+			try {
+				if ($server->stop()) {
+					echo ConsoleFormatter::showMessage($type . ' server stopped.');
+				} else {
+					echo ConsoleFormatter::showMessage($type . ' server is not stopped!', 'warning', 'Server stop');
 				}
-			}catch(\Exception $e){
-				echo ConsoleFormatter::showMessage($e->getMessage(),'error','Server stop');
+			} catch (\Exception $e) {
+				echo ConsoleFormatter::showMessage($e->getMessage(), 'error', 'Server stop');
 			}
-		}else{
-			echo ConsoleFormatter::showMessage($type.' server is not installed!','error','Server stop');
+		} else {
+			echo ConsoleFormatter::showMessage($type . ' server is not installed!', 'error', 'Server stop');
 		}
 	}
 
-	private static function info(){
-		echo self::$appName." (".self::$version.")\n";
-		$commands=Command::getCommands();
-		foreach ($commands as $command){
+	private static function info() {
+		echo self::$appName . " (" . self::$version . ")\n";
+		$commands = Command::getCommands();
+		foreach ($commands as $command) {
 			echo ConsoleFormatter::formatHtml($command->longString());
 			echo "\n";
 		}
 	}
 
-	private static function bootstrap(&$config,$mode){
-		$file=ROOT.DS.'config/bootstrap.php';
-		if(\file_exists($file)){
+	private static function bootstrap(&$config, $mode) {
+		$file = ROOT . DS . 'config/bootstrap.php';
+		if (\file_exists($file)) {
 			include $file;
-			$function_name='_'.$mode;
-			if(\function_exists($function_name)){
-				$self=new self();
-				try{
-					if(\function_exists('bs_before')){
-						bs_before($self,$config);
+			$function_name = '_' . $mode;
+			if (\function_exists($function_name)) {
+				$self = new self();
+				try {
+					if (\function_exists('bs_before')) {
+						bs_before($self, $config);
 					}
 					echo ConsoleFormatter::showInfo("Try to execute {$function_name} function...");
-					\call_user_func($function_name,$self,$config);
-					if(\function_exists('bs_after')){
-						bs_after($self,$config);
+					\call_user_func($function_name, $self, $config);
+					if (\function_exists('bs_after')) {
+						bs_after($self, $config);
 					}
-					echo ConsoleFormatter::showMessage("Bootstrap for {$mode} is ok!",'success');
-				}catch (\Exception $e){
-					echo ConsoleFormatter::showMessage($e->getMessage(),'error','Exception '.$e->getCode());
+					echo ConsoleFormatter::showMessage("Bootstrap for {$mode} is ok!", 'success');
+				} catch (\Exception $e) {
+					echo ConsoleFormatter::showMessage($e->getMessage(), 'error', 'Exception ' . $e->getCode());
 				}
-			}else{
-				echo ConsoleFormatter::showMessage("Function {$function_name} does not exists!",'error','Bootstrap');
+			} else {
+				echo ConsoleFormatter::showMessage("Function {$function_name} does not exists!", 'error', 'Bootstrap');
 			}
-		}else{
-			echo ConsoleFormatter::showMessage("File {$file} does not exists!",'error','Bootstrap');
+		} else {
+			echo ConsoleFormatter::showMessage("File {$file} does not exists!", 'error', 'Bootstrap');
 		}
 	}
 
-	private static function infoCmd($cmd){
-		$infos=Command::getInfo($cmd);
-		$command=null;
-		foreach ($infos as $info){
+	private static function infoCmd($cmd) {
+		$infos = Command::getInfo($cmd);
+		$command = null;
+		foreach ($infos as $info) {
 			echo ConsoleFormatter::showInfo($info['info']);
-			if($command!==$info['cmd']){
+			if ($command !== $info['cmd']) {
 				echo ConsoleFormatter::formatHtml($info['cmd']->longString());
 			}
-			$command=$info['cmd'];
+			$command = $info['cmd'];
 			echo "\n";
 		}
 	}
-	private static function _init($silent=false){
-		self::$activeDir=dirname(__FILE__);
-		if(!self::setDir(getcwd())){
-			if($silent){
+
+	private static function _init($silent = false) {
+		self::$activeDir = dirname(__FILE__);
+		if (! self::setDir(getcwd())) {
+			if ($silent) {
 				return;
 			}
-			echo ConsoleFormatter::showMessage("Failed to locate project root folder\nAn Ubiquity project must contain the <b>".self::$checkProjectDir."</b> folder.",'error');
+			echo ConsoleFormatter::showMessage("Failed to locate project root folder\nAn Ubiquity project must contain the <b>" . self::$checkProjectDir . "</b> folder.", 'error');
 			die();
 		}
-		if (!defined('ROOT')) {
-			define('ROOT', realpath('./app').DS);
+		if (! defined('ROOT')) {
+			define('ROOT', realpath('./app') . DS);
 		}
-		require_once ROOT.'./../vendor/autoload.php';
-		if(isset(\Ubiquity\controllers\Startup::$config)){
-			$config=\Ubiquity\controllers\Startup::$config;
-		}else{
-			$config=require_once 'app/config/config.php';
+		require_once ROOT . './../vendor/autoload.php';
+		if (isset(\Ubiquity\controllers\Startup::$config)) {
+			$config = \Ubiquity\controllers\Startup::$config;
+		} else {
+			$config = require_once 'app/config/config.php';
 			\Ubiquity\controllers\Startup::setConfig($config);
 		}
 		return $config;
@@ -743,14 +914,14 @@ class Ubiquity {
 	}
 
 	public static function error($exception) {
-		$msg="\n<b>Message</b> : ".ConsoleFormatter::colorize($exception->getMessage(),ConsoleFormatter::LIGHT_GRAY)."\n<b>File</b> : " .$exception->getFile()."\n<b>Line : </b> " . $exception->getLine();
-		echo ConsoleFormatter::showMessage($msg,'error');
+		$msg = "\n<b>Message</b> : " . ConsoleFormatter::colorize($exception->getMessage(), ConsoleFormatter::LIGHT_GRAY) . "\n<b>File</b> : " . $exception->getFile() . "\n<b>Line : </b> " . $exception->getLine();
+		echo ConsoleFormatter::showMessage($msg, 'error');
 	}
 }
 error_reporting(E_ALL);
 
-if (!defined('DS')) {
-    define('DS', DIRECTORY_SEPARATOR);
+if (! defined('DS')) {
+	define('DS', DIRECTORY_SEPARATOR);
 }
 
-Ubiquity::init($argv[1]??'help');
+Ubiquity::init($argv[1] ?? 'help');
