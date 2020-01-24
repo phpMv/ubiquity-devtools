@@ -317,6 +317,20 @@ class Command {
 			]);
 	}
 
+	public static function mailer(){
+		return new Command("mailer","part","Displays mailer classes, mailer queue or mailer dequeue.",[],[],
+		[
+			'Display mailer classes'=>'Ubiquity mailer classes',
+			'Display mailer messages in queue(To send)'=>'Ubiquity mailer queue',
+			'Display mailer messages in dequeue(sent)'=>'Ubiquity mailer dequeue'
+		]);
+	}
+
+	public static function newMail(){
+		return new Command("new-mail","name","Creates a new mailer class.",["newMail","new:mail"],[],
+			['Creates a new mailer class'=>'Ubiquity newMail InformationMail']);
+	}
+
 	public static function getCommands(){
 		return [self::project(),
 				self::serve(),
@@ -344,7 +358,9 @@ class Command {
 				self::configInfo(),
 				self::configSet(),
 				self::installTheme(),
-				self::newTheme()
+				self::newTheme(),
+				self::mailer(),
+				self::newMail()
 		];
 	}
 	/**
