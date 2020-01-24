@@ -326,6 +326,16 @@ class Command {
 		]);
 	}
 
+	public static function sendMails(){
+		return new Command("sendMail","","Send message(s) from queue.",["sendMails"],[
+			"n"=>Parameter::create("num", "If specified, Send the mail at the position n in queue.", [])
+		],
+			[
+				'Send all messages to send from queue'=>'Ubiquity semdmails',
+				'Send the first message in queue'=>'Ubiquity sendmail 1'
+			]);
+	}
+
 	public static function newMail(){
 		return new Command("new-mail","name","Creates a new mailer class.",["newMail","new:mail"],[],
 			['Creates a new mailer class'=>'Ubiquity newMail InformationMail']);
@@ -360,7 +370,8 @@ class Command {
 				self::installTheme(),
 				self::newTheme(),
 				self::mailer(),
-				self::newMail()
+				self::newMail(),
+				self::sendMails()
 		];
 	}
 	/**

@@ -8,7 +8,7 @@ class SendMailQueueCmd extends AbstractCmd {
 
 	public static function run(&$config, $options, $what) {
 		\Ubiquity\cache\CacheManager::startProd($config);
-		$index = self::getOption($options, 'n', 'num');
+		$index = $what;
 		MailerManager::start();
 		if (isset($index)) {
 			if (\is_numeric($index)) {

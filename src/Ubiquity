@@ -32,7 +32,7 @@ use Ubiquity\devtools\cmd\commands\NewMailCmd;
 class Ubiquity {
 	use CmdTrait;
 
-	private static $version = '1.2.11+';
+	private static $version = '1.2.12';
 
 	private static $appName = 'Ubiquity devtools';
 
@@ -133,7 +133,7 @@ class Ubiquity {
 			if (is_array($item))
 				$item = implode("\n", $item);
 		});
-		return str_replace(array_keys($array), array_values($array), $subject);
+		return \str_replace(array_keys($array), array_values($array), $subject);
 	}
 
 	public static function openReplaceWrite($source, $destination, $keyAndValues) {
@@ -518,12 +518,13 @@ class Ubiquity {
 			case "mailer":
 				$config = self::_init();
 				$what = self::requiredParam($what, 'queue');
-				if($what=='send'){
-					SendMailQueueCmd::run($config, $options, $what);
-				}else{
-					InfoMailerCmd::run($config, $options, $what);
-				}
+				InfoMailerCmd::run($config, $options, $what);
 				break;
+			case "sendMail": case "sendMails":
+				$config = self::_init();
+				$what = self::requiredParam($what, 'queue');
+				SendMailQueueCmd::run($config, $options, $what);
+			break;
 			case "new-mail": case "newMail": case "new:mail":
 				$config = self::_init();
 				$what = self::requiredParam($what, 'classname');
