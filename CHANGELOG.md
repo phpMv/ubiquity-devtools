@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 - Nothing
+## [1.2.12] - 2020-01-25
+#### Added
+- Mailer commands (mailer, newMail, sendMail)
+- opcache preloading in project creation
+#### Changed
+- set `help` as default command
+- require php 7.4
+
 ## [1.2.11] - 2019-11-18
 #### Changed
 - Update client libraries for new projects (Formantic 2.8, jQuery 3.4.1, phpMv-ui 2.3)
