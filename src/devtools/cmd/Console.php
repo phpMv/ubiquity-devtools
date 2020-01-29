@@ -2,8 +2,8 @@
 namespace  Ubiquity\devtools\cmd;
 
 class Console {
-	public static function readline(){
-		return rtrim(fgets(STDIN));
+	public static function readConsoleInput(){
+		return readline();
 	}
 
 	public static function question($prompt,array $propositions=null){
@@ -16,17 +16,17 @@ class Console {
 				}
 				echo ConsoleFormatter::formatContent($props);
 				do{
-					$answer=self::readline();
+					$answer=self::readConsoleInput();
 				}while((int)$answer!=$answer || !isset($propositions[(int)$answer-1]));
 				$answer=$propositions[(int)$answer-1];
 			}else {
 				echo " (".implode("/", $propositions).")\n";
 				do{
-					$answer=self::readline();
+					$answer=self::readConsoleInput();
 				}while(array_search($answer, $propositions)===false);
 			}
 		}else{
-			$answer=self::readline();
+			$answer=self::readConsoleInput();
 		}
 
 		return $answer;
