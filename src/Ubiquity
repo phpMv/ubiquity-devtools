@@ -87,9 +87,10 @@ class Ubiquity {
 			'start' => '_workerman.php start'
 		],
         'roadrunner' => [
-            'files' => [],
-            'config' => 'config.php',
-            'require' => 'lapinskas/roadrunner-ubiquity'
+			'files' => [],
+			'checkClass' => '\\RoadRunnerUbiquity\\Request',
+			'config' => 'config.php',
+			'require' => 'lapinskas/roadrunner-ubiquity'
         ]
 	];
 
@@ -815,17 +816,13 @@ class Ubiquity {
 				echo ConsoleFormatter::showMessage($msg . "Use <b>Ubiquity serve:stop</b> {$type} to stop it!\n");
 				system('php .ubiquity' . \DS . $serverInfos['start']);
 				break;
-            case 'roadrunner':
-                if (! \file_exists("vendor/lapinskas/roadrunner-ubiquity")) {
-                    system('composer require ' . $serverInfos['require']);
-                }
-
-                if (! \file_exists("rr")) {
-                    system('vendor/bin/rr-ub-install');
-                }
-                echo ConsoleFormatter::showInfo($msg . "Press Ctrl+C to stop it!\n");
-                system('./rr serve -v -d' . ' &');
-                break;
+				case 'roadrunner':
+				if (! \file_exists("rr")) {
+				    system('vendor/bin/rr-ub-install');
+				}
+				echo ConsoleFormatter::showInfo($msg . "Press Ctrl+C to stop it!\n");
+				system('./rr serve -v -d -o http.address=:' . $port . ' &');
+				break;
 		}
 	}
 
