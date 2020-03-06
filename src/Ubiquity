@@ -86,12 +86,12 @@ class Ubiquity {
 			'require' => 'phpmv/ubiquity-workerman',
 			'start' => '_workerman.php start'
 		],
-        'roadrunner' => [
+		'roadrunner' => [
 			'files' => [],
-			'checkClass' => '\\RoadRunnerUbiquity\\Request',
 			'config' => 'config.php',
+			'checkClass' => '\\RoadRunnerUbiquity\\Request',
 			'require' => 'lapinskas/roadrunner-ubiquity'
-        ]
+		]
 	];
 
 	protected static function addAdminDependencies() {
@@ -816,12 +816,12 @@ class Ubiquity {
 				echo ConsoleFormatter::showMessage($msg . "Use <b>Ubiquity serve:stop</b> {$type} to stop it!\n");
 				system('php .ubiquity' . \DS . $serverInfos['start']);
 				break;
-				case 'roadrunner':
+			case 'roadrunner':
 				if (! \file_exists("rr")) {
-				    system('vendor/bin/rr-ub-install');
+					system('vendor/bin/rr-ub-install');
 				}
 				echo ConsoleFormatter::showInfo($msg . "Press Ctrl+C to stop it!\n");
-				system('./rr serve -v -d -o http.address=:' . $port . ' &');
+				system('./rr serve -v -d -o http.address=' . $host . ':' . $port . ' &');
 				break;
 		}
 	}
