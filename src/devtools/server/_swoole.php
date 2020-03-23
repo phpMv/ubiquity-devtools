@@ -15,4 +15,4 @@ require ROOT . './../vendor/autoload.php';
 $swooleServer=new \Ubiquity\servers\swoole\SwooleServer();
 $swooleServer->init($config, __DIR__);
 require ROOT.'config/services.php';
-$swooleServer->run($sConfig['host'],$sConfig['port'],$sConfig);
+$swooleServer->run($sConfig['host'],$sConfig['port'],$sConfig['options']??[]);
