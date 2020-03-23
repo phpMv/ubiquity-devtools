@@ -32,7 +32,7 @@ use Ubiquity\devtools\cmd\commands\NewMailCmd;
 class Ubiquity {
 	use CmdTrait;
 
-	private static $version = '1.2.12';
+	private static $version = '1.2.13';
 
 	private static $appName = 'Ubiquity devtools';
 
