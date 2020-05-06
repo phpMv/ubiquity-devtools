@@ -32,7 +32,7 @@ use Ubiquity\devtools\cmd\commands\NewMailCmd;
 class Ubiquity {
 	use CmdTrait;
 
-	private static $version = '1.2.13';
+	private static $version = '1.2.14';
 
 	private static $appName = 'Ubiquity devtools';
 
@@ -674,7 +674,7 @@ class Ubiquity {
 				$config = self::_init(true);
 				if (is_array($config)) {
 					if (class_exists("\\Ubiquity\\controllers\\admin\\UbiquityMyAdminBaseController")) {
-						$v .= 'Ubiquity Webtools (' . \Ubiquity\controllers\admin\UbiquityMyAdminBaseController::version . ")\n";
+						$v .= 'Ubiquity webtools (' . \Ubiquity\controllers\admin\UbiquityMyAdminBaseController::version . ")\n";
 					}
 					$v .= 'Ubiquity ' . Framework::version . "\n";
 				}
@@ -769,60 +769,74 @@ class Ubiquity {
 		}
 	}
 
+	private static function checkPort($ip, $port) {
+		$fp = @\fsockopen($ip, $port, $errno, $errstr, 0.1);
+		if ($fp) {
+			fclose($fp);
+			return false;
+		}
+		return true;
+	}
+
 	private static function startServer($host, $port, $type = 'php') {
-		$serverInfos = self::$servers[$type];
-		$what = $host . ':' . $port;
-		self::_init();
-		if (isset($serverInfos['checkClass'])) {
-			$checkClass = $serverInfos['checkClass'];
-			if (! \class_exists($checkClass, true)) {
-				$require = $serverInfos['require'];
-				echo ConsoleFormatter::showInfo('composer require ' . $require);
-				system('composer require ' . $require);
-			}
-		}
-		$msg = "Starting " . $type . " server at <b>" . $what . "</b>...\n";
-
-		foreach ($serverInfos['files'] as $fileSrc => $fileDest) {
-			if (! \file_exists($fileDest)) {
-				FileUtils::xcopy(self::$activeDir . $fileSrc, $fileDest);
-			}
-		}
-
-		if (\file_exists(".ubiquity/" . $serverInfos['config'])) {
-			$config = include ".ubiquity/" . $serverInfos['config'];
-			$updated = $config['host'] != $host || $config['port'] != $port;
-		}
-		if (! isset($config) || $updated) {
-			$config['host'] = $host;
-			$config['port'] = $port;
-			$config['sessionName'] = uniqid('s');
-			$content = "<?php\nreturn " . UArray::asPhpArray($config, 'array') . ';';
-			if (@\file_put_contents('.ubiquity' . \DS . $serverInfos['config'], $content, LOCK_EX) === false) {
-				throw new \Exception('Unable to write config file: .ubiquity' . \DS . $serverInfos['config']);
-			}
-		}
-		switch ($type) {
-			case 'php':
-				echo ConsoleFormatter::showInfo($msg . "Press Ctrl+C to stop it!\n");
-				system('php -S ' . $what . ' .ubiquity' . \DS . '.htrouter.php -t ' . getcwd() . ' &');
-				break;
-			case 'react':
-				echo ConsoleFormatter::showInfo($msg . "Press Ctrl+C to stop it!\n");
-				system('php .ubiquity' . \DS . '_react.php ' . $what . ' &');
-				break;
-			case 'swoole':
-			case 'workerman':
-				echo ConsoleFormatter::showMessage($msg . "Use <b>Ubiquity serve:stop</b> {$type} to stop it!\n");
-				system('php .ubiquity' . \DS . $serverInfos['start']);
-				break;
-			case 'roadrunner':
-				if (! \file_exists("rr")) {
-					system('vendor/bin/rr-ub-install');
+		if(self::checkPort($host, $port)){
+			$serverInfos = self::$servers[$type];
+			$what = $host . ':' . $port;
+			self::_init();
+			if (isset($serverInfos['checkClass'])) {
+				$checkClass = $serverInfos['checkClass'];
+				if (! \class_exists($checkClass, true)) {
+					$require = $serverInfos['require'];
+					echo ConsoleFormatter::showInfo('composer require ' . $require);
+					system('composer require ' . $require);
 				}
-				echo ConsoleFormatter::showInfo($msg . "Press Ctrl+C to stop it!\n");
-				system('./rr serve -v -d -o http.address=' . $host . ':' . $port . ' &');
-				break;
+			}
+			$msg = "Starting " . $type . " server at <b>" . $what . "</b>...\n";
+
+			foreach ($serverInfos['files'] as $fileSrc => $fileDest) {
+				if (! \file_exists($fileDest)) {
+					FileUtils::xcopy(self::$activeDir . $fileSrc, $fileDest);
+				}
+			}
+
+			if (\file_exists(".ubiquity/" . $serverInfos['config'])) {
+				$config = include ".ubiquity/" . $serverInfos['config'];
+				$updated = $config['host'] != $host || $config['port'] != $port;
+			}
+			if (! isset($config) || $updated) {
+				$config['host'] = $host;
+				$config['port'] = $port;
+				$config['sessionName'] = uniqid('s');
+				$content = "<?php\nreturn " . UArray::asPhpArray($config, 'array') . ';';
+				if (@\file_put_contents('.ubiquity' . \DS . $serverInfos['config'], $content, LOCK_EX) === false) {
+					throw new \Exception('Unable to write config file: .ubiquity' . \DS . $serverInfos['config']);
+				}
+			}
+			switch ($type) {
+				case 'php':
+					echo ConsoleFormatter::showInfo($msg . "Press Ctrl+C to stop it!\n");
+					system('php -S ' . $what . ' .ubiquity' . \DS . '.htrouter.php -t ' . getcwd() . ' &');
+					break;
+				case 'react':
+					echo ConsoleFormatter::showInfo($msg . "Press Ctrl+C to stop it!\n");
+					system('php .ubiquity' . \DS . '_react.php ' . $what . ' &');
+					break;
+				case 'swoole':
+				case 'workerman':
+					echo ConsoleFormatter::showMessage($msg . "Use <b>Ubiquity serve:stop</b> {$type} to stop it!\n");
+					system('php .ubiquity' . \DS . $serverInfos['start']);
+					break;
+				case 'roadrunner':
+					if (! \file_exists("rr")) {
+						system('vendor/bin/rr-ub-install');
+					}
+					echo ConsoleFormatter::showInfo($msg . "Press Ctrl+C to stop it!\n");
+					system('./rr serve -v -d -o http.address=' . $host . ':' . $port . ' &');
+					break;
+			}
+		}else{
+			$message??=ConsoleFormatter::showMessage("the port $port is occupied!",'error','Server starting');
+			echo $message;
 		}
 	}
 
