@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 - Nothing
+## [1.2.14] - 2020-05-06
+#### Updated
+- Update client libraries for new projects (Fomantic 2.8.4, jQuery 3.5.1)
+- Add port checking for `Ubiquity serve` command
 ## [1.2.13] - 2020-03-23
 #### Added
 - roadrunner server command (Thanks @Lapinskas)
@@ -21,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.11] - 2019-11-18
 #### Changed
-- Update client libraries for new projects (Formantic 2.8, jQuery 3.4.1, phpMv-ui 2.3)
+- Update client libraries for new projects (Fomantic 2.8, jQuery 3.4.1, phpMv-ui 2.3)
 - require php 7.2
 
 ## [1.2.10] - 2019-10-28
