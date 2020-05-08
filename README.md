@@ -3,7 +3,7 @@
 [![Latest Stable Version](https://poser.pugx.org/phpmv/ubiquity-devtools/v/stable)](https://packagist.org/packages/phpmv/ubiquity-devtools)
 [![Total Downloads](https://poser.pugx.org/phpmv/ubiquity-devtools/downloads)](https://packagist.org/packages/phpmv/ubiquity-devtools)
 [![License](https://poser.pugx.org/phpmv/ubiquity-devtools/license)](https://packagist.org/packages/phpmv/ubiquity-devtools)
-[![Documentation Status](https://readthedocs.org/projects/micro-framework/badge/?version=latest)](http://micro-framework.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/micro-framework/badge/?version=latest)](http://micro-framework.readthedocs.io/en/latest/?badge=latest) [![Join the chat at https://gitter.im/ubiquity-framework/devtools](https://badges.gitter.im/ubiquity-framework/devtools.svg)](https://gitter.im/ubiquity-framework/devtools?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Command line tools for [Ubiquity framework](https://github.com/phpMv/ubiquity)
 ## I - Installation
