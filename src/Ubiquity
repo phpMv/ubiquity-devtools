@@ -32,7 +32,7 @@ use Ubiquity\devtools\cmd\commands\NewMailCmd;
 class Ubiquity {
 	use CmdTrait;
 
-	private static $version = '1.2.14';
+	private static $version = '1.2.15';
 
 	private static $appName = 'Ubiquity devtools';
 
@@ -526,12 +526,15 @@ class Ubiquity {
 				$what = self::requiredParam($what, 'queue');
 				InfoMailerCmd::run($config, $options, $what);
 				break;
-			case "sendMail": case "sendMails":
+			case "sendMail":
+			case "sendMails":
 				$config = self::_init();
 				$what = self::requiredParam($what, 'queue');
 				SendMailQueueCmd::run($config, $options, $what);
-			break;
-			case "new-mail": case "newMail": case "new:mail":
+				break;
+			case "new-mail":
+			case "newMail":
+			case "new:mail":
 				$config = self::_init();
 				$what = self::requiredParam($what, 'classname');
 				NewMailCmd::run($config, $options, $what);
@@ -639,6 +642,7 @@ class Ubiquity {
 				break;
 
 			case "help":
+				self::_init(true);
 				if (isset($what)) {
 					self::infoCmd($what);
 				} else {
@@ -751,6 +755,12 @@ class Ubiquity {
 				break;
 
 			default:
+				$config = self::_init();
+				$customCommands = Command::getCustomCommands();
+				if (isset($customCommands[$command])) {
+					$cmd = $customCommands[$command];
+					return $cmd->run($config, $options, $what, self::$activeDir);
+				}
 				$commands = Command::getInfo($command);
 				echo ConsoleFormatter::showMessage("The command {$command} does not exists!", 'warning');
 				if (sizeof($commands) > 0) {
@@ -779,7 +789,7 @@ class Ubiquity {
 	}
 
 	private static function startServer($host, $port, $type = 'php') {
-		if(self::checkPort($host, $port)){
+		if (self::checkPort($host, $port)) {
 			$serverInfos = self::$servers[$type];
 			$what = $host . ':' . $port;
 			self::_init();
@@ -834,8 +844,8 @@ class Ubiquity {
 					system('./rr serve -v -d -o http.address=' . $host . ':' . $port . ' &');
 					break;
 			}
-		}else{
-			$message??=ConsoleFormatter::showMessage("the port $port is occupied!",'error','Server starting');
+		} else {
+			$message ??= ConsoleFormatter::showMessage("the port $port is occupied!", 'error', 'Server starting');
 			echo $message;
 		}
 	}
@@ -928,6 +938,7 @@ class Ubiquity {
 			define('ROOT', realpath('./app') . DS);
 		}
 		require_once ROOT . './../vendor/autoload.php';
+		Command::preloadCustomCommands();
 		if (isset(\Ubiquity\controllers\Startup::$config)) {
 			$config = \Ubiquity\controllers\Startup::$config;
 		} else {
