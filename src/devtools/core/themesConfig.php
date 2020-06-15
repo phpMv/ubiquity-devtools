@@ -11,7 +11,7 @@ return [
 				'composer'=>['zurb/foundation'=>'^6.5']
 		],
 		'semantic'=>[
-				'composer'=>['fomantic/ui'=>'^2.7','frameworks/jquery'=> '~2.1'],
+				'composer'=>['fomantic/ui'=>'^2.8','frameworks/jquery'=> '~2.1'],
 				'vendor-copy'=>[
 						'/vendor/fomantic/ui/dist/semantic.min.css'=>'/public/assets/%theme%/css/semantic.min.css',
 						'/vendor/fomantic/ui/dist/semantic.min.js'=>'/public/assets/%theme%/js/semantic.min.js',
