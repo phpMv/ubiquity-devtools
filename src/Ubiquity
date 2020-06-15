@@ -761,6 +761,12 @@ class Ubiquity {
 					$cmd = $customCommands[$command];
 					return $cmd->run($config, $options, $what, self::$activeDir);
 				}
+				$aliases = Command::getCustomAliases();
+				if (isset($aliases[$command])) {
+					$cmd = $aliases[$command];
+					return $cmd->run($config, $options, $what, self::$activeDir);
+				}
+
 				$commands = Command::getInfo($command);
 				echo ConsoleFormatter::showMessage("The command {$command} does not exists!", 'warning');
 				if (sizeof($commands) > 0) {
