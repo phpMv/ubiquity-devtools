@@ -29,6 +29,7 @@ use Ubiquity\devtools\cmd\commands\InfoMailerCmd;
 use Ubiquity\devtools\cmd\commands\SendMailQueueCmd;
 use Ubiquity\devtools\cmd\commands\NewMailCmd;
 use Ubiquity\devtools\cmd\commands\CreateCommandCmd;
+use Ubiquity\devtools\cmd\commands\HelpCmd;
 
 class Ubiquity {
 	use CmdTrait;
@@ -653,12 +654,9 @@ class Ubiquity {
 
 			case "help":
 				self::_init(true);
-				if (isset($what)) {
-					self::infoCmd($what);
-				} else {
-					self::info();
-				}
+				HelpCmd::run(self, $what);
 				break;
+
 			case "serve":
 				$dPort = 8095;
 				$type = self::getOption($options, 't', 'type', 'php');
@@ -767,7 +765,7 @@ class Ubiquity {
 			case 'createCommand':
 			case 'create:command':
 				$config = self::_init();
-				CreateCommandCmd::run($config, $options, $what, self::$devtoolsConfig['cmd-pattern']);
+				CreateCommandCmd::run($config, $options, $what, self::$devtoolsConfig, __CLASS__);
 				break;
 			default:
 				$config = self::_init();
@@ -896,15 +894,6 @@ class Ubiquity {
 		}
 	}
 
-	private static function info() {
-		echo self::$appName . " (" . self::$version . ")\n";
-		$commands = Command::getCommands();
-		foreach ($commands as $command) {
-			echo ConsoleFormatter::formatHtml($command->longString());
-			echo "\n";
-		}
-	}
-
 	private static function bootstrap(&$config, $mode) {
 		$file = ROOT . DS . 'config/bootstrap.php';
 		if (\file_exists($file)) {
@@ -930,19 +919,6 @@ class Ubiquity {
 			}
 		} else {
 			echo ConsoleFormatter::showMessage("File {$file} does not exists!", 'error', 'Bootstrap');
-		}
-	}
-
-	private static function infoCmd($cmd) {
-		$infos = Command::getInfo($cmd);
-		$command = null;
-		foreach ($infos as $info) {
-			echo ConsoleFormatter::showInfo($info['info']);
-			if ($command !== $info['cmd']) {
-				echo ConsoleFormatter::formatHtml($info['cmd']->longString());
-			}
-			$command = $info['cmd'];
-			echo "\n";
 		}
 	}
 
