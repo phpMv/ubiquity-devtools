@@ -28,6 +28,7 @@ use Ubiquity\orm\DAO;
 use Ubiquity\devtools\cmd\commands\InfoMailerCmd;
 use Ubiquity\devtools\cmd\commands\SendMailQueueCmd;
 use Ubiquity\devtools\cmd\commands\NewMailCmd;
+use Ubiquity\devtools\cmd\commands\CreateCommandCmd;
 
 class Ubiquity {
 	use CmdTrait;
@@ -39,6 +40,8 @@ class Ubiquity {
 	private static $configOptions;
 
 	private static $toolsConfig;
+
+	private static $devtoolsConfig;
 
 	private static $indexContent = "\n\t\$this->loadView(\"@framework/index/index.html\");\n";
 
@@ -93,6 +96,13 @@ class Ubiquity {
 			'require' => 'lapinskas/roadrunner-ubiquity'
 		]
 	];
+
+	protected static function loadDevtoolsConfig() {
+		if (\file_exists(self::$checkProjectDir . \DS . 'devtoolsConfig.php')) {
+			self::$devtoolsConfig = include self::$checkProjectDir . \DS . 'devtoolsConfig.php';
+		}
+		self::$devtoolsConfig['cmd-pattern'] ??= 'commands' . \DS . '*.cmd.php';
+	}
 
 	protected static function addAdminDependencies() {
 		self::addComposerDependencies(self::$toolsConfig['composer']['require-dev'], ' --dev');
@@ -753,7 +763,12 @@ class Ubiquity {
 				$config = self::_init();
 				InstallThemeCmd::run($config, $options, $what, self::$activeDir);
 				break;
-
+			case 'create-command':
+			case 'createCommand':
+			case 'create:command':
+				$config = self::_init();
+				CreateCommandCmd::run($config, $options, $what, self::$devtoolsConfig['cmd-pattern']);
+				break;
 			default:
 				$config = self::_init();
 				$customCommands = Command::getCustomCommands();
@@ -944,7 +959,8 @@ class Ubiquity {
 			define('ROOT', realpath('./app') . DS);
 		}
 		require_once ROOT . './../vendor/autoload.php';
-		Command::preloadCustomCommands();
+		self::loadDevtoolsConfig();
+		Command::preloadCustomCommands(self::$devtoolsConfig);
 		if (isset(\Ubiquity\controllers\Startup::$config)) {
 			$config = \Ubiquity\controllers\Startup::$config;
 		} else {
