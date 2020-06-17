@@ -37,7 +37,7 @@ class HelpCmd extends AbstractCmd {
 	}
 
 	private static function info($caller) {
-		echo $caller::$appName . " (" . $caller::$version . ")\n";
+		echo $caller::getAppVersion() . "\n";
 		$commands = Command::getCommands();
 		foreach ($commands as $command) {
 			echo ConsoleFormatter::formatHtml($command->longString());

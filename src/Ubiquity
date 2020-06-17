@@ -503,6 +503,10 @@ class Ubiquity {
 		return true;
 	}
 
+	public static function getAppVersion() {
+		return self::$appName . " (" . self::$version . ")";
+	}
+
 	public static function run($command, ...$options) {
 		$options = array_merge([
 			__FILE__,
