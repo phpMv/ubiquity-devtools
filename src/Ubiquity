@@ -658,7 +658,7 @@ class Ubiquity {
 
 			case "help":
 				self::_init(true);
-				HelpCmd::run(self, $what);
+				HelpCmd::run(__CLASS__, $what);
 				break;
 
 			case "serve":
