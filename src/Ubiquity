@@ -7,10 +7,7 @@ use Ubiquity\core\Framework;
 use Ubiquity\devtools\cmd\Command;
 use Ubiquity\devtools\cmd\Console;
 use Ubiquity\devtools\cmd\ConsoleFormatter;
-use Ubiquity\devtools\utils\FileUtils;
-use Ubiquity\utils\base\UArray;
 use Ubiquity\devtools\cmd\commands\ConfigSetCmd;
-use Ubiquity\devtools\cmd\traits\CmdTrait;
 use Ubiquity\devtools\cmd\commands\ConfigCmd;
 use Ubiquity\devtools\cmd\commands\InfoRoutesCmd;
 use Ubiquity\devtools\cmd\commands\InfoModelsCmd;
@@ -24,17 +21,20 @@ use Ubiquity\devtools\cmd\commands\RestCmd;
 use Ubiquity\devtools\cmd\commands\RestApiCmd;
 use Ubiquity\devtools\cmd\commands\InstallThemeCmd;
 use Ubiquity\devtools\cmd\commands\NewThemeCmd;
-use Ubiquity\orm\DAO;
 use Ubiquity\devtools\cmd\commands\InfoMailerCmd;
 use Ubiquity\devtools\cmd\commands\SendMailQueueCmd;
 use Ubiquity\devtools\cmd\commands\NewMailCmd;
 use Ubiquity\devtools\cmd\commands\CreateCommandCmd;
 use Ubiquity\devtools\cmd\commands\HelpCmd;
+use Ubiquity\devtools\cmd\traits\CmdTrait;
+use Ubiquity\devtools\utils\FileUtils;
+use Ubiquity\orm\DAO;
+use Ubiquity\utils\base\UArray;
 
 class Ubiquity {
 	use CmdTrait;
 
-	private static $version = '1.2.15';
+	private static $version = '1.2.16';
 
 	private static $appName = 'Ubiquity devtools';
 
@@ -527,7 +527,7 @@ class Ubiquity {
 		global $argv;
 		\set_exception_handler(array(
 			Ubiquity::class,
-			"error"
+			'error'
 		));
 
 		$what = $argv[$current] ?? null;
@@ -536,34 +536,34 @@ class Ubiquity {
 		}
 		$options = self::parseArguments();
 		switch ($command) {
-			case "mailer":
+			case 'mailer':
 				$config = self::_init();
 				$what = self::requiredParam($what, 'queue');
 				InfoMailerCmd::run($config, $options, $what);
 				break;
-			case "sendMail":
-			case "sendMails":
+			case 'sendMail':
+			case 'sendMails':
 				$config = self::_init();
 				$what = self::requiredParam($what, 'queue');
 				SendMailQueueCmd::run($config, $options, $what);
 				break;
-			case "new-mail":
-			case "newMail":
-			case "new:mail":
+			case 'new-mail':
+			case 'newMail':
+			case 'new:mail':
 				$config = self::_init();
 				$what = self::requiredParam($what, 'classname');
 				NewMailCmd::run($config, $options, $what);
 				break;
-			case "project":
-			case "create-project":
-			case "new":
+			case 'project':
+			case 'create-project':
+			case 'new':
 				self::create($what, $options);
 				break;
-			case "composer-create-project":
+			case 'composer-create-project':
 				self::composerCreateProject();
 				break;
-			case "all-models":
-			case "create-all-models":
+			case 'all-models':
+			case 'create-all-models':
 				$config = self::_init();
 				$offset = self::getOption($options, "d", "database", 'default');
 
@@ -574,8 +574,8 @@ class Ubiquity {
 				}
 				break;
 
-			case "model":
-			case "create-model":
+			case 'model':
+			case 'create-model':
 				$config = self::_init();
 				$offset = self::getOption($options, "d", "database", 'default');
 				$what = self::requiredParam($what, 'tableName');
@@ -586,8 +586,8 @@ class Ubiquity {
 				}
 				break;
 
-			case "controller":
-			case "create-controller":
+			case 'controller':
+			case 'create-controller':
 				$config = self::_init();
 				$what = self::requiredParam($what, 'controllerName');
 				$view = self::getOption($options, "v", "views", false);
@@ -599,31 +599,31 @@ class Ubiquity {
 				self::createController($config, $what, $indexContent, $view, $theme);
 				break;
 
-			case "crud":
-			case "crud-controller":
+			case 'crud':
+			case 'crud-controller':
 				$config = self::_init();
 				$what = self::requiredParam($what, 'controllerName');
 				CrudCmd::run($config, $options, $what);
 				break;
 
-			case "auth":
-			case "auth-controller":
+			case 'auth':
+			case 'auth-controller':
 				self::_init();
 				AuthCmd::run($config, $options, $what);
 				break;
 
-			case "clear-cache":
+			case 'clear-cache':
 				$type = self::getOption($options, "t", "type", "all");
 				$config = self::_init();
 				CacheManager::clearCache($config, $type);
 				break;
-			case "action":
-			case "new-action":
+			case 'action':
+			case 'new-action':
 				$config = self::_init();
 				NewActionCmd::run($config, $options, $what);
 				break;
 
-			case "init-cache":
+			case 'init-cache':
 				$type = self::getOption($options, "t", "type", "all");
 				$config = self::_init();
 				ob_start();
@@ -632,7 +632,7 @@ class Ubiquity {
 				echo ConsoleFormatter::showMessage($res, 'success', 'init-cache:' . $type);
 				break;
 
-			case "self-update":
+			case 'self-update':
 				self::selfUpdate();
 				break;
 
@@ -656,12 +656,12 @@ class Ubiquity {
 				self::composer($what);
 				break;
 
-			case "help":
+			case 'help':
 				self::_init(true);
 				HelpCmd::run(__CLASS__, $what);
 				break;
 
-			case "serve":
+			case 'serve':
 				$dPort = 8095;
 				$type = self::getOption($options, 't', 'type', 'php');
 				if (isset(self::$servers[$type])) {
@@ -679,12 +679,12 @@ class Ubiquity {
 					echo ConsoleFormatter::showMessage(sprintf('The server %s does not exists!', $type), 'error', 'Server starting');
 				}
 				break;
-			case "serve:stop":
-			case "stop:serve":
+			case 'serve:stop':
+			case 'stop:serve':
 				$what = self::requiredParam($what, 'type');
 				self::stopServer($what);
 				break;
-			case "version":
+			case 'version':
 				$v = 'PHP ' . \phpversion() . "\n";
 				$v .= self::$appName . " (" . self::$version . ")\n";
 				$config = self::_init(true);
@@ -697,71 +697,71 @@ class Ubiquity {
 				echo ConsoleFormatter::showInfo($v);
 				break;
 
-			case "info:routes":
-			case "info:r":
-			case "info::routes":
+			case 'info:routes':
+			case 'info:r':
+			case 'info::routes':
 				$config = self::_init();
 				InfoRoutesCmd::run($config, $options, $what);
 				break;
 
-			case "info:model":
-			case "info-model":
+			case 'info:model':
+			case 'info-model':
 				$config = self::_init();
 				InfoModelCmd::run($config, $options, $what);
 				break;
 
-			case "info:models":
-			case "info-models":
+			case 'info:models':
+			case 'info-models':
 				$config = self::_init();
 				InfoModelsCmd::run($config, $options, $what);
 				break;
 
-			case "config":
-			case "info:config":
-			case "info-config":
+			case 'config':
+			case 'info:config':
+			case 'info-config':
 				$config = self::_init();
 				ConfigCmd::run($config, $options, $what);
 				break;
 
-			case "info:validators":
-			case "info:validation":
+			case 'info:validators':
+			case 'info:validation':
 				$config = self::_init();
 				InfoValidationCmd::run($config, $options, $what);
 				break;
 
-			case "config:set":
-			case "config-set":
+			case 'config:set':
+			case 'config-set':
 				$config = self::_init();
 				ConfigSetCmd::run($config, $options);
 				break;
 
-			case "dao":
-			case "DAO":
+			case 'dao':
+			case 'DAO':
 				$config = self::_init();
 				DAOCmd::run($config, $options, $what);
 				break;
 
-			case "rest":
-			case "rest-controller":
+			case 'rest':
+			case 'rest-controller':
 				$config = self::_init();
 				RestCmd::run($config, $options, $what);
 				break;
 
-			case "restapi":
-			case "restapi-controller":
+			case 'restapi':
+			case 'restapi-controller':
 				$config = self::_init();
 				RestApiCmd::run($config, $options, $what);
 				break;
 
-			case "create-theme":
-			case "create:theme":
+			case 'create-theme':
+			case 'create:theme':
 				$config = self::_init();
 				NewThemeCmd::run($config, $options, $what, self::$activeDir);
 				break;
 
-			case "install-theme":
-			case "install:theme":
-			case "theme":
+			case 'install-theme':
+			case 'install:theme':
+			case 'theme':
 				$config = self::_init();
 				InstallThemeCmd::run($config, $options, $what, self::$activeDir);
 				break;
