@@ -52,89 +52,37 @@ Ubiquity help
 This command should display something similar to:
 
 ```bash
-Ubiquity devtools (1.2.7)
+Ubiquity devtools (1.2.15)
 
-■ project [projectName] =>
-        · Creates a new #ubiquity project.
-        · Aliases : new,create-project
+■ init-cache [] =>
+        · Init the cache for models, router, rest.
         · Parameters :
-                -b      shortcut of --dbName
-                        Sets the database name.
-
-                -s      shortcut of --serverName
-                        Defines the db server address.
-                        Default : [127.0.0.1]
-
-                -p      shortcut of --port
-                        Defines the db server port.
-                        Default : [3306]
-
-                -u      shortcut of --user
-                        Defines the db server user.
-                        Default : [root]
-
-                -w      shortcut of --password
-                        Defines the db server password.
-
-                -h      shortcut of --themes
-                        Install themes.
-                        Possibles values :
-                        semantic,bootstrap,foundation
-
-                -m      shortcut of --all-models
-                        Creates all models from database.
-
-                -a      shortcut of --admin
-                        Adds UbiquityMyAdmin tool.
-                        Possibles values :
-                        true,false
-                        Default : [false]
-
-                -i      shortcut of --siteUrl
-                        Sets the site base URL.
-
-                -e      shortcut of --rewriteBase
-                        Sets .htaccess file rewriteBase.
-                        
-        × Samples :
-                Creates a new project
-                  · Ubiquity new blog
-                With admin interface
-                  · Ubiquity new blog -a
-                and models generation
-                  · Ubiquity new blog -a -m -b=blogDB
-
-■ serve [] =>
-        · Start a web server.
-        · Parameters :
-                -h      shortcut of --host
-                        Sets the host ip address.
-                        Default : [127.0.0.1]
-
-                -p      shortcut of --port
-                        Sets the listen port number.
-                        Default : [8090]
-
                 -t      shortcut of --type
-                        Sets the server type.
+                        Defines the type of cache to create.
                         Possibles values :
-                        php,react
-                        Default : [php]
+                        all,controllers,rest,models
+                        Default : [all]
 
         × Samples :
-                Starts a php server at 127.0.0.1:8090
-                  · Ubiquity serve
-                Starts a reactPHP server at 127.0.0.1:8080
-                  · Ubiquity serve -t=react
+                Init all caches
+                  · Ubiquity init-cache
+                Init models cache
+                  · Ubiquity init-cache -t=models
 
-■ help [?] =>
-        · Get some help about a dev-tools command.
+■ clear-cache [] =>
+        · Clear models cache.
+        · Parameters :
+                -t      shortcut of --type
+                        Defines the type of cache to reset.
+                        Possibles values :
+                        all,annotations,controllers,rest,models,queries,views
+                        Default : [all]
+
         × Samples :
-                Get some help about crud
-                  · Ubiquity help crud
-
-■ version [] =>
-        · Return PHP, Framework and dev-tools versions.
+                Clear all caches
+                  · Ubiquity clear-cache -t=all
+                Clear models cache
+                  · Ubiquity clear-cache -t=models
 
 ■ controller [controllerName] =>
         · Creates a new controller.
@@ -144,6 +92,7 @@ Ubiquity devtools (1.2.7)
                         creates an associated view folder
                         Possibles values :
                         true,false
+                        Default : [false]
 
         × Samples :
                 Creates a controller
@@ -151,79 +100,58 @@ Ubiquity devtools (1.2.7)
                 with its associated view
                   · Ubiquity controller UserController -v
 
-■ model [tableName] =>
-        · Generates a new model.
-        · Aliases : create-model
-        × Samples :
-                  · Ubiquity model User
-
-■ all-models [] =>
-        · Generates all models from database.
-        · Aliases : create-all-models
-        × Samples :
-                  · Ubiquity all-models
-
-■ dao [command] =>
-        · Executes a DAO command (getAll,getOne,count,uGetAll,uGetOne,uCount).
-        · Aliases : DAO
+■ action [controller.action] =>
+        · Creates a new action in a controller.
+        · Aliases : new-action
         · Parameters :
-                -r      shortcut of --resource
-                        The model used
+                -p      shortcut of --params
+                        The action parameters (or arguments)
 
-                -c      shortcut of --condition
-                        The where part of the query
+                -r      shortcut of --route
+                        The associated route path
 
-                -i      shortcut of --included
-                        The associated members to load (boolean or array: client.*,commands)
-
-                -p      shortcut of --parameters
-                        The parameters for a parameterized query
-
-                -f      shortcut of --fields
-                        The fields to display in the response
-
-        × Samples :
-                Returns all instances of models\User
-                  · Ubiquity dao getAll -r=User
-                Returns all instances of models\User and includes their commands
-                  · Ubiquity dao getAll -r=User -i=commands
-                Returns the User with the id 5
-                  · Ubiquity dao getOne -c="id=5"-r=User
-                Returns the list of users belonging to the "Brittany" or "Normandy" regions
-                  · Ubiquity uGetAll -r=User -c="region.name= ? or region.name= ?" -p=Brittany,Normandy
-■ clear-cache [] =>
-        · Clear models cache.
-        · Parameters :
-                -t      shortcut of --type
-                        Defines the type of cache to reset.
+                -v      shortcut of --create-view
+                        Creates the associated view
                         Possibles values :
-                        all,annotations,controllers,rest,models,queries,views
+                        true,false
+                        Default : [false]
 
         × Samples :
-                Clear all caches
-                  · Ubiquity clear-cache -t=all
-                Clear models cache
-                  · Ubiquity clear-cache -t=models
+                Adds the action all in controller Users
+                  · Ubiquity action Users.all
+                Adds the action display in controller Users with a parameter
+                  · Ubiquity action Users.display -p=idUser
+                and associates a route to it
+                  · Ubiquity action Users.display -p=idUser -r=/users/display/{idUser}
+                with multiple parameters
+                  · Ubiquity action Users.search -p=name,address
+                and create the associated view
+                  · Ubiquity action Users.search -p=name,address -v
 
-■ init-cache [] =>
-        · Init the cache for models, router, rest.
+■ auth [authControllerName] =>
+        · Creates a new controller for authentification.
+        · Aliases : auth-controller
         · Parameters :
-                -t      shortcut of --type
-                        Defines the type of cache to create.
+                -e      shortcut of --extends
+                        The base class of the controller (must derived from AuthController)
+                        Default : [Ubiquity\controllers\auth\AuthController]
+
+                -t      shortcut of --templates
+                        The templates to modify
                         Possibles values :
-                        all,controllers,rest,models
+                        index,info,noAccess,disconnected,message,baseTemplate
+                        Default : [index,info,noAccess,disconnected,message,baseTemplate]
+
+                -p      shortcut of --path
+                        The associated route
 
         × Samples :
-                Init all caches
-                  · Ubiquity init-cache
-                Init models cache
-                  · Ubiquity init-cache -t=models
-
-■ self-update [] =>
-        · Updates Ubiquity framework for the current project.
-
-■ admin [] =>
-        · Add UbiquityMyAdmin webtools to the current project.
+                Creates a new controller for authentification
+                  · Ubiquity auth AdminAuthController
+                and associates a route to it
+                  · Ubiquity auth AdminAuthController -p=/admin/auth
+                allows customization of index and info templates
+                  · Ubiquity auth AdminAuthController -t=index,info
 
 ■ crud [crudControllerName] =>
         · Creates a new CRUD controller.
@@ -266,31 +194,193 @@ Ubiquity devtools (1.2.7)
                   · Ubiquity crud CrudUsers -r=User -p=/users
                 allows customization of index and form templates
                   · Ubiquity crud CrudUsers -r=User -t=index,form
+                Creates a crud controller for the class models\projects\Author
+                  · Ubiquity crud Authors -r=models\projects\Author
 
-■ auth [authControllerName] =>
-        · Creates a new controller for authentification.
-        · Aliases : auth-controller
+■ create-theme [themeName] =>
+        · Creates a new theme or installs an existing one.
+        · Aliases : create:theme
         · Parameters :
-                -e      shortcut of --extends
-                        The base class of the controller (must derived from AuthController)
-                        Default : [Ubiquity\controllers\auth\AuthController]
-
-                -t      shortcut of --templates
-                        The templates to modify
+                -x      shortcut of --extend
+                        If specified, inherits from an existing theme (bootstrap,semantic or foundation).
                         Possibles values :
-                        index,info,noAccess,disconnected,message,baseTemplate
-                        Default : [index,info,noAccess,disconnected,message,baseTemplate]
-
-                -p      shortcut of --path
-                        The associated route
+                        bootstrap,semantic,foundation
 
         × Samples :
-                Creates a new controller for authentification
-                  · Ubiquity auth AdminAuthController
-                and associates a route to it
-                  · Ubiquity auth AdminAuthController -p=/admin/auth
-                allows customization of index and info templates
-                  · Ubiquity auth AdminAuthController -t=index,info
+                Creates a new theme custom
+                  · Ubiquity create-theme custom
+                Creates a new theme inheriting from Bootstrap
+                  · Ubiquity theme myBootstrap -x=bootstrap
+
+■ theme [themeName] =>
+        · Installs an existing theme or creates a new one if the specified theme does not exists.
+        · Aliases : install-theme,install:theme
+        × Samples :
+                Creates a new theme custom
+                  · Ubiquity theme custom
+                Install bootstrap theme
+                  · Ubiquity theme bootstrap
+
+■ project [projectName] =>
+        · Creates a new #ubiquity project.
+        · Aliases : new,create-project
+        · Parameters :
+                -b      shortcut of --dbName
+                        Sets the database name.
+
+                -s      shortcut of --serverName
+                        Defines the db server address.
+                        Default : [127.0.0.1]
+
+                -p      shortcut of --port
+                        Defines the db server port.
+                        Default : [3306]
+
+                -u      shortcut of --user
+                        Defines the db server user.
+                        Default : [root]
+
+                -w      shortcut of --password
+                        Defines the db server password.
+
+                -h      shortcut of --themes
+                        Install themes.
+                        Possibles values :
+                        semantic,bootstrap,foundation
+
+                -m      shortcut of --all-models
+                        Creates all models from database.
+
+                -a      shortcut of --admin
+                        Adds UbiquityMyAdmin tool.
+                        Possibles values :
+                        true,false
+                        Default : [false]
+
+                -i      shortcut of --siteUrl
+                        Sets the site base URL.
+
+                -e      shortcut of --rewriteBase
+                        Sets .htaccess file rewriteBase.
+
+        × Samples :
+                Creates a new project
+                  · Ubiquity new blog
+                With admin interface
+                  · Ubiquity new blog -a
+                and models generation
+                  · Ubiquity new blog -a -m -b=blogDB
+
+■ serve [] =>
+        · Start a web server.
+        · Parameters :
+                -h      shortcut of --host
+                        Sets the host ip address.
+                        Default : [127.0.0.1]
+
+                -p      shortcut of --port
+                        Sets the listen port number.
+                        Default : [8090]
+
+                -t      shortcut of --type
+                        Sets the server type.
+                        Possibles values :
+                        php,react,swoole,roadrunner
+                        Default : [php]
+
+        × Samples :
+                Starts a php server at 127.0.0.1:8090
+                  · Ubiquity serve
+                Starts a reactPHP server at 127.0.0.1:8080
+                  · Ubiquity serve -t=react
+
+■ bootstrap [command] =>
+        · Executes a command created in app/config/_bootstrap.php file for bootstraping the app.
+        · Aliases : boot
+        × Samples :
+                Bootstrap for dev mode
+                  · Ubiquity bootstrap dev
+                Bootstrap for prod mode
+                  · Ubiquity bootstrap prod
+
+■ help [?] =>
+        · Get some help about a dev-tools command.
+        × Samples :
+                Get some help about crud
+                  · Ubiquity help crud
+
+■ version [] =>
+        · Return PHP, Framework and dev-tools versions.
+
+■ model [tableName] =>
+        · Generates a new model.
+        · Aliases : create-model
+        · Parameters :
+                -d      shortcut of --database
+                        The database connection to use
+                        Default : [default]
+
+        × Samples :
+                  · Ubiquity model User
+                  · Ubiquity model Author -d=projects
+
+■ all-models [] =>
+        · Generates all models from database.
+        · Aliases : create-all-models
+        · Parameters :
+                -d      shortcut of --database
+                        The database connection to use
+                        Default : [default]
+
+        × Samples :
+                  · Ubiquity all-models
+                  · Ubiquity all-models -d=projects
+
+■ dao [command] =>
+        · Executes a DAO command (getAll,getOne,count,uGetAll,uGetOne,uCount).
+        · Aliases : DAO
+        · Parameters :
+                -r      shortcut of --resource
+                        The model used
+
+                -c      shortcut of --condition
+                        The where part of the query
+
+                -i      shortcut of --included
+                        The associated members to load (boolean or array: client.*,commands)
+
+                -p      shortcut of --parameters
+                        The parameters for a parameterized query
+
+                -f      shortcut of --fields
+                        The fields to display in the response
+
+        × Samples :
+                Returns all instances of models\User
+                  · Ubiquity dao getAll -r=User
+                Returns all instances of models\User and includes their commands
+                  · Ubiquity dao getAll -r=User -i=commands
+                Returns the User with the id 5
+                  · Ubiquity dao getOne -c="id=5"-r=User
+                Returns the list of users belonging to the "Brittany" or "Normandy" regions
+                  · Ubiquity uGetAll -r=User -c="region.name= ? or region.name= ?" -p=Brittany,Normandy
+
+■ self-update [] =>
+        · Updates Ubiquity framework for the current project.
+
+■ composer [command] =>
+        · Executes a composer command.
+        · Aliases : compo
+        × Samples :
+                composer update
+                  · Ubiquity composer update
+                composer update with no-dev
+                  · Ubiquity composer nodev
+                composer optimization for production
+                  · Ubiquity composer optimize
+
+■ admin [] =>
+        · Add UbiquityMyAdmin webtools to the current project.
 
 ■ rest [restControllerName] =>
         · Creates a new REST controller.
@@ -317,31 +407,6 @@ Ubiquity devtools (1.2.7)
                 Creates a REST API controller
                   · Ubiquity restapi -p=/rest
 
-■ action [controller.action] =>
-        · Creates a new action in a controller.
-        · Aliases : new-action
-        · Parameters :
-                -p      shortcut of --params
-                        The action parameters (or arguments)
-
-                -r      shortcut of --route
-                        The associated route path
-
-                -v      shortcut of --create-view
-                        Creates the associated view
-                        Default : [false]
-
-        × Samples :
-                Adds the action all in controller Users
-                  · Ubiquity action Users.all
-                Adds the action display in controller Users with a parameter
-                  · Ubiquity action Users.display -p=idUser
-                and associates a route to it
-                  · Ubiquity action Users.display -p=idUser -r=/users/display/{idUser}
-                with multiple parameters
-                  · Ubiquity action Users.search -p=name,address
-                and create the associated view
-                  · Ubiquity action Users.search -p=name,address -v
 ■ info:routes [] =>
         · Display the cached routes.
         · Aliases : info:r,info::routes
@@ -366,7 +431,9 @@ Ubiquity devtools (1.2.7)
                         get,post,put,delete,patch
 
         × Samples :
+                All routes
                   · Ubiquity info:routes
+                Rest routes
                   · Ubiquity info:routes -type=rest
                 Only the routes with the method post
                   · Ubiquity info:routes -type=rest -m=-post
@@ -377,6 +444,9 @@ Ubiquity devtools (1.2.7)
         · Parameters :
                 -s      shortcut of --separate
                         If true, returns each info in a separate table
+                        Possibles values :
+                        true,false
+                        Default : [false]
 
                 -m      shortcut of --model
                         The model on which the information is sought.
@@ -412,6 +482,9 @@ Ubiquity devtools (1.2.7)
         · Parameters :
                 -s      shortcut of --separate
                         If true, returns each info in a separate table
+                        Possibles values :
+                        true,false
+                        Default : [false]
 
                 -m      shortcut of --model
                         The model on which the information is sought.
@@ -444,29 +517,55 @@ Ubiquity devtools (1.2.7)
                 Change the database name and port
                   · Ubiquity config:set --database.dbName=blog --database.port=3307
 
-■ theme [themeName] =>
-        · Installs an existing theme or creates a new one if the specified theme does not exists.
-        · Aliases : install-theme,install:theme
+■ mailer [part] =>
+        · Displays mailer classes, mailer queue or mailer dequeue.
         × Samples :
-                Creates a new theme custom
-                  · Ubiquity theme custom
-                Install bootstrap theme
-                  · Ubiquity theme bootstrap
+                Display mailer classes
+                  · Ubiquity mailer classes
+                Display mailer messages in queue(To send)
+                  · Ubiquity mailer queue
+                Display mailer messages in dequeue(sent)
+                  · Ubiquity mailer dequeue
 
-■ create-theme [themeName] =>
-        · Creates a new theme or installs an existing one.
-        · Aliases : create:theme
+■ new-mail [name] =>
+        · Creates a new mailer class.
+        · Aliases : newMail,new:mail
+        × Samples :
+                Creates a new mailer class
+                  · Ubiquity newMail InformationMail
+
+■ sendMail [] =>
+        · Send message(s) from queue.
+        · Aliases : sendMails
         · Parameters :
-                -x      shortcut of --extend
-                        If specified, inherits from an existing theme (bootstrap,semantic or foundation).
-                        Possibles values :
-                        bootstrap,semantic,foundation
+                -n      shortcut of --num
+                        If specified, Send the mail at the position n in queue.
 
         × Samples :
-                Creates a new theme custom
-                  · Ubiquity create-theme custom
-                Creates a new theme inheriting from Bootstrap
-                  · Ubiquity theme myBootstrap -x=bootstrap
+                Send all messages to send from queue
+                  · Ubiquity semdmails
+                Send the first message in queue
+                  · Ubiquity sendmail 1
+
+■ create-command [commandName] =>
+        · Creates a new custom command for the devtools.
+        · Aliases : create:command,createCommand
+        · Parameters :
+                -v      shortcut of --value
+                        The command value (first parameter).
+
+                -p      shortcut of --parameters
+                        The command parameters (comma separated).
+
+                -d      shortcut of --description
+                        The command description.
+
+                -a      shortcut of --aliases
+                        The command aliases (comma separated).
+
+        × Samples :
+                Creates a new custom command
+                  · Ubiquity create-command custom
 ```
 
 ### Project creation
