@@ -259,6 +259,7 @@ class Ubiquity {
 			self::$configOptions["%cssFiles%"] = [];
 			self::$configOptions["%jsFiles%"] = [];
 			self::$configOptions["%injections%"] = "";
+			self::$configOptions["%sessionName%"] = \preg_replace("/[^A-Za-z0-9 ]/", '', $projectName);
 			foreach ($arguments as $argument) {
 				self::$configOptions["%" . $argument[1] . "%"] = self::getOption($options, $argument[0], $argument[1], $argument[2]);
 			}

@@ -11,7 +11,7 @@ return array(
 				"options"=>[],
 				"cache"=>false
 		],
-		"sessionName"=>"%projectName%",
+		"sessionName"=>"%sessionName%",
 		"namespaces"=>[],
 		"templateEngine"=>'Ubiquity\\views\\engine\\Twig',
 		"templateEngineOptions"=>array("cache"=>false%activeTheme%),
