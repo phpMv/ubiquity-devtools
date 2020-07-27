@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [unreleased]
 - nothing
-## [1.2.16] - 2020-07-27
+## [1.2.16] - 2020-07-28
 ### Updated
 - Update client libraries for new projects (Fomantic 2.8.6)
 - Fix session name generation pb (only alphanumeric chars)
