@@ -34,7 +34,7 @@ use Ubiquity\utils\base\UArray;
 class Ubiquity {
 	use CmdTrait;
 
-	private static $version = '1.2.16';
+	private static $version = '1.2.17';
 
 	private static $appName = 'Ubiquity devtools';
 
@@ -567,10 +567,11 @@ class Ubiquity {
 			case 'create-all-models':
 				$config = self::_init();
 				$offset = self::getOption($options, "d", "database", 'default');
+				$memberAccess = self::getOption($options, "a", "access", 'private');
 
 				if (self::checkDatabase('create-all-models', $config, $offset)) {
-					self::displayResult(function () use ($config, $offset) {
-						(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config, true, null, $offset);
+					self::displayResult(function () use ($config, $offset, $memberAccess) {
+						(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config, true, null, $offset, $memberAccess);
 					});
 				}
 				break;
@@ -580,9 +581,10 @@ class Ubiquity {
 				$config = self::_init();
 				$offset = self::getOption($options, "d", "database", 'default');
 				$what = self::requiredParam($what, 'tableName');
+				$memberAccess = self::getOption($options, "a", "access", 'private');
 				if (self::checkDatabase('create-model', $config, $offset)) {
-					self::displayResult(function () use ($config, $what, $offset) {
-						(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config, true, $what, $offset);
+					self::displayResult(function () use ($config, $what, $offset, $memberAccess) {
+						(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config, true, $what, $offset, $memberAccess);
 					});
 				}
 				break;
