@@ -697,6 +697,7 @@ class Ubiquity {
 					}
 					$v .= 'Ubiquity ' . Framework::version . "\n";
 				}
+				$v .= 'OS: ' . \php_uname() . "\n";
 				echo ConsoleFormatter::showInfo($v);
 				break;
 
