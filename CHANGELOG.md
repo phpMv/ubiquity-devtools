@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [unreleased]
 - nothing
+## [1.2.17] - 2020-09-30
+### Updated
+- add access option (member access) to all-models & create-model cmd
+- add db offset param to info:models command
+- add OS in version command
 ## [1.2.16] - 2020-07-28
 ### Updated
 - Update client libraries for new projects (Fomantic 2.8.6)
