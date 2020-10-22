@@ -31,6 +31,7 @@ use Ubiquity\devtools\utils\FileUtils;
 use Ubiquity\orm\DAO;
 use Ubiquity\utils\base\UArray;
 use Ubiquity\devtools\cmd\commands\InitAclsCmd;
+use Ubiquity\devtools\cmd\commands\DisplayAclsCmd;
 
 class Ubiquity {
 	use CmdTrait;
@@ -636,11 +637,18 @@ class Ubiquity {
 				echo ConsoleFormatter::showMessage($res, 'success', 'init-cache:' . $type);
 				break;
 
-			case 'init:acls':
-			case 'init-acls':
-			case 'initAcls':
+			case 'acl:init':
+			case 'acl-init':
+			case 'aclInit':
 				$config = self::_init();
 				InitAclsCmd::run($config);
+				break;
+
+			case 'acl:display':
+			case 'acl-display':
+			case 'aclDisplay':
+				$config = self::_init();
+				DisplayAclsCmd::run($config, $options);
 				break;
 
 			case 'self-update':
