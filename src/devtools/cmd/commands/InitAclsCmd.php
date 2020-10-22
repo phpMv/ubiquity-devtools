@@ -6,6 +6,7 @@ use Ubiquity\devtools\cmd\ConsoleFormatter;
 use Ubiquity\devtools\cmd\Console;
 use Ubiquity\security\acl\AclManager;
 use Ubiquity\security\acl\persistence\AclCacheProvider;
+use Ubiquity\cache\CacheManager;
 
 /**
  * Initialize ACLS from annotation in controllers.
@@ -30,6 +31,7 @@ class InitAclsCmd extends AbstractCmd {
 				die();
 			}
 		}
+		CacheManager::start($config);
 		AclManager::start();
 		AclManager::initFromProviders([
 			new AclCacheProvider()
