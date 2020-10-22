@@ -18,15 +18,15 @@ use Ubiquity\security\acl\persistence\AclCacheProvider;
 class InitAclsCmd extends AbstractCmd {
 
 	public static function run(&$config) {
-		if (! \class_exists(\Ubiquity\acl\AclManager::class, true)) {
-			$answer = Console::question("Ubiquity-acl is not available. Would you like to install it now with composer?", [
+		if (! \class_exists(\Ubiquity\security\acl\AclManager::class, true)) {
+			$answer = Console::question("\n\tUbiquity-acl is not available. Would you like to install it now with composer?", [
 				"y",
 				"n"
 			]);
 			if (Console::isYes($answer)) {
 				\system('composer require phpmv/ubiquity-acl');
 			} else {
-				echo ConsoleFormatter::showMessage('aborted operation!', 'error', 'init-acls');
+				echo ConsoleFormatter::showMessage('aborted operation!', 'warning', 'init-acls');
 				die();
 			}
 		}
