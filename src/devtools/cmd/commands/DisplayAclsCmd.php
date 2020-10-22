@@ -8,7 +8,7 @@ use Ubiquity\devtools\utils\arrays\ReflectArray;
 
 class DisplayAclsCmd extends AbstractCmd {
 
-	public static function run(&$config, $options, $what) {
+	public static function run(&$config, $options) {
 		$part = self::getOption($options, 'v', 'value', 'all');
 		if ($part === 'all') {
 			$parts = [
