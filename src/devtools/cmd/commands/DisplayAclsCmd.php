@@ -31,25 +31,25 @@ class DisplayAclsCmd extends AbstractCmd {
 		foreach ($parts as $part) {
 			switch ($part) {
 				case 'role':
-					$this->displayPart($part, \Ubiquity\security\acl\AclManager::getRoles());
+					self::displayPart($part, \Ubiquity\security\acl\AclManager::getRoles());
 					break;
 				case 'resource':
-					$this->displayPart($part, \Ubiquity\security\acl\AclManager::getResources());
+					self::displayPart($part, \Ubiquity\security\acl\AclManager::getResources());
 					break;
 				case 'permission':
-					$this->displayPart($part, \Ubiquity\security\acl\AclManager::getPermissions());
+					self::displayPart($part, \Ubiquity\security\acl\AclManager::getPermissions());
 					break;
 				case 'acl':
-					$this->displayPart($part, \Ubiquity\security\acl\AclManager::getAcls());
+					self::displayPart($part, \Ubiquity\security\acl\AclManager::getAcls());
 					break;
 				case 'map':
-					$this->displayPart('permissionMap', \Ubiquity\security\acl\AclManager::getPermissionMap());
+					self::displayPart('permissionMap', \Ubiquity\security\acl\AclManager::getPermissionMap());
 					break;
 			}
 		}
 	}
 
-	private function displayPart($title, $datas) {
+	private static function displayPart($title, $datas) {
 		$count = \count($datas);
 		if ($count > 0) {
 			$fields = \array_keys(\current($datas));
