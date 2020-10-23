@@ -31,41 +31,42 @@ class DisplayAclsCmd extends AbstractCmd {
 		foreach ($parts as $part) {
 			switch ($part) {
 				case 'role':
+				case 'roles':
 					self::displayPart($part, \Ubiquity\security\acl\AclManager::getRoles(), [
 						'name',
 						'parents'
 					]);
 					break;
 				case 'resource':
+				case 'resources':
 					self::displayPart($part, \Ubiquity\security\acl\AclManager::getResources(), [
 						'name',
 						'value'
 					]);
 					break;
 				case 'permission':
+				case 'permissions':
 					self::displayPart($part, \Ubiquity\security\acl\AclManager::getPermissions(), [
 						'name',
 						'level'
 					]);
 					break;
 				case 'acl':
+				case 'acls':
 					$acls = \Ubiquity\security\acl\AclManager::getAcls();
-					$aclsArray = [];
-					foreach ($acls as $acl) {
-						$aclsArray[] = [
-							'role' => $acl->getRole()->getName(),
-							'resource' => $acl->getResource()->getName(),
-							'permission' => $acl->getPermission()->getName()
-						];
-					}
-					self::displayPart($part, $aclsArray, [
+					self::displayPart($part, $acls, [
 						'role',
 						'resource',
 						'permission'
 					]);
 					break;
 				case 'map':
-					// self::displayPart('permissionMap', \Ubiquity\security\acl\AclManager::getPermissionMap()->getMap(), []);
+				case 'maps':
+					self::displayPart('permissionMap', \Ubiquity\security\acl\AclManager::getPermissionMap()->getMap(), [
+						'controller.action',
+						'resource',
+						'permission'
+					]);
 					break;
 			}
 		}
