@@ -31,33 +31,44 @@ class DisplayAclsCmd extends AbstractCmd {
 		foreach ($parts as $part) {
 			switch ($part) {
 				case 'role':
-					self::displayPart($part, \Ubiquity\security\acl\AclManager::getRoles());
+					self::displayPart($part, \Ubiquity\security\acl\AclManager::getRoles(), [
+						'name',
+						'parents'
+					]);
 					break;
 				case 'resource':
-					self::displayPart($part, \Ubiquity\security\acl\AclManager::getResources());
+					self::displayPart($part, \Ubiquity\security\acl\AclManager::getResources(), [
+						'name',
+						'value'
+					]);
 					break;
 				case 'permission':
-					self::displayPart($part, \Ubiquity\security\acl\AclManager::getPermissions());
+					self::displayPart($part, \Ubiquity\security\acl\AclManager::getPermissions(), [
+						'name',
+						'level'
+					]);
 					break;
 				case 'acl':
-					self::displayPart($part, \Ubiquity\security\acl\AclManager::getAcls());
+					self::displayPart($part, \Ubiquity\security\acl\AclManager::getAcls(), [
+						'role',
+						'resource',
+						'permission'
+					]);
 					break;
 				case 'map':
-					self::displayPart('permissionMap', \Ubiquity\security\acl\AclManager::getPermissionMap());
+					self::displayPart('permissionMap', \Ubiquity\security\acl\AclManager::getPermissionMap(), [
+						'controller',
+						'action',
+						'resource',
+						'permission'
+					]);
 					break;
 			}
 		}
 	}
 
-	private static function displayPart($title, $datas) {
+	private static function displayPart($title, $datas, $fields) {
 		$count = \count($datas);
-		if ($count > 0) {
-			$fields = \array_keys(\current($datas));
-		} else {
-			$fields = [
-				'elements'
-			];
-		}
 		$tbl = new ConsoleTable();
 		$rArray = new ReflectArray();
 		$rArray->setProperties($fields);
