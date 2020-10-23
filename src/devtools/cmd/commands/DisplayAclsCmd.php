@@ -56,12 +56,7 @@ class DisplayAclsCmd extends AbstractCmd {
 					]);
 					break;
 				case 'map':
-					self::displayPart('permissionMap', \Ubiquity\security\acl\AclManager::getPermissionMap(), [
-						'controller',
-						'action',
-						'resource',
-						'permission'
-					]);
+					self::displayPart('permissionMap', \Ubiquity\security\acl\AclManager::getPermissionMap()->getMap(), []);
 					break;
 			}
 		}
