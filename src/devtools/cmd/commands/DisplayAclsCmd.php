@@ -49,14 +49,23 @@ class DisplayAclsCmd extends AbstractCmd {
 					]);
 					break;
 				case 'acl':
-					self::displayPart($part, \Ubiquity\security\acl\AclManager::getAcls(), [
+					$acls = \Ubiquity\security\acl\AclManager::getAcls();
+					$aclsArray = [];
+					foreach ($acls as $acl) {
+						$aclsArray[] = [
+							'role' => $acl->getRole()->getName(),
+							'resource' => $acl->getResource()->getName(),
+							'permission' => $acl->getPermission()->getName()
+						];
+					}
+					self::displayPart($part, $aclsArray, [
 						'role',
 						'resource',
 						'permission'
 					]);
 					break;
 				case 'map':
-					self::displayPart('permissionMap', \Ubiquity\security\acl\AclManager::getPermissionMap()->getMap(), []);
+					// self::displayPart('permissionMap', \Ubiquity\security\acl\AclManager::getPermissionMap()->getMap(), []);
 					break;
 			}
 		}
