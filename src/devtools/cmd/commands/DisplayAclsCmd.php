@@ -79,11 +79,11 @@ class DisplayAclsCmd extends AbstractCmd {
 		$rArray->setProperties($fields);
 		$rArray->setObjects($datas);
 		$tbl->setDatas($rArray->parse());
+		echo ConsoleFormatter::showInfo("$count $title(s)\n");
 		echo $tbl->getTable();
 		if ($rArray->hasMessages()) {
 			echo ConsoleFormatter::showMessage(\implode("\n", $rArray->getMessages()), 'error');
 		}
-		echo ConsoleFormatter::showInfo("$count $title(s)\n");
 	}
 }
 
