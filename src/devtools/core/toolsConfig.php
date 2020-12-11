@@ -16,7 +16,7 @@ return [
 	],
 	"composer" => [
 		"require" => [
-			"php" => "^7.4",
+			"php" => ">=7.4",
 			"twig/twig" => "^3.0",
 			"phpmv/ubiquity" => "^2.3",
 			"phpmv/ubiquity-mailer" => "^0.0"
