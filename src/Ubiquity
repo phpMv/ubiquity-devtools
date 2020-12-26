@@ -36,7 +36,7 @@ use Ubiquity\devtools\cmd\commands\DisplayAclsCmd;
 class Ubiquity {
 	use CmdTrait;
 
-	private static $version = '1.2.18';
+	private static $version = '1.2.18+';
 
 	private static $appName = 'Ubiquity devtools';
 
@@ -119,7 +119,16 @@ class Ubiquity {
 		}
 	}
 
+	protected static function getAnnotationsLibrary() {
+		$annotsLibrary = 'phpmv/ubiquity-annotations';
+		if (\version_compare(\phpversion(), '8.0.0', '>=')) {
+			$annotsLibrary = 'phpmv/ubiquity-attributes';
+		}
+		return $annotsLibrary;
+	}
+
 	public static function createComposerFile() {
+		self::$toolsConfig['composer']['require-dev'][self::getAnnotationsLibrary()] = 'dev-main';
 		$composer = \json_encode(self::$toolsConfig['composer'], \JSON_PRETTY_PRINT);
 		echo ConsoleFormatter::showInfo("Composer file creation...\n");
 		FileUtils::writeFile("composer.json", $composer);
@@ -350,6 +359,8 @@ class Ubiquity {
 					echo ConsoleFormatter::showMessage("Project <b>{$projectName}</b> is partialy created.\nYou will need to run `composer install` in the root folder of the project.\nThen `Ubiquity init-cache` to initialize the cache folders.\n", 'info');
 				}
 			} else {
+				$annotsLibrary = self::getAnnotationsLibrary();
+				\system('composer require ' . $annotsLibrary . ' --dev');
 				echo ConsoleFormatter::showMessage("project <b>{$projectName}</b> successfully created.", 'success', 'new-project from composer');
 			}
 		} else {
