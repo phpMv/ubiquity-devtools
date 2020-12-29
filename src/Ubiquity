@@ -346,6 +346,7 @@ class Ubiquity {
 
 					if (self::isBooleanTrue(self::$configOptions["%all-models%"])) {
 						ob_start();
+						\Ubiquity\cache\CacheManager::start($config);
 						(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config);
 						$res = ob_get_clean();
 						echo ConsoleFormatter::showMessage($res, 'success', 'models generation');
@@ -584,6 +585,7 @@ class Ubiquity {
 
 				if (self::checkDatabase('create-all-models', $config, $offset)) {
 					self::displayResult(function () use ($config, $offset, $memberAccess) {
+						\Ubiquity\cache\CacheManager::start($config);
 						(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config, true, null, $offset, $memberAccess);
 					});
 				}
@@ -597,6 +599,7 @@ class Ubiquity {
 				$memberAccess = self::getOption($options, "a", "access", 'private');
 				if (self::checkDatabase('create-model', $config, $offset)) {
 					self::displayResult(function () use ($config, $what, $offset, $memberAccess) {
+						\Ubiquity\cache\CacheManager::start($config);
 						(new \Ubiquity\orm\creator\database\DbModelsCreator())->create($config, true, $what, $offset, $memberAccess);
 					});
 				}
