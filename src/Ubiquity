@@ -32,11 +32,12 @@ use Ubiquity\orm\DAO;
 use Ubiquity\utils\base\UArray;
 use Ubiquity\devtools\cmd\commands\InitAclsCmd;
 use Ubiquity\devtools\cmd\commands\DisplayAclsCmd;
+use Ubiquity\devtools\cmd\commands\EncryptNewKey;
 
 class Ubiquity {
 	use CmdTrait;
 
-	private static $version = '1.2.19';
+	private static $version = '1.2.19+';
 
 	private static $appName = 'Ubiquity devtools';
 
@@ -663,6 +664,14 @@ class Ubiquity {
 			case 'aclDisplay':
 				$config = self::_init();
 				DisplayAclsCmd::run($config, $options);
+				break;
+
+			case 'new-key':
+			case 'new:key':
+			case 'newKey':
+				$config = self::_init();
+				$what = self::requiredParam($what, 'cypher');
+				EncryptNewKey::run($config, $what);
 				break;
 
 			case 'self-update':
