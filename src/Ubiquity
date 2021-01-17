@@ -37,7 +37,7 @@ use Ubiquity\devtools\cmd\commands\EncryptNewKey;
 class Ubiquity {
 	use CmdTrait;
 
-	private static $version = '1.2.19+';
+	private static $version = '1.2.21';
 
 	private static $appName = 'Ubiquity devtools';
 
