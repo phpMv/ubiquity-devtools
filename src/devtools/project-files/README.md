@@ -7,7 +7,7 @@ A short introduction of this app could easily go here.
 
 You will need the following things properly installed on your computer.
 
-* php ^7.1
+* php >=7.4
 * [Git](https://git-scm.com/)
 * [Composer](https://getcomposer.org)
 * [Ubiquity devtools](https://ubiquity.kobject.net/)
