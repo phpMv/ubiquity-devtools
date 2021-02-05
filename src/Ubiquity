@@ -726,7 +726,7 @@ class Ubiquity {
 			case 'live-reload':
 			case 'live':
 				$config = self::_init();
-				LiveReloadCmd::run($config, $options, $what, self::$activeDir);
+				LiveReloadCmd::run($config, $options, $what, \ROOT);
 			case 'serve:stop':
 			case 'stop:serve':
 				$what = self::requiredParam($what, 'type');
