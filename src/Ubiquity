@@ -33,11 +33,12 @@ use Ubiquity\utils\base\UArray;
 use Ubiquity\devtools\cmd\commands\InitAclsCmd;
 use Ubiquity\devtools\cmd\commands\DisplayAclsCmd;
 use Ubiquity\devtools\cmd\commands\EncryptNewKey;
+use Ubiquity\devtools\cmd\commands\LiveReloadCmd;
 
 class Ubiquity {
 	use CmdTrait;
 
-	private static $version = '1.2.21';
+	private static $version = '1.2.22';
 
 	private static $appName = 'Ubiquity devtools';
 
@@ -721,6 +722,11 @@ class Ubiquity {
 					echo ConsoleFormatter::showMessage(sprintf('The server %s does not exists!', $type), 'error', 'Server starting');
 				}
 				break;
+			case 'livereload':
+			case 'live-reload':
+			case 'live':
+				$config = self::_init();
+				LiveReloadCmd::run($config, $options, $what, self::$activeDir);
 			case 'serve:stop':
 			case 'stop:serve':
 				$what = self::requiredParam($what, 'type');
