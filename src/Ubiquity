@@ -38,7 +38,7 @@ use Ubiquity\devtools\cmd\commands\LiveReloadCmd;
 class Ubiquity {
 	use CmdTrait;
 
-	private static $version = '1.2.22';
+	private static $version = '1.2.23';
 
 	private static $appName = 'Ubiquity devtools';
 
@@ -57,6 +57,8 @@ class Ubiquity {
 	private static $checkProjectDir = '.ubiquity';
 
 	private static $toolsPath = 'devtools/';
+
+	private static ?\Symfony\Component\Process\Process $p;
 
 	private static $servers = [
 		'php' => [
@@ -706,18 +708,23 @@ class Ubiquity {
 
 			case 'serve':
 				$dPort = 8095;
+				$lrPort=35729;
+				$noLr=false;
 				$type = self::getOption($options, 't', 'type', 'php');
 				if (isset(self::$servers[$type])) {
 					$host = self::getOption($options, 'h', 'host', '127.0.0.1');
 					if ($type == 'php') {
 						$dPort = 8090;
+						$port = self::getOption($options, 'l', 'lrport', $lrPort);
+						$noLr = self::getOption($options, 'n', 'nolr', $noLr);
 					}
 					$port = self::getOption($options, 'p', 'port', $dPort);
+
 					if (($p = (int) $port) != $port || ! ($p > 0 && $p < 26000)) {
 						echo ConsoleFormatter::showMessage($port . " is an invalid port number!", 'error');
 						exit(1);
 					}
-					self::startServer($host, $port, $type);
+					self::startServer($host, $port, $type,$noLr,$lrPort);
 				} else {
 					echo ConsoleFormatter::showMessage(sprintf('The server %s does not exists!', $type), 'error', 'Server starting');
 				}
@@ -861,7 +868,7 @@ class Ubiquity {
 		return true;
 	}
 
-	private static function startServer($host, $port, $type = 'php') {
+	private static function startServer($host, $port, $type = 'php',$noLr=false,$lrPort=35729) {
 		if (self::checkPort($host, $port)) {
 			$serverInfos = self::$servers[$type];
 			$what = $host . ':' . $port;
@@ -895,9 +902,25 @@ class Ubiquity {
 					throw new \Exception('Unable to write config file: .ubiquity' . \DS . $serverInfos['config']);
 				}
 			}
+			\register_shutdown_function(function(){self::shutdown();});
+			if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+				sapi_windows_set_ctrl_handler(function () {
+					self::shutdown();
+				});
+			}else{
+				declare(ticks = 1);
+				\pcntl_signal(SIGINT,function(){self::shutdown();});
+			}
+
 			switch ($type) {
 				case 'php':
-					echo ConsoleFormatter::showInfo($msg . "Press Ctrl+C to stop it!\n");
+					if(!$noLr) {
+						$lr = "livereload " . \ROOT . " -e php,html -x cache/,logs/ -p 35729 -d";
+						self::$p = new \Symfony\Component\Process\Process(['livereload', \ROOT, '-e', 'php,html', '-x', 'cache/,logs/', '-p', $lrPort, '-d']);
+						echo ConsoleFormatter::showInfo("Starting livereload server on <b>{$lrPort}</b> port...\n");
+						self::$p->start();
+					}
+					echo ConsoleFormatter::showInfo($msg."Press Ctrl+C to stop it!\n");
 					system('php -S ' . $what . ' .ubiquity' . \DS . '.htrouter.php -t ' . getcwd() . ' &');
 					break;
 				case 'react':
@@ -923,6 +946,20 @@ class Ubiquity {
 		}
 	}
 
+
+	private static function shutdown(){
+	    if(isset(self::$p)) {
+			if (!self::$p->isTerminated()) {
+				self::$p->signal(9);
+				echo ConsoleFormatter::showInfo($msg . "Livereload server stopped.");
+			}
+			self::$p = null;
+
+			echo PHP_EOL . 'Bye!' . PHP_EOL;
+			exit;
+		}
+	}
+	
 	private static function stopServer($type) {
 		$serverInfos = self::$servers[$type];
 		self::_init(true);
@@ -930,7 +967,7 @@ class Ubiquity {
 		if (class_exists($checkClass, true)) {
 			$server = new $checkClass();
 			$config = [];
-			if (file_exists(".ubiquity/" . $serverInfos['config'])) {
+			if (\file_exists(".ubiquity/" . $serverInfos['config'])) {
 				$config = include ".ubiquity/" . $serverInfos['config'];
 			}
 			$server->setOptions($config);
