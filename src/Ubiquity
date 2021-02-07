@@ -927,20 +927,29 @@ class Ubiquity {
 			switch ($type) {
 				case 'php':
 					if (! $noLr) {
-						$lr = "livereload " . \ROOT . " -e php,html -x cache/,logs/ -p 35729 -d";
-						self::$p = new \Symfony\Component\Process\Process([
-							'livereload',
-							\ROOT,
-							'-e',
-							'php,html',
-							'-x',
-							'cache/,logs/',
-							'-p',
-							$lrPort,
-							'-d'
-						]);
-						echo ConsoleFormatter::showInfo("Starting livereload server on <b>{$lrPort}</b> port...\n");
-						self::$p->start();
+						if (FileUtils::systemCommandExists('livereload')) {
+							$lr = "livereload " . \ROOT . " -e php,html -x cache/,logs/ -p 35729 -d";
+							self::$p = new \Symfony\Component\Process\Process([
+								'livereload',
+								\ROOT,
+								'-e',
+								'php,html',
+								'-x',
+								'cache/,logs/',
+								'-p',
+								$lrPort,
+								'-d'
+							]);
+							echo ConsoleFormatter::showInfo("Starting livereload server on <b>{$lrPort}</b> port...");
+							self::$p->start();
+							if (self::$p->isRunning()) {
+								echo ConsoleFormatter::showInfo("Livereload server started on <b>{$lrPort}</b> port\n");
+							} else {
+								echo ConsoleFormatter::showMessage("Livereload fail to start on <b>{$lrPort}</b> port\n", 'error', 'live-reload');
+							}
+						} else {
+							echo ConsoleFormatter::showMessage("Problem starting livereload, check livereload installation with <b>npm install -g livereload</b>.\n", 'warning', 'live-reload');
+						}
 					}
 					echo ConsoleFormatter::showInfo($msg . "Press Ctrl+C to stop it!\n");
 					system('php -S ' . $what . ' .ubiquity' . \DS . '.htrouter.php -t ' . getcwd() . ' &');

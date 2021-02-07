@@ -4,6 +4,7 @@ namespace Ubiquity\devtools\cmd\commands;
 use Ubiquity\devtools\core\ConsoleScaffoldController;
 use Ubiquity\devtools\cmd\ConsoleFormatter;
 use Ubiquity\cache\CacheManager;
+use Ubiquity\devtools\utils\FileUtils;
 
 class LiveReloadCmd extends AbstractCmd {
 
@@ -18,10 +19,8 @@ class LiveReloadCmd extends AbstractCmd {
 
 		$msg = "Starting live-reload server...\n";
 
-		\exec('livereload --version', $foo, $exitCode);
-
-		if ($exitCode !== 0) {
-			echo ConsoleFormatter::showMessage("Problem starting livereload, check livereload installation with <b>npm install -g livereloadx</b>.\n", 'warning', 'live-reload');
+		if (! FileUtils::systemCommandExists('livereload')) {
+			echo ConsoleFormatter::showMessage("Problem starting livereload, check livereload installation with <b>npm install -g livereload</b>.\n", 'warning', 'live-reload');
 			echo ConsoleFormatter::showInfo("Trying to install livereload\n");
 			system('npm install -g livereload');
 		}
