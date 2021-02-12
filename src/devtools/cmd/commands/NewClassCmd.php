@@ -11,7 +11,9 @@ class NewClassCmd extends AbstractCmd {
 		$what = self::requiredParam($what, 'completeClassname');
 		$what = \str_replace('.', "\\", $what);
 		$parent = self::getOption($options, 'p', 'parent', '');
-		$parent = \str_replace('.', "\\", $parent);
+		if ($parent != null) {
+			$parent = 'extends \\' . \ltrim(\str_replace('.', "\\", $parent), '\\');
+		}
 		$classname = ClassUtils::getClassSimpleName($what);
 		$ns = ClassUtils::getNamespaceFromCompleteClassname($what);
 		if ($ns != null) {
