@@ -4,11 +4,13 @@ namespace Ubiquity\devtools\cmd\commands;
 
 use Ubiquity\devtools\core\ConsoleScaffoldController;
 use Ubiquity\devtools\cmd\ConsoleFormatter;
+use Ubiquity\cache\CacheManager;
 
 class CrudCmd extends AbstractCmdModel{
 	public static function run(&$config,$options,$what){
 		$resource=self::answerModel($options, 'r', 'resource', 'crud-controller', $config);
 		if(class_exists($resource)){
+			CacheManager::start($config);
 			$scaffold=new ConsoleScaffoldController();
 			$crudDatas=self::getOption($options, 'd', 'datas',true);
 			$crudViewer=self::getOption($options, 'v', 'viewer',true);
