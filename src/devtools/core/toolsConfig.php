@@ -22,7 +22,8 @@ return [
 		],
 		"require-dev" => [
 			"monolog/monolog" => "^2.2",
-			"phpmv/ubiquity-dev" => "^0.1"
+			"phpmv/ubiquity-dev" => "^0.1",
+			"phpmv/ubiquity-debug" => "^0.0"
 		],
 		"autoload" => [
 			"psr-4" => [
