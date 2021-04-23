@@ -16,7 +16,7 @@ if (\class_exists("\\Monolog\\Logger")) {
 	\Ubiquity\log\Logger::init($config);
 }
 
-\Ubiquity\debug\Debugger::start();
+\Ubiquity\debug\Debugger::start($config);
 
 require ROOT . 'config/services.php';
 
@@ -24,8 +24,4 @@ if (\Ubiquity\debug\LiveReload::hasLiveReload()) {
 	echo \Ubiquity\debug\LiveReload::start();
 }
 
-try {
-	\Ubiquity\controllers\Startup::run($config);
-} catch (\Throwable $e) {
-	\Ubiquity\debug\Debugger::showException($e);
-}
+\Ubiquity\controllers\Startup::run($config);
