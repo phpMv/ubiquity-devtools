@@ -39,7 +39,7 @@ use Ubiquity\devtools\cmd\commands\NewClassCmd;
 class Ubiquity {
 	use CmdTrait;
 
-	private static $version = '1.2.27';
+	private static $version = '1.2.28';
 
 	private static $appName = 'Ubiquity devtools';
 
