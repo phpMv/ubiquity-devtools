@@ -3,6 +3,14 @@ use Ubiquity\devtools\cmd\ConsoleFormatter as Console;
 
 //Comments
 
+
+//For dynamic routes initialization in cache
+function bs_routes($devtools,$config){
+		echo Console::showInfo("Store dynamic routes");
+		//Write your routes here
+		//\Ubiquity\controllers\Router::addRoute("sample", "controllers\\SampleController","sampleAction");
+}
+
 //For development mode initialization
 function _dev($devtools,$config){
 		echo Console::showInfo("Development mode");
