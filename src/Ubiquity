@@ -37,6 +37,7 @@ use Ubiquity\devtools\cmd\commands\LiveReloadCmd;
 use Ubiquity\devtools\cmd\commands\NewClassCmd;
 
 class Ubiquity {
+
 	use CmdTrait;
 
 	private static $version = '1.2.28+';
@@ -177,7 +178,7 @@ class Ubiquity {
 
 	public static function create($projectName, $options, $force = false, $composerCreateProject = false) {
 		self::$activeDir = dirname(__FILE__);
-		self::$toolsConfig = include (self::$activeDir . "/devtools/core/toolsConfig.php");
+		self::$toolsConfig = include(self::$activeDir . "/devtools/core/toolsConfig.php");
 		$arguments = [
 			[
 				"b",
@@ -235,7 +236,7 @@ class Ubiquity {
 				$projectName
 			]
 		];
-		if (! $composerCreateProject) {
+		if (!$composerCreateProject) {
 			if (($dir = basename(getcwd())) == $projectName || $projectName == null) {
 				$answer = Console::question("Do you want to create the new project in this folder ($dir) ?", [
 					"y",
@@ -251,13 +252,13 @@ class Ubiquity {
 					}
 				}
 			}
-		} elseif (! $force) {
+		} elseif (!$force) {
 			chdir("..");
 			self::create($projectName, $options, true, $composerCreateProject);
 			return;
 		}
-		if (! is_dir($projectName) || $force) {
-			if (! $force)
+		if (!is_dir($projectName) || $force) {
+			if (!$force)
 				FileUtils::safeMkdir($projectName);
 			chdir($projectName);
 			FileUtils::safeMkdir(self::$checkProjectDir);
@@ -280,8 +281,8 @@ class Ubiquity {
 				self::$configOptions["%" . $argument[1] . "%"] = self::getOption($options, $argument[0], $argument[1], $argument[2]);
 			}
 			self::showConfigOptions();
-			self::openReplaceWrite(self::$activeDir . "/devtools/project-files/.htaccess", getcwd() . "/.htaccess", array(
-				"%rewriteBase%" => self::$configOptions["%rewriteBase%"]
+			self::openReplaceWrite(self::$activeDir . "/devtools/project-files/.htaccess", getcwd() . "/public/.htaccess", array(
+				"%rewriteBase%" => self::$configOptions["%rewriteBase%"] . 'public/'
 			));
 
 			if (self::isBooleanTrue(self::$configOptions["%admin%"])) {
@@ -294,14 +295,14 @@ class Ubiquity {
 			self::openReplaceWrite(self::$activeDir . "/devtools/project-files/templates/preloader.config.tpl", "app/config/preloader.config.php", [
 				'%hasDatabase%' => self::$configOptions['%dbName%'] != null
 			]);
-			FileUtils::xcopy(self::$activeDir . "/devtools/project-files/index.php", "index.php");
+			FileUtils::xcopy(self::$activeDir . "/devtools/project-files/index.php", "public/index.php");
 			FileUtils::xcopy(self::$activeDir . "/devtools/project-files/app/.htaccess", "app/.htaccess");
 
 			// -------------Add themes----------------
 
 			$themes = self::$configOptions["%themes%"];
 			$themes = array_filter(explode(',', $themes));
-			$themesConfig = include (self::$activeDir . "/devtools/core/themesConfig.php");
+			$themesConfig = include(self::$activeDir . "/devtools/core/themesConfig.php");
 			$hasThemes = false;
 			$activeTheme = "";
 
@@ -314,7 +315,7 @@ class Ubiquity {
 					echo ConsoleFormatter::showMessage('The theme <b>' . $theme . '</b> does not exists!', 'warning', 'Themes installation');
 				}
 			}
-			if (! $hasThemes) {
+			if (!$hasThemes) {
 				self::includeDefaultStyles();
 				self::openReplaceWrite(self::$activeDir . "/devtools/project-files/templates/vHeader.tpl", "app/views/main/vHeader.html", self::$configOptions);
 				self::openReplaceWrite(self::$activeDir . "/devtools/project-files/templates/vFooter.tpl", "app/views/main/vFooter.html", self::$configOptions);
@@ -333,7 +334,7 @@ class Ubiquity {
 			self::openReplaceWrite(self::$activeDir . "/devtools/project-files/templates/config.tpl", "app/config/config.php", self::$configOptions);
 			self::openReplaceWrite(self::$activeDir . "/devtools/project-files/README.md", getcwd() . "/README.md", self::$configOptions);
 
-			if (! $composerCreateProject) {
+			if (!$composerCreateProject) {
 				self::createComposerFile();
 				$answer = Console::question("Do you want to run composer install ?", [
 					"y",
@@ -393,7 +394,7 @@ class Ubiquity {
 	}
 
 	private static function adminInstall($config = null) {
-		if (! class_exists("\\Ubiquity\\controllers\\admin\\UbiquityMyAdminBaseController")) {
+		if (!class_exists("\\Ubiquity\\controllers\\admin\\UbiquityMyAdminBaseController")) {
 			self::$toolsConfig["composer"]["require-dev"]["phpmv/ubiquity-webtools"] = "^2.3";
 		}
 		FileUtils::xcopy(self::$activeDir . "/devtools/project-files/app/controllers/Admin.php", "app/controllers/Admin.php");
@@ -423,7 +424,7 @@ class Ubiquity {
 		$controllerName = ucfirst($controllerName);
 		FileUtils::safeMkdir("app/controllers");
 		$filename = "app/controllers/{$controllerName}.php";
-		if (file_exists($filename) && ! $force) {
+		if (file_exists($filename) && !$force) {
 			$answer = Console::question("The file {$filename} exists.\nWould you like to replace it?", [
 				"y",
 				"n"
@@ -511,12 +512,12 @@ class Ubiquity {
 
 	private static function checkDatabase($part, $config, $dbOffset = 'default') {
 		$offsets = DAO::getDatabases();
-		if (! \in_array($dbOffset, $offsets)) {
+		if (!\in_array($dbOffset, $offsets)) {
 			echo ConsoleFormatter::showMessage('The connection ' . $dbOffset . ' does not exists in config file!', 'error', $part);
 			return false;
 		}
 		$dbConfig = DAO::getDbOffset($config, $dbOffset);
-		if (! isset($dbConfig["dbName"])) {
+		if (!isset($dbConfig["dbName"])) {
 			echo ConsoleFormatter::showMessage('The connection ' . $dbOffset . ' has no dbName value in config file!', 'error', $part);
 			return false;
 		}
@@ -728,7 +729,7 @@ class Ubiquity {
 					}
 					$port = self::getOption($options, 'p', 'port', $dPort);
 
-					if (($p = (int) $port) != $port || ! ($p > 0 && $p < 26000)) {
+					if (($p = (int)$port) != $port || !($p > 0 && $p < 26000)) {
 						echo ConsoleFormatter::showMessage($port . " is an invalid port number!", 'error');
 						exit(1);
 					}
@@ -883,7 +884,7 @@ class Ubiquity {
 			self::_init();
 			if (isset($serverInfos['checkClass'])) {
 				$checkClass = $serverInfos['checkClass'];
-				if (! \class_exists($checkClass, true)) {
+				if (!\class_exists($checkClass, true)) {
 					$require = $serverInfos['require'];
 					echo ConsoleFormatter::showInfo('composer require ' . $require);
 					system('composer require ' . $require);
@@ -892,7 +893,7 @@ class Ubiquity {
 			$msg = "Starting " . $type . " server at <b>" . $what . "</b>...\n";
 
 			foreach ($serverInfos['files'] as $fileSrc => $fileDest) {
-				if (! \file_exists($fileDest)) {
+				if (!\file_exists($fileDest)) {
 					FileUtils::xcopy(self::$activeDir . $fileSrc, $fileDest);
 				}
 			}
@@ -901,7 +902,7 @@ class Ubiquity {
 				$config = include ".ubiquity/" . $serverInfos['config'];
 				$updated = $config['host'] != $host || $config['port'] != $port;
 			}
-			if (! isset($config) || $updated) {
+			if (!isset($config) || $updated) {
 				$config['host'] = $host;
 				$config['port'] = $port;
 				$config['sessionName'] = uniqid('s');
@@ -918,7 +919,7 @@ class Ubiquity {
 					self::shutdown();
 				});
 			} else {
-				declare(ticks = 1);
+				declare(ticks=1);
 				\pcntl_signal(SIGINT, function () {
 					self::shutdown();
 				});
@@ -926,7 +927,7 @@ class Ubiquity {
 
 			switch ($type) {
 				case 'php':
-					if (! $noLr) {
+					if (!$noLr) {
 						if (FileUtils::systemCommandExists('livereload')) {
 							$lr = "livereload " . \ROOT . " -e php,html -x cache/,logs/ -p 35729 -d";
 							self::$p = new \Symfony\Component\Process\Process([
@@ -964,7 +965,7 @@ class Ubiquity {
 					system('php .ubiquity' . \DS . $serverInfos['start']);
 					break;
 				case 'roadrunner':
-					if (! \file_exists("rr")) {
+					if (!\file_exists("rr")) {
 						system('vendor/bin/rr-ub-install');
 					}
 					echo ConsoleFormatter::showInfo($msg . "Press Ctrl+C to stop it!\n");
@@ -979,7 +980,7 @@ class Ubiquity {
 
 	private static function shutdown() {
 		if (isset(self::$p)) {
-			if (! self::$p->isTerminated()) {
+			if (!self::$p->isTerminated()) {
 				self::$p->signal(9);
 				echo ConsoleFormatter::showInfo($msg . "Livereload server stopped.");
 			}
@@ -1016,54 +1017,54 @@ class Ubiquity {
 	}
 
 	private static function bootstrap(&$config, $mode) {
-        $file = ROOT . DS . 'config/bootstrap.php';
-        if (\file_exists($file)) {
-            include $file;
-            $function_name = '_' . $mode;
-            if (\function_exists($function_name)) {
-                $self = new self();
-                if ($function_name === '_routes') {
-                    if (\function_exists('bs_routes')) {
-                        echo ConsoleFormatter::showInfo("Try to execute initialize dynamic routes...");
-                        \Ubiquity\cache\CacheManager::startProd($config);
-                        \Ubiquity\cache\CacheManager::initCache($config, 'controllers', true);
-                        \Ubiquity\controllers\Router::start();
-                        bs_routes($self, $config);
-                        \Ubiquity\cache\CacheManager::storeDynamicRoutes();
-                    }
-                } else {
-                    try {
-                        if (\function_exists('bs_before')) {
-                            bs_before($self, $config);
-                        }
-                        echo ConsoleFormatter::showInfo("Try to execute {$function_name} function...");
-                        \call_user_func($function_name, $self, $config);
-                        if (\function_exists('bs_after')) {
-                            bs_after($self, $config);
-                        }
-                        echo ConsoleFormatter::showMessage("Bootstrap for {$mode} is ok!", 'success');
-                    } catch (\Exception $e) {
-                        echo ConsoleFormatter::showMessage($e->getMessage(), 'error', 'Exception ' . $e->getCode());
-                    }
-                }
-            } else {
-                echo ConsoleFormatter::showMessage("Function {$function_name} does not exists!", 'error', 'Bootstrap');
-            }
-        } else {
-            echo ConsoleFormatter::showMessage("File {$file} does not exists!", 'error', 'Bootstrap');
-        }
+		$file = ROOT . DS . 'config/bootstrap.php';
+		if (\file_exists($file)) {
+			include $file;
+			$function_name = '_' . $mode;
+			if (\function_exists($function_name)) {
+				$self = new self();
+				if ($function_name === '_routes') {
+					if (\function_exists('_routes')) {
+						echo ConsoleFormatter::showInfo("Try to execute initialize dynamic routes...");
+						\Ubiquity\cache\CacheManager::startProd($config);
+						\Ubiquity\cache\CacheManager::initCache($config, 'controllers', true);
+						\Ubiquity\controllers\Router::start();
+						_routes($self, $config);
+						\Ubiquity\cache\CacheManager::storeDynamicRoutes();
+					}
+				} else {
+					try {
+						if (\function_exists('bs_before')) {
+							bs_before($self, $config);
+						}
+						echo ConsoleFormatter::showInfo("Try to execute {$function_name} function...");
+						\call_user_func($function_name, $self, $config);
+						if (\function_exists('bs_after')) {
+							bs_after($self, $config);
+						}
+						echo ConsoleFormatter::showMessage("Bootstrap for {$mode} is ok!", 'success');
+					} catch (\Exception $e) {
+						echo ConsoleFormatter::showMessage($e->getMessage(), 'error', 'Exception ' . $e->getCode());
+					}
+				}
+			} else {
+				echo ConsoleFormatter::showMessage("Function {$function_name} does not exists!", 'error', 'Bootstrap');
+			}
+		} else {
+			echo ConsoleFormatter::showMessage("File {$file} does not exists!", 'error', 'Bootstrap');
+		}
 	}
 
 	private static function _init($silent = false) {
 		self::$activeDir = dirname(__FILE__);
-		if (! self::setDir(getcwd())) {
+		if (!self::setDir(getcwd())) {
 			if ($silent) {
 				return;
 			}
 			echo ConsoleFormatter::showMessage("Failed to locate project root folder\nAn Ubiquity project must contain the <b>" . self::$checkProjectDir . "</b> folder.", 'error');
 			die();
 		}
-		if (! defined('ROOT')) {
+		if (!defined('ROOT')) {
 			define('ROOT', realpath('./app') . DS);
 		}
 		require_once ROOT . './../vendor/autoload.php';
@@ -1087,9 +1088,10 @@ class Ubiquity {
 		echo ConsoleFormatter::showMessage($msg, 'error');
 	}
 }
+
 error_reporting(E_ALL);
 
-if (! defined('DS')) {
+if (!defined('DS')) {
 	define('DS', DIRECTORY_SEPARATOR);
 }
 
