@@ -283,7 +283,7 @@ class Ubiquity {
 			}
 			self::showConfigOptions();
 			self::openReplaceWrite(self::$activeDir . "/devtools/project-files/.htaccess", getcwd() . "/public/.htaccess", array(
-				"%rewriteBase%" => self::$configOptions["%rewriteBase%"] . 'public/'
+				"%rewriteBase%" => self::$configOptions["%rewriteBase%"] . '/public'
 			));
 
 			if (self::isBooleanTrue(self::$configOptions["%admin%"])) {
