@@ -228,7 +228,7 @@ class Ubiquity {
 			[
 				"i",
 				"siteUrl",
-				"http://127.0.0.1/" . $projectName . "/"
+				"http://127.0.0.1/" . $projectName . "/public/"
 			],
 			[
 				"e",
