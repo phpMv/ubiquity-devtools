@@ -20,6 +20,8 @@ if (\class_exists("\\Monolog\\Logger")) {
 
 require ROOT . 'config/services.php';
 
+\Ubiquity\assets\AssetsManager::setAssetsFolder();
+
 if (\Ubiquity\debug\LiveReload::hasLiveReload()) {
 	echo \Ubiquity\debug\LiveReload::start();
 }
