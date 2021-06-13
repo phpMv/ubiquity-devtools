@@ -267,6 +267,7 @@ class Ubiquity {
 			FileUtils::safeMkdir("app/controllers");
 			FileUtils::safeMkdir("app/models");
 			FileUtils::safeMkdir("app/config");
+			FileUtils::safeMkdir("public");
 			define('ROOT', realpath('./app') . DS);
 			echo ConsoleFormatter::showInfo("Files copy...");
 			FileUtils::xcopy(self::$activeDir . "/devtools/project-files/app/controllers/ControllerBase.php", "app/controllers/ControllerBase.php");
