@@ -3,17 +3,106 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
 ## [unreleased]
 - nothing
+
+## [1.3.0] - 2021-06-15
+#### Models generation
+- The regeneration of models preserves the code implemented on the existing models.
+
+#### Application root (breaking change)
+- For apache and nginX, root folder is set to public folder (for new projects since Ubiquity 2.4.5)
+
+For an old project (created with a version prior to 2.4.5), you have to modify ``index.php`` and move the ``index.php`` and ``.htaccess`` files to the ``public`` folder.
+
+```php
+   <?php
+   define('DS', DIRECTORY_SEPARATOR);
+   //Updated with index.php in public folder
+   define('ROOT', __DIR__ . DS . '../app' . DS);
+   $config = include_once ROOT . 'config/config.php';
+   require_once ROOT . './../vendor/autoload.php';
+   require_once ROOT . 'config/services.php';
+   \Ubiquity\controllers\Startup::run($config);
+```
+
+## [1.2.28] - 2021-02-15
+### Updated
+- `ubiquity-debug` integration
+
+## [1.2.27] - 2021-03-29
+### Fixed
+- `info::routes` command bug => no routes displayed
+
+## [1.2.26] - 2021-03-10
+### Fixed
+- crud & rest commands bug
+>Call to a member function asAnnotation on null
+>BaseControllerCreator line 58
+
+## [1.2.25] - 2021-02-15
+### Fixed
+- Bug on new class command with parent class (inheritance)
+
+## [1.2.24] - 2021-02-08
+### Added
+- `newClass` command for creating a new class
+
+## [1.2.23] - 2021-02-06
+### Updated
+- replace `livereloadx` with `livereload` 
+>livereloadx has not been updated for 2 years, and does not manage file operations (add, delete).
+
+- add livereload with default php server
+
+Starts php web server and livereload (on 35729 port)
+```bash
+Ubiquity serve
+```
+
+Starts php web server without livereload
+```bash
+Ubiquity serve -n
+```
+
+## [1.2.22] - 2021-02-05
+### Added
+- `live-reload` command for dev server
+
+## [1.2.21] - 2021-01-17
+### Added
+- `newKey` command for generating the encryption key with Ubiquity-security
+
+## [1.2.20] - 2020-12-31
+### Fixed
+- new action problem
+>Call to a member function asAnnotation() on null
+
+## [1.2.19] - 2020-12-31
+
+### Updated
+- Add attributes or annotations fix
+
+## [1.2.18] - 2020-12-11
+
+### Added
+- `display-acls` command
+
+### Updated
+- composer for php 8
+
 ## [1.2.17] - 2020-09-30
 ### Updated
 - add access option (member access) to all-models & create-model cmd
 - add db offset param to info:models command
 - add OS in version command
+
 ## [1.2.16] - 2020-07-28
 ### Updated
 - Update client libraries for new projects (Fomantic 2.8.6)
 - Fix session name generation pb (only alphanumeric chars)
+
 ## [1.2.15] - 2020-06-27
 ### Added
 - Add `create:command`command
@@ -21,6 +110,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Updated
 - move utility classes to `ubiquity-commands` repo
 - Update client libraries for new projects (Fomantic 2.8.5)
+
 ## [1.2.14] - 2020-05-06
 #### Updated
 - Update client libraries for new projects (Fomantic 2.8.4, jQuery 3.5.1)
@@ -31,6 +121,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 `Ubiquity serve -t=roadrunner`
 #### Added
+
 ## [1.2.12] - 2020-01-25
 #### Added
 - Mailer commands (mailer, newMail, sendMail)
@@ -50,6 +141,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ```
 composer create-project phpmv/ubiquity-project {projectName}
 ```
+
 ## [1.2.9] - 2019-09-25
 ### Fixed
 - [Cannot set database](https://github.com/phpMv/ubiquity/issues/74)
