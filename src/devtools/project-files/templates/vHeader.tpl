@@ -9,7 +9,7 @@
 {% endblock %}
 {% block css %}
 	%cssFiles%
-	{{css('css/style.css') | raw}}
+	{{css('css/style.css')}}
 {% endblock %}
 </head>
 <body>
