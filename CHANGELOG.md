@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 - nothing
+## [1.3.1] - 2021-07-06
+#### Fixed
+- Application root pb (public folder) with embedded web server
 
 ## [1.3.0] - 2021-06-15
 #### Models generation
