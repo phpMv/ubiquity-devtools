@@ -16,7 +16,7 @@ class ConsoleScaffoldController extends \Ubiquity\scaffolding\ScaffoldController
 
 	private function prefixLines($str, $prefix) {
 		$lines = explode("\n", $str);
-		array_walk($lines, function (&$line) use ($prefix) {
+		\array_walk($lines, function (&$line) use ($prefix) {
 			if (trim($line) != null)
 				$line = $prefix . $line;
 		});
