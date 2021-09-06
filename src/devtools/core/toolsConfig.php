@@ -27,7 +27,7 @@ return [
 		],
 		"autoload" => [
 			"psr-4" => [
-				"\\" => "app/"
+				"" => "app/"
 			]
 		]
 	]
