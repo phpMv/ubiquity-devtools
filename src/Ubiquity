@@ -41,7 +41,7 @@ class Ubiquity {
 
 	use CmdTrait;
 
-	private static $version = '1.3.3';
+	private static $version = '1.3.4';
 
 	private static $appName = 'Ubiquity devtools';
 
@@ -179,7 +179,7 @@ class Ubiquity {
 
 	public static function create($projectName, $options, $force = false, $composerCreateProject = false) {
 		self::$activeDir = dirname(__FILE__);
-		self::$toolsConfig = include(self::$activeDir . "/devtools/core/toolsConfig.php");
+		self::$toolsConfig = include (self::$activeDir . "/devtools/core/toolsConfig.php");
 		$arguments = [
 			[
 				"b",
@@ -237,7 +237,7 @@ class Ubiquity {
 				$projectName
 			]
 		];
-		if (!$composerCreateProject) {
+		if (! $composerCreateProject) {
 			if (($dir = basename(getcwd())) == $projectName || $projectName == null) {
 				$answer = Console::question("Do you want to create the new project in this folder ($dir) ?", [
 					"y",
@@ -253,13 +253,13 @@ class Ubiquity {
 					}
 				}
 			}
-		} elseif (!$force) {
+		} elseif (! $force) {
 			chdir("..");
 			self::create($projectName, $options, true, $composerCreateProject);
 			return;
 		}
-		if (!is_dir($projectName) || $force) {
-			if (!$force)
+		if (! is_dir($projectName) || $force) {
+			if (! $force)
 				FileUtils::safeMkdir($projectName);
 			chdir($projectName);
 			FileUtils::safeMkdir(self::$checkProjectDir);
@@ -304,7 +304,7 @@ class Ubiquity {
 
 			$themes = self::$configOptions["%themes%"];
 			$themes = array_filter(explode(',', $themes));
-			$themesConfig = include(self::$activeDir . "/devtools/core/themesConfig.php");
+			$themesConfig = include (self::$activeDir . "/devtools/core/themesConfig.php");
 			$hasThemes = false;
 			$activeTheme = "";
 
@@ -317,7 +317,7 @@ class Ubiquity {
 					echo ConsoleFormatter::showMessage('The theme <b>' . $theme . '</b> does not exists!', 'warning', 'Themes installation');
 				}
 			}
-			if (!$hasThemes) {
+			if (! $hasThemes) {
 				self::includeDefaultStyles();
 				self::openReplaceWrite(self::$activeDir . "/devtools/project-files/templates/vHeader.tpl", "app/views/main/vHeader.html", self::$configOptions);
 				self::openReplaceWrite(self::$activeDir . "/devtools/project-files/templates/vFooter.tpl", "app/views/main/vFooter.html", self::$configOptions);
@@ -336,7 +336,7 @@ class Ubiquity {
 			self::openReplaceWrite(self::$activeDir . "/devtools/project-files/templates/config.tpl", "app/config/config.php", self::$configOptions);
 			self::openReplaceWrite(self::$activeDir . "/devtools/project-files/README.md", getcwd() . "/README.md", self::$configOptions);
 
-			if (!$composerCreateProject) {
+			if (! $composerCreateProject) {
 				self::createComposerFile();
 				$answer = Console::question("Do you want to run composer install ?", [
 					"y",
@@ -396,7 +396,7 @@ class Ubiquity {
 	}
 
 	private static function adminInstall($config = null) {
-		if (!class_exists("\\Ubiquity\\controllers\\admin\\UbiquityMyAdminBaseController")) {
+		if (! class_exists("\\Ubiquity\\controllers\\admin\\UbiquityMyAdminBaseController")) {
 			self::$toolsConfig["composer"]["require-dev"]["phpmv/ubiquity-webtools"] = "^2.3";
 		}
 		FileUtils::xcopy(self::$activeDir . "/devtools/project-files/app/controllers/Admin.php", "app/controllers/Admin.php");
@@ -426,7 +426,7 @@ class Ubiquity {
 		$controllerName = ucfirst($controllerName);
 		FileUtils::safeMkdir("app/controllers");
 		$filename = "app/controllers/{$controllerName}.php";
-		if (file_exists($filename) && !$force) {
+		if (file_exists($filename) && ! $force) {
 			$answer = Console::question("The file {$filename} exists.\nWould you like to replace it?", [
 				"y",
 				"n"
@@ -514,12 +514,12 @@ class Ubiquity {
 
 	private static function checkDatabase($part, $config, $dbOffset = 'default') {
 		$offsets = DAO::getDatabases();
-		if (!\in_array($dbOffset, $offsets)) {
+		if (! \in_array($dbOffset, $offsets)) {
 			echo ConsoleFormatter::showMessage('The connection ' . $dbOffset . ' does not exists in config file!', 'error', $part);
 			return false;
 		}
 		$dbConfig = DAO::getDbOffset($config, $dbOffset);
-		if (!isset($dbConfig["dbName"])) {
+		if (! isset($dbConfig["dbName"])) {
 			echo ConsoleFormatter::showMessage('The connection ' . $dbOffset . ' has no dbName value in config file!', 'error', $part);
 			return false;
 		}
@@ -632,7 +632,7 @@ class Ubiquity {
 				$what = self::requiredParam($what, 'controllerName');
 				CrudCmd::run($config, $options, $what);
 				break;
-				
+
 			case 'crud-index':
 			case 'crud-index-controller':
 				$config = self::_init();
@@ -738,7 +738,7 @@ class Ubiquity {
 					}
 					$port = self::getOption($options, 'p', 'port', $dPort);
 
-					if (($p = (int)$port) != $port || !($p > 0 && $p < 26000)) {
+					if (($p = (int) $port) != $port || ! ($p > 0 && $p < 26000)) {
 						echo ConsoleFormatter::showMessage($port . " is an invalid port number!", 'error');
 						exit(1);
 					}
@@ -893,7 +893,7 @@ class Ubiquity {
 			self::_init();
 			if (isset($serverInfos['checkClass'])) {
 				$checkClass = $serverInfos['checkClass'];
-				if (!\class_exists($checkClass, true)) {
+				if (! \class_exists($checkClass, true)) {
 					$require = $serverInfos['require'];
 					echo ConsoleFormatter::showInfo('composer require ' . $require);
 					system('composer require ' . $require);
@@ -902,7 +902,7 @@ class Ubiquity {
 			$msg = "Starting " . $type . " server at <b>" . $what . "</b>...\n";
 
 			foreach ($serverInfos['files'] as $fileSrc => $fileDest) {
-				if (!\file_exists($fileDest)) {
+				if (! \file_exists($fileDest)) {
 					FileUtils::xcopy(self::$activeDir . $fileSrc, $fileDest);
 				}
 			}
@@ -911,7 +911,7 @@ class Ubiquity {
 				$config = include ".ubiquity/" . $serverInfos['config'];
 				$updated = $config['host'] != $host || $config['port'] != $port;
 			}
-			if (!isset($config) || $updated) {
+			if (! isset($config) || $updated) {
 				$config['host'] = $host;
 				$config['port'] = $port;
 				$config['sessionName'] = uniqid('s');
@@ -928,7 +928,7 @@ class Ubiquity {
 					self::shutdown();
 				});
 			} else {
-				declare(ticks=1);
+				declare(ticks = 1);
 				\pcntl_signal(SIGINT, function () {
 					self::shutdown();
 				});
@@ -936,7 +936,7 @@ class Ubiquity {
 
 			switch ($type) {
 				case 'php':
-					if (!$noLr) {
+					if (! $noLr) {
 						if (FileUtils::systemCommandExists('livereload')) {
 							$lr = "livereload " . \ROOT . " -e php,html -x cache/,logs/ -p 35729 -d";
 							self::$p = new \Symfony\Component\Process\Process([
@@ -962,7 +962,7 @@ class Ubiquity {
 						}
 					}
 					echo ConsoleFormatter::showInfo($msg . "Press Ctrl+C to stop it!\n");
-					system('php -S ' . $what . ' -t ' . getcwd() . \DS. 'public .ubiquity' . \DS . '.htrouter.php &');
+					system('php -S ' . $what . ' -t ' . getcwd() . \DS . 'public .ubiquity' . \DS . '.htrouter.php &');
 					break;
 				case 'react':
 					echo ConsoleFormatter::showInfo($msg . "Press Ctrl+C to stop it!\n");
@@ -974,7 +974,7 @@ class Ubiquity {
 					system('php .ubiquity' . \DS . $serverInfos['start']);
 					break;
 				case 'roadrunner':
-					if (!\file_exists("rr")) {
+					if (! \file_exists("rr")) {
 						system('vendor/bin/rr-ub-install');
 					}
 					echo ConsoleFormatter::showInfo($msg . "Press Ctrl+C to stop it!\n");
@@ -989,7 +989,7 @@ class Ubiquity {
 
 	private static function shutdown() {
 		if (isset(self::$p)) {
-			if (!self::$p->isTerminated()) {
+			if (! self::$p->isTerminated()) {
 				self::$p->signal(9);
 				echo ConsoleFormatter::showInfo($msg . "Livereload server stopped.");
 			}
@@ -1066,14 +1066,14 @@ class Ubiquity {
 
 	private static function _init($silent = false) {
 		self::$activeDir = dirname(__FILE__);
-		if (!self::setDir(getcwd())) {
+		if (! self::setDir(getcwd())) {
 			if ($silent) {
 				return;
 			}
 			echo ConsoleFormatter::showMessage("Failed to locate project root folder\nAn Ubiquity project must contain the <b>" . self::$checkProjectDir . "</b> folder.", 'error');
 			die();
 		}
-		if (!defined('ROOT')) {
+		if (! defined('ROOT')) {
 			define('ROOT', realpath('./app') . DS);
 		}
 		require_once ROOT . './../vendor/autoload.php';
@@ -1100,7 +1100,7 @@ class Ubiquity {
 
 error_reporting(E_ALL);
 
-if (!defined('DS')) {
+if (! defined('DS')) {
 	define('DS', DIRECTORY_SEPARATOR);
 }
 
