@@ -6,7 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 - nothing
+## [1.3.4] - 2021-10-07
+### Fixed
+- assets folder location with Ubiquity server
 
+## [1.3.3] - 2021-09-06
+### Updated
+- Default index page
+- ui libraries
+ 
 ## [1.3.2] - 2021-07-11
 #### Added
 - `index-crud` command
