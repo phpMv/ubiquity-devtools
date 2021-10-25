@@ -19,7 +19,11 @@ class IndexCrudCmd extends AbstractCmdModel {
 		$routePath = self::getOption($options, 'p', 'path', '{resource}');
 		$domain = self::getOption($options, 'o', 'domain', '');
 		$dbOffset = self::getOption($options, 'a', 'database', '');
-		DDDManager::setDomain($domain);
+		if ($domain == '') {
+			DDDManager::resetActiveDomain();
+		} else {
+			DDDManager::setDomain($domain);
+		}
 		$dbs = DDDManager::getDatabases();
 		if ($dbOffset == '' || \array_search($dbOffset, $dbs) === false) {
 			if (\count($dbs) > 1) {
