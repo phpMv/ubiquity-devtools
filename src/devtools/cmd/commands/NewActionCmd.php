@@ -12,9 +12,13 @@ class NewActionCmd extends AbstractCmd {
 		$scaffold = new ConsoleScaffoldController();
 		$scaffold->setConfig($config);
 		@list ($controller, $action) = explode('.', $what);
+		$domain = self::getOption($options, 'o', 'domain', '');
+		if ($domain != '') {
+			DDDManager::setDomain($domain);
+		}
 		if ($controller != null && $action != null) {
 			$controller = self::getCompleteClassname($config, $controller, 'controllers');
-			if (class_exists($controller)) {
+			if (\class_exists($controller)) {
 				$parameters = self::getOption($options, 'p', 'params');
 				$routePath = self::getOption($options, 'r', 'route');
 				$createView = self::getOption($options, 'v', 'create-view', false);
