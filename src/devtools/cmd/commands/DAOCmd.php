@@ -13,12 +13,13 @@ use Ubiquity\cache\CacheManager;
  * This class is part of Ubiquity
  *
  * @author jc
- * @version 1.0.0
+ * @version 1.0.1
  *
  */
 class DAOCmd extends AbstractCmd {
 
 	public static function run(&$config, $options, $what) {
+		self::updateDomain($options);
 		$resource = self::answerModel($options, 'r', 'resource', 'dao', $config);
 		$condition = self::getOption($options, 'c', 'condition', '');
 		$included = self::getOptionArray($options, 'i', 'included', false);
@@ -68,7 +69,7 @@ class DAOCmd extends AbstractCmd {
 				$tbl = new ConsoleTable();
 				$tbl->setIndent(5);
 				$rArray = new ClassicArray($datas, $what);
-				if (\is_array($fields) && sizeof($fields) > 0) {
+				if (\is_array($fields) && \count($fields) > 0) {
 					if (\is_array($objects)) {
 						$rArray->setIFields($fields);
 					} else {
@@ -81,7 +82,7 @@ class DAOCmd extends AbstractCmd {
 				}
 				echo $tbl->getTable();
 				if (\is_array($objects)) {
-					echo ConsoleFormatter::showInfo(sizeof($datas) . " instances of " . $resource);
+					echo ConsoleFormatter::showInfo(\count($datas) . " instances of " . $resource);
 				}
 				echo ConsoleFormatter::showInfo(sprintf("Query executed in %.3f seconds", (float) microtime(true) - $start));
 			} else {

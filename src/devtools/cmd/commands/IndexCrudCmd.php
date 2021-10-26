@@ -17,11 +17,8 @@ class IndexCrudCmd extends AbstractCmdModel {
 		$crudEvents = self::getOption($options, 'e', 'events', true);
 		$crudViews = self::getOption($options, 't', 'templates', 'index,form,display,home,itemHome');
 		$routePath = self::getOption($options, 'p', 'path', '{resource}');
-		$domain = self::getOption($options, 'o', 'domain', '');
 		$dbOffset = self::getOption($options, 'a', 'database', '');
-		if ($domain != '') {
-			DDDManager::setDomain($domain);
-		}
+		$domain = self::updateDomain($options);
 		$dbs = DDDManager::getDatabases();
 		if ($dbOffset == '' || \array_search($dbOffset, $dbs) === false) {
 			if (\count($dbs) > 1) {

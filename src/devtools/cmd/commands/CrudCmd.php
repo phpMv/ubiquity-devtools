@@ -9,6 +9,7 @@ use Ubiquity\domains\DDDManager;
 class CrudCmd extends AbstractCmdModel {
 
 	public static function run(&$config, $options, $what) {
+		self::updateDomain($options);
 		$resource = self::answerModel($options, 'r', 'resource', 'crud-controller', $config);
 		if (\class_exists($resource)) {
 			CacheManager::start($config);
@@ -18,10 +19,6 @@ class CrudCmd extends AbstractCmdModel {
 			$crudEvents = self::getOption($options, 'e', 'events', true);
 			$crudViews = self::getOption($options, 't', 'templates', 'index,form,display');
 			$routePath = self::getOption($options, 'p', 'path', '');
-			$domain = self::getOption($options, 'o', 'domain', '');
-			if ($domain != '') {
-				DDDManager::setDomain($domain);
-			}
 			$scaffold->addCrudController($what, $resource, $crudDatas, $crudViewer, $crudEvents, $crudViews, $routePath);
 		} else {
 			echo ConsoleFormatter::showMessage("The models class <b>{$resource}</b> does not exists!", 'error', 'crud-controller');

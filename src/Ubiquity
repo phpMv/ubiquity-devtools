@@ -31,11 +31,13 @@ use Ubiquity\devtools\cmd\traits\CmdTrait;
 use Ubiquity\devtools\utils\FileUtils;
 use Ubiquity\orm\DAO;
 use Ubiquity\utils\base\UArray;
+use Ubiquity\domains\DDDManager;
 use Ubiquity\devtools\cmd\commands\InitAclsCmd;
 use Ubiquity\devtools\cmd\commands\DisplayAclsCmd;
 use Ubiquity\devtools\cmd\commands\EncryptNewKey;
 use Ubiquity\devtools\cmd\commands\LiveReloadCmd;
 use Ubiquity\devtools\cmd\commands\NewClassCmd;
+use Ubiquity\devtools\core\ConsoleScaffoldController;
 
 class Ubiquity {
 
@@ -164,11 +166,11 @@ class Ubiquity {
 	}
 
 	public static function replaceAll($array, $subject) {
-		array_walk($array, function (&$item) {
-			if (is_array($item))
-				$item = implode("\n", $item);
+		\array_walk($array, function (&$item) {
+			if (\is_array($item))
+				$item = \implode("\n", $item);
 		});
-		return \str_replace(array_keys($array), array_values($array), $subject);
+		return \str_replace(\array_keys($array), \array_values($array), $subject);
 	}
 
 	public static function openReplaceWrite($source, $destination, $keyAndValues) {
@@ -415,60 +417,27 @@ class Ubiquity {
 
 	private static function showConfigOptions() {
 		$output = implode("\n", array_map(function ($v, $k) {
-			if (is_array($v))
-				$v = implode(",", $v);
-			return sprintf("%s='%s'", str_ireplace("%", "", $k), $v);
+			if (\is_array($v))
+				$v = \implode(",", $v);
+			return \sprintf("%s='%s'", str_ireplace("%", "", $k), $v);
 		}, self::$configOptions, array_keys(self::$configOptions)));
 		echo ConsoleFormatter::showMessage($output . "\n", 'info', 'Command line arguments');
 	}
 
-	public static function createController($config, $controllerName, $indexContent = null, $view = false, $theme = null, $force = false) {
-		$controllerName = ucfirst($controllerName);
-		FileUtils::safeMkdir("app/controllers");
-		$filename = "app/controllers/{$controllerName}.php";
-		if (file_exists($filename) && ! $force) {
-			$answer = Console::question("The file {$filename} exists.\nWould you like to replace it?", [
-				"y",
-				"n"
-			]);
-			if (Console::isYes($answer))
-				self::createController($config, $controllerName, $indexContent, $view, $theme, true);
-		} else {
-			$msg = "Creation of the Controller <b>{$controllerName}</b> at the location <b>{$filename}</b>\n";
-			$namespace = "";
-			if (isset($config["mvcNS"]["controllers"]) && $config["mvcNS"]["controllers"] !== "")
-				$namespace = "namespace " . $config["mvcNS"]["controllers"] . ";";
-			self::openReplaceWrite(self::$activeDir . "/devtools/project-files/templates/controller.tpl", $filename, [
-				"%controllerName%" => $controllerName,
-				"%indexContent%" => $indexContent,
-				"%namespace%" => $namespace
-			]);
-			if ($view) {
-				$prefix = "";
-				if ($theme == null) {
-					$theme = $config["templateEngineOptions"]["activeTheme"] ?? null;
-				}
-				if ($theme != null) {
-					$prefix = 'themes/' . $theme . '/';
-				}
-				$viewFolder = "app/views/" . $prefix . $controllerName;
-				FileUtils::safeMkdir($viewFolder);
-				$msg .= "Creation of the the associated view index.html at the location {$viewFolder}/index.html\n";
-				self::openReplaceWrite(self::$activeDir . "/devtools/project-files/templates/view.tpl", $viewFolder . "/index.html", [
-					"%controllerName%" => $controllerName
-				]);
-			}
-			echo ConsoleFormatter::showMessage($msg, "success", "Controller creation");
-		}
+	public static function createController($controllerName, $view = false) {
+		$scaffold = new ConsoleScaffoldController();
+		echo $scaffold->_createController($controllerName, [
+			'%baseClass%' => '\\controllers\\ControllerBase'
+		], 'controller.tpl', $view);
 	}
 
 	private static function setDir($dir = null) {
-		if (file_exists($dir) && is_dir($dir)) {
+		if (\file_exists($dir) && \is_dir($dir)) {
 			$microDir = $dir . DIRECTORY_SEPARATOR . self::$checkProjectDir;
-			if (file_exists($microDir) && is_dir($microDir)) {
-				chdir($dir);
+			if (\file_exists($microDir) && \is_dir($microDir)) {
+				\chdir($dir);
 				self::$activeProjectDir = $dir;
-				echo ConsoleFormatter::showInfo("The project folder is <b>" . FileUtils::cleanPathname(self::$activeProjectDir) . "</b>");
+				echo ConsoleFormatter::showInfo('The project folder is <b>' . FileUtils::cleanPathname(self::$activeProjectDir) . '</b>');
 				return true;
 			}
 		}
@@ -506,9 +475,9 @@ class Ubiquity {
 	}
 
 	private static function displayResult($callback) {
-		ob_start();
+		\ob_start();
 		$callback();
-		$res = ob_get_clean();
+		$res = \ob_get_clean();
 		echo ConsoleFormatter::showInfo($res);
 	}
 
@@ -531,7 +500,7 @@ class Ubiquity {
 	}
 
 	public static function run($command, ...$options) {
-		$options = array_merge([
+		$options = \array_merge([
 			__FILE__,
 			$command
 		], $options);
@@ -546,6 +515,14 @@ class Ubiquity {
 		], false, true);
 	}
 
+	private static function updateDomain($options) {
+		$domain = self::getOption($options, 'o', 'domain', '');
+		if ($domain != '') {
+			DDDManager::setDomain($domain);
+		}
+		return $domain;
+	}
+
 	public static function init($command, $current = 2) {
 		global $argv;
 		\set_exception_handler(array(
@@ -554,7 +531,7 @@ class Ubiquity {
 		));
 
 		$what = $argv[$current] ?? null;
-		if ($what != null && strpos($what, '=') !== false) {
+		if ($what != null && \strpos($what, '=') !== false) {
 			$what = null;
 		}
 		$options = self::parseArguments();
@@ -590,7 +567,7 @@ class Ubiquity {
 				$config = self::_init();
 				$offset = self::getOption($options, "d", "database", 'default');
 				$memberAccess = self::getOption($options, "a", "access", 'private');
-
+				self::updateDomain($options);
 				if (self::checkDatabase('create-all-models', $config, $offset)) {
 					self::displayResult(function () use ($config, $offset, $memberAccess) {
 						\Ubiquity\cache\CacheManager::start($config);
@@ -605,6 +582,7 @@ class Ubiquity {
 				$offset = self::getOption($options, "d", "database", 'default');
 				$what = self::requiredParam($what, 'tableName');
 				$memberAccess = self::getOption($options, "a", "access", 'private');
+				self::updateDomain($options);
 				if (self::checkDatabase('create-model', $config, $offset)) {
 					self::displayResult(function () use ($config, $what, $offset, $memberAccess) {
 						\Ubiquity\cache\CacheManager::start($config);
@@ -618,12 +596,8 @@ class Ubiquity {
 				$config = self::_init();
 				$what = self::requiredParam($what, 'controllerName');
 				$view = self::getOption($options, "v", "views", false);
-				$theme = self::getOption($options, "t", "theme");
-				$indexContent = null;
-				if ($view) {
-					$indexContent = "\n\t\t" . '$this->loadDefaultView();' . "\n\t";
-				}
-				self::createController($config, $what, $indexContent, $view, $theme);
+				self::updateDomain($options);
+				self::createController($what, $view);
 				break;
 
 			case 'crud':
@@ -762,8 +736,8 @@ class Ubiquity {
 				$v = 'PHP ' . \phpversion() . "\n";
 				$v .= self::$appName . " (" . self::$version . ")\n";
 				$config = self::_init(true);
-				if (is_array($config)) {
-					if (class_exists("\\Ubiquity\\controllers\\admin\\UbiquityMyAdminBaseController")) {
+				if (\is_array($config)) {
+					if (\class_exists("\\Ubiquity\\controllers\\admin\\UbiquityMyAdminBaseController")) {
 						$v .= 'Ubiquity webtools (' . \Ubiquity\controllers\admin\UbiquityMyAdminBaseController::version . ")\n";
 					}
 					$v .= 'Ubiquity ' . Framework::version . "\n";
@@ -861,8 +835,8 @@ class Ubiquity {
 
 				$commands = Command::getInfo($command);
 				echo ConsoleFormatter::showMessage("The command {$command} does not exists!", 'warning');
-				if (sizeof($commands) > 0) {
-					$cmd = current($commands)["cmd"];
+				if (\count($commands) > 0) {
+					$cmd = \current($commands)["cmd"];
 					$answer = Console::question("Did you mean {$cmd->getName()}?", [
 						"y",
 						"n"
