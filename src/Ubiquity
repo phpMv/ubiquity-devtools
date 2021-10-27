@@ -546,6 +546,19 @@ class Ubiquity {
 		], false, true);
 	}
 
+	private static function updateDomain($options) {
+		$domain = self::getOption($options, 'o', 'domain', '');
+		if ($domain != '') {
+			$domains=DDDManager::getDomains();
+			if(\array_search($domain, $domains)!==false){
+				DDDManager::setDomain($domain);
+			}else{
+				throw new \Ubiquity\exceptions\UbiquityException("Domain `$domain` doesn't exist!");
+			}
+		}
+		return $domain;
+	}
+
 	public static function init($command, $current = 2) {
 		global $argv;
 		\set_exception_handler(array(
