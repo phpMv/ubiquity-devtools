@@ -8,6 +8,7 @@ use Ubiquity\devtools\cmd\ConsoleFormatter;
 class InfoModelsCmd extends AbstractCmdModel {
 
 	public static function run(&$config, $options, $what) {
+		self::updateDomain($options);
 		$fields = self::getOption($options, 'f', 'fields', '');
 		$dbOffset = self::getOption($options, 'd', 'database', 'default');
 		$selectedModels = self::getSelectedModels(self::getOption($options, 'm', 'models', null), $config);
