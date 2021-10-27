@@ -24,7 +24,7 @@ class DAOCmd extends AbstractCmd {
 		$condition = self::getOption($options, 'c', 'condition', '');
 		$included = self::getOptionArray($options, 'i', 'included', false);
 		$fields = self::getOptionArray($options, 'f', 'fields', false);
-		$parameters = self::getOptionArray($options, 'p', 'parameters', null);
+		$parameters = self::getOptionArray($options, 'p', 'parameters', []);
 
 		if (\class_exists($resource)) {
 			$datas = null;
