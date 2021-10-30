@@ -389,12 +389,12 @@ class Ubiquity {
 
 	private static function includeDefaultStyles() {
 		self::$configOptions["%injections%"] = "\"@exec\"=>[\"jquery\"=>function(\$controller){
-				\t\treturn \\Ubiquity\\core\\Framework::diSemantic(\$controller);
+				\t\treturn \\Ajax\\php\\ubiquity\\JsUtils::diSemantic(\$controller);
 				\t}]";
 		self::$configOptions["%cssFiles%"][] = self::includeCss(self::$toolsConfig["cdn"]["semantic"]["css"]);
 		self::$configOptions["%jsFiles%"][] = self::includeJs(self::$toolsConfig["cdn"]["jquery"]);
 		self::$configOptions["%jsFiles%"][] = self::includeJs(self::$toolsConfig["cdn"]["semantic"]["js"]);
-		self::$toolsConfig["composer"]["require"]["phpmv/php-mv-ui"] = "^2.3";
+		self::$toolsConfig["composer"]["require"]["phpmv/php-mv-ui"] = "^2.4";
 	}
 
 	private static function adminInstall($config = null) {
@@ -404,7 +404,7 @@ class Ubiquity {
 		FileUtils::xcopy(self::$activeDir . "/devtools/project-files/app/controllers/Admin.php", "app/controllers/Admin.php");
 		echo ConsoleFormatter::showInfo("Creating the Controller <b>Admin</b> at the location <b>app/controllers/Admin.php<:b>\n");
 		self::$toolsConfig["composer"]["require-dev"]["czproject/git-php"] = "^3.13";
-		self::$toolsConfig["composer"]["require"]["phpmv/php-mv-ui"] = "^2.2.17";
+		self::$toolsConfig["composer"]["require"]["phpmv/php-mv-ui"] = "^2.4";
 	}
 
 	private static function includeCss($filename) {
@@ -518,10 +518,10 @@ class Ubiquity {
 	private static function updateDomain($options) {
 		$domain = self::getOption($options, 'o', 'domain', '');
 		if ($domain != '') {
-			$domains=DDDManager::getDomains();
-			if(\array_search($domain, $domains)!==false){
+			$domains = DDDManager::getDomains();
+			if (\array_search($domain, $domains) !== false) {
 				DDDManager::setDomain($domain);
-			}else{
+			} else {
 				throw new \Ubiquity\exceptions\UbiquityException("Domain `$domain` doesn't exist!");
 			}
 		}
