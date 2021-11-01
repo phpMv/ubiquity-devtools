@@ -20,8 +20,5 @@ return array(
 		"logger"=>function(){return new \Ubiquity\log\libraries\UMonolog("%projectName%",\Monolog\Logger::INFO);},
 		"di"=>[%injections%],
 		"cache"=>["directory"=>"cache/","system"=>"Ubiquity\\cache\\system\\ArrayCache","params"=>[]],
-		"mvcNS"=>["models"=>"models","controllers"=>"controllers","rest"=>""],
-		"isRest"=>function(){
-			return \Ubiquity\utils\http\URequest::getUrlParts()[0]==="rest";
-		}
+		"mvcNS"=>["models"=>"models","controllers"=>"controllers","rest"=>""]
 );

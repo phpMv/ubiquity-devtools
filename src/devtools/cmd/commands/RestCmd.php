@@ -9,6 +9,7 @@ use Ubiquity\cache\CacheManager;
 class RestCmd extends AbstractCmdModel {
 
 	public static function run(&$config, $options, $what) {
+		self::updateDomain($options);
 		$resource = self::answerModel($options, 'r', 'resource', 'rest-controller', $config);
 		if (\class_exists($resource)) {
 			CacheManager::start($config);

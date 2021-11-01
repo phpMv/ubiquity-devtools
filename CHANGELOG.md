@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 - nothing
+
+## [1.3.5] - 2021-11-01
+
+### Added
+- Adds Domain option (`-o` or `--domain`) for commands: `controller, action, auth, crud-index, model, all-models, dao, rest, rest-api, info-model, info-models, info-validation`
+
+### Updated
+- Command names parsing:
+  For all commands with multiple parts in the name, the following syntaxes can be used:
+  ex: for `Ubiquity all-models`
+    - `Ubiquity all_models`
+    - `Ubiquity all:models`
+    - `Ubiquity allModels`
+
 ## [1.3.4] - 2021-10-07
 ### Fixed
 - assets folder location with Ubiquity server
