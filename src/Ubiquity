@@ -44,7 +44,7 @@ class Ubiquity {
 
 	use CmdTrait;
 
-	private static $version = '1.3.5';
+	private static $version = '1.3.5+';
 
 	private static $appName = 'Ubiquity devtools';
 
@@ -810,8 +810,7 @@ class Ubiquity {
 				RestApiCmd::run($config, $options, $what);
 				break;
 
-			case 'create-theme':
-			case 'create:theme':
+			case 'create_theme':
 				$config = self::_init();
 				NewThemeCmd::run($config, $options, $what, self::$activeDir);
 				break;
