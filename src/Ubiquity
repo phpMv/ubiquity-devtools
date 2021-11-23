@@ -940,7 +940,7 @@ class Ubiquity {
 						}
 					}
 					echo ConsoleFormatter::showInfo($msg . "Press Ctrl+C to stop it!\n");
-					system('php -S ' . $what . ' -t ' . getcwd() . \DS . 'public .ubiquity' . \DS . '.htrouter.php &');
+					system('php -S ' . $what . ' -t "' . getcwd() . \DS . 'public" .ubiquity' . \DS . '.htrouter.php &');
 					break;
 				case 'react':
 					echo ConsoleFormatter::showInfo($msg . "Press Ctrl+C to stop it!\n");
@@ -969,7 +969,7 @@ class Ubiquity {
 		if (isset(self::$p)) {
 			if (! self::$p->isTerminated()) {
 				self::$p->signal(9);
-				echo ConsoleFormatter::showInfo($msg . "Livereload server stopped.");
+				echo ConsoleFormatter::showInfo("Livereload server stopped.");
 			}
 			self::$p = null;
 
