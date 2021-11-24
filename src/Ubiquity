@@ -40,6 +40,7 @@ use Ubiquity\devtools\cmd\commands\NewClassCmd;
 use Ubiquity\devtools\core\ConsoleScaffoldController;
 use Ubiquity\devtools\cmd\commands\NewDomainCmd;
 use Ubiquity\devtools\cmd\commands\InfoMigrationsCmd;
+use Ubiquity\devtools\cmd\commands\MigrationsCmd;
 
 class Ubiquity {
 
@@ -828,6 +829,12 @@ class Ubiquity {
 			case 'info_migrations':
 				$config = self::_init();
 				InfoMigrationsCmd::run($config, $options, $what);
+				break;
+
+			case 'migrations':
+			case 'migrate':
+				$config = self::_init();
+				MigrationsCmd::run($config, $options, $what);
 				break;
 
 			default:
