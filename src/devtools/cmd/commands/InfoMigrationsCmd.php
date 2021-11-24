@@ -23,12 +23,12 @@ class InfoMigrationsCmd extends AbstractCmd {
 		if ($checker->hasErrors()) {
 			echo ConsoleFormatter::showMessage("Migrations to operate for db at offset <b>$dbOffset</b>$domainStr:", 'info', 'Migrations');
 			$messages = [];
-			$checker->displayAll(function ($type, $icons, $content) use ($messages) {
+			$checker->displayAll(function ($type, $icons, $content) use (&$messages) {
 				$messages[$icons][] = $content;
 			});
 			foreach ($messages as $title => $msgs) {
 				$content = \implode(PHP_EOL, $msgs);
-				ConsoleFormatter::showMessage($content, 'warning', $title);
+				echo ConsoleFormatter::showMessage($content, 'warning', $title);
 			}
 		} else {
 			echo ConsoleFormatter::showMessage("No migrations to operate for db at offset <b>$dbOffset</b>$domainStr!", 'info', 'Migrations');
