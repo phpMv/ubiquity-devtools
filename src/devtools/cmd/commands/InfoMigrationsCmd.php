@@ -1,0 +1,38 @@
+<?php
+namespace Ubiquity\devtools\cmd\commands;
+
+use Ubiquity\cache\CacheManager;
+use Ubiquity\devtools\cmd\ConsoleFormatter;
+use Ubiquity\orm\reverse\DatabaseChecker;
+
+class InfoMigrationsCmd extends AbstractCmd {
+
+	public static function run(&$config, $options, $what) {
+		$domain = self::updateDomain($options);
+		$dbOffset = self::getOption($options, 'd', 'database', 'default');
+
+		$domainStr = '';
+		if ($domain != '') {
+			$domainStr = " in the domain <b>$domain</b>";
+		}
+
+		CacheManager::start($config);
+		$checker = new DatabaseChecker($dbOffset);
+		$checker->checkAll();
+
+		if ($checker->hasErrors()) {
+			echo ConsoleFormatter::showMessage("Migrations to operate for db at offset <b>$dbOffset</b>$domainStr:", 'info', 'Migrations');
+			$messages = [];
+			$checker->displayAll(function ($type, $icons, $content) use ($messages) {
+				$messages[$icons][] = $content;
+			});
+			foreach ($messages as $title => $msgs) {
+				$content = \implode(PHP_EOL, $msgs);
+				ConsoleFormatter::showMessage($content, 'warning', $title);
+			}
+		} else {
+			echo ConsoleFormatter::showMessage("No migrations to operate for db at offset <b>$dbOffset</b>$domainStr!", 'info', 'Migrations');
+		}
+	}
+}
+

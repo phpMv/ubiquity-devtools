@@ -39,6 +39,7 @@ use Ubiquity\devtools\cmd\commands\LiveReloadCmd;
 use Ubiquity\devtools\cmd\commands\NewClassCmd;
 use Ubiquity\devtools\core\ConsoleScaffoldController;
 use Ubiquity\devtools\cmd\commands\NewDomainCmd;
+use Ubiquity\devtools\cmd\commands\InfoMigrationsCmd;
 
 class Ubiquity {
 
@@ -824,6 +825,11 @@ class Ubiquity {
 				$config = self::_init();
 				CreateCommandCmd::run($config, $options, $what, self::$devtoolsConfig, __CLASS__);
 				break;
+			case 'info_migrations':
+				$config = self::_init();
+				InfoMigrationsCmd::run($config, $options, $what);
+				break;
+
 			default:
 				$config = self::_init();
 				$customCommands = Command::getCustomCommands();
