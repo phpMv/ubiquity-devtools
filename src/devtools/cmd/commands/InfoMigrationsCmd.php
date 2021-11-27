@@ -2,15 +2,18 @@
 namespace Ubiquity\devtools\cmd\commands;
 
 use Ubiquity\cache\CacheManager;
+use Ubiquity\devtools\cmd\commands\traits\DbCheckTrait;
 use Ubiquity\devtools\cmd\ConsoleFormatter;
 use Ubiquity\orm\reverse\DatabaseChecker;
 
 class InfoMigrationsCmd extends AbstractCmd {
 
+	use DbCheckTrait;
+
 	public static function run(&$config, $options, $what) {
 		$domain = self::updateDomain($options);
 		$dbOffset = self::getOption($options, 'd', 'database', 'default');
-
+		self::checkDbOffset($config, $dbOffset);
 		$domainStr = '';
 		if ($domain != '') {
 			$domainStr = " in the domain <b>$domain</b>";

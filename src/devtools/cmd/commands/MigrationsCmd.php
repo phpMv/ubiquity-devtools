@@ -2,10 +2,12 @@
 namespace Ubiquity\devtools\cmd\commands;
 
 use Ubiquity\cache\CacheManager;
+use Ubiquity\devtools\cmd\commands\traits\DbCheckTrait;
 use Ubiquity\devtools\cmd\Console;
 use Ubiquity\devtools\cmd\ConsoleFormatter;
 use Ubiquity\devtools\utils\arrays\ClassicArray;
 use Ubiquity\devtools\utils\arrays\ReflectArray;
+use Ubiquity\exceptions\DAOException;
 use Ubiquity\orm\DAO;
 use Ubiquity\orm\reverse\DatabaseReversor;
 use Ubiquity\db\reverse\DbGenerator;
@@ -13,11 +15,12 @@ use Ubiquity\devtools\cmd\ConsoleTable;
 use Ubiquity\devtools\cmd\Screen;
 
 class MigrationsCmd extends AbstractCmd {
+	use DbCheckTrait;
 
 	public static function run(&$config, $options, $what) {
 		$domain = self::updateDomain($options);
 		$dbOffset = self::getOption($options, 'd', 'database', 'default');
-
+		self::checkDbOffset($config, $dbOffset);
 		$domainStr = '';
 		if ($domain != '') {
 			$domainStr = " in the domain <b>$domain</b>";
