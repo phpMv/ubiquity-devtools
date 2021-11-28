@@ -15,6 +15,7 @@ use Ubiquity\devtools\cmd\ConsoleTable;
 use Ubiquity\devtools\cmd\Screen;
 
 class MigrationsCmd extends AbstractCmd {
+
 	use DbCheckTrait;
 
 	public static function run(&$config, $options, $what) {
