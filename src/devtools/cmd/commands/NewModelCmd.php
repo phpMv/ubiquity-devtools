@@ -32,9 +32,9 @@ class NewModelCmd extends AbstractCmd {
 
 	private static string $originalModelName;
 
-	private static string $tableName;
+	private static ?string $tableName;
 
-	private static string $defaultPk;
+	private static ?string $defaultPk;
 
 	private static array $pks = [];
 
