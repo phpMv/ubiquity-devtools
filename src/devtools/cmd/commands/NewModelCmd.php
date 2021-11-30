@@ -75,7 +75,7 @@ class NewModelCmd extends AbstractCmd {
 
 		if (! $class->hasField($pk)) {
 			echo ConsoleFormatter::showMessage("$pk is not in field list", 'warning', 'Add primary keys');
-			$q = Console::question("Would you like to add $pk in field list?", [
+			$q = Console::yesNoQuestion("Would you like to add $pk in field list?", [
 				'yes',
 				'no'
 			]);
@@ -128,7 +128,7 @@ class NewModelCmd extends AbstractCmd {
 		}
 		self::showMessages('success', $messages);
 		self::showMessages('error', $messages);
-		$rep = Console::question('Do you want to re-init models cache?', [
+		$rep = Console::yesNoQuestion('Do you want to re-init models cache?', [
 			'yes',
 			'no'
 		]);
@@ -251,7 +251,7 @@ class NewModelCmd extends AbstractCmd {
 		$newModel = self::getNewModel($modelName);
 		$modelCompleteName = self::getModelNamespace($domain, $dbOffset) . $modelName;
 		if (CacheManager::$cache->exists(self::CACHE_KEY . $modelName) && ! \class_exists($modelCompleteName)) {
-			$rep = Console::question("A model with this name was already created.\nWould you like to reload it from cache?", [
+			$rep = Console::yesNoQuestion("A model with this name was already created.\nWould you like to reload it from cache?", [
 				'yes',
 				'no'
 			]);
@@ -274,7 +274,7 @@ class NewModelCmd extends AbstractCmd {
 			if (\class_exists($modelCompleteName) && ! \in_array($modelCompleteName, $checkExisting)) {
 				$checkExisting[] = $modelCompleteName;
 				echo ConsoleFormatter::showMessage("The class <b>$modelCompleteName</b> already exists!", 'warning', 'Update model');
-				$rep = Console::question("Would you like to modify the existing class?", [
+				$rep = Console::yesNoQuestion("Would you like to modify the existing class?", [
 					'yes',
 					'no'
 				]);
