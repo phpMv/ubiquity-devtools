@@ -40,9 +40,9 @@ class NewModelCmd extends AbstractCmd {
 
 	private static ?NewModel $currentModel;
 
-	private static $loadCurrentModels=false;
+	private static $loadCurrentModels = false;
 
-	private static ?string $defaultPkValue=null;
+	private static ?string $defaultPkValue = null;
 
 	private static function getModelNamespace($domain, $dbOffset) {
 		$modelNS = Startup::getNS('models');
@@ -53,7 +53,7 @@ class NewModelCmd extends AbstractCmd {
 	}
 
 	private static function getNewModel(string $modelName, bool $updateCurrent = true): NewModel {
-		$modelName=\ucfirst($modelName);
+		$modelName = \ucfirst($modelName);
 		if (! isset(self::$allModels[$modelName])) {
 			self::$allModels[$modelName] = new NewModel($modelName);
 		}
@@ -67,9 +67,9 @@ class NewModelCmd extends AbstractCmd {
 	private static function getAllModelsAsString(): string {
 		$result = [];
 		foreach (self::$allModels as $name => $model) {
-			$oName=$name;
-			if($model->isUpdated()){
-				$name.='*';
+			$oName = $name;
+			if ($model->isUpdated()) {
+				$name .= '*';
 			}
 			if (\strtolower($oName) === \strtolower(self::$currentModelName)) {
 				$result[] = "<b>$name</b>";
@@ -181,22 +181,22 @@ class NewModelCmd extends AbstractCmd {
 			'defaultPk' => ($newModel->getDefaultPk() ?? ''),
 			'pks' => $newModel->getPks(),
 			'fields' => $newModel->getFields(),
-			'manyToOne'=>$newModel->getManyToOne(),
-			'oneToMany'=>$newModel->getOneToMany(),
-			'manyToMany'=>$newModel->getManyToMany()
+			'manyToOne' => $newModel->getManyToOne(),
+			'oneToMany' => $newModel->getOneToMany(),
+			'manyToMany' => $newModel->getManyToMany()
 		];
 		CacheManager::$cache->store(self::CACHE_KEY . $className, $content);
 	}
 
-	private static function loadFromCache(string $className,?NewModel $newModel=null): void {
+	private static function loadFromCache(string $className, ?NewModel $newModel = null): void {
 		$result = CacheManager::$cache->fetch(self::CACHE_KEY . $className);
 		$newModel ??= self::$currentModel;
 		$newModel->setFields($result['fields']);
 		$newModel->setDefaultPk($result['defaultPk']);
 		$newModel->setPks($result['pks']);
-		$newModel->setManyToOne($result['manyToOne']??[]);
-		$newModel->setOneToMany($result['oneToMany']??[]);
-		$newModel->setManyToMany($result['manyToMany']??[]);
+		$newModel->setManyToOne($result['manyToOne'] ?? []);
+		$newModel->setOneToMany($result['oneToMany'] ?? []);
+		$newModel->setManyToMany($result['manyToMany'] ?? []);
 		$newModel->setLoadedFromCache(true);
 	}
 
@@ -219,34 +219,34 @@ class NewModelCmd extends AbstractCmd {
 			$newModel->setFields($fields);
 			$newModel->setTableName($metaDatas['#tableName']);
 
-			self::reloadFromExistingClassRelations($newModel,$metaDatas);
+			self::reloadFromExistingClassRelations($newModel, $metaDatas);
 			$newModel->setLoadedFromCache(true);
-			self::$loadCurrentModels=false;
+			self::$loadCurrentModels = false;
 			return true;
 		}
 		return false;
 	}
 
-	private static function reloadFromExistingClassRelations(NewModel $newModel,array $metaDatas){
-		$manyToOnes=$metaDatas['#manyToOne']??[];
-		$joinColumns=$metaDatas['#joinColumn']??[];
-		foreach ($manyToOnes as $manyToOne){
-			$joinColumn=$joinColumns[$manyToOne];
-			$newModel->addManyToOne($manyToOne,$joinColumn['name'],$joinColumn['className']);
+	private static function reloadFromExistingClassRelations(NewModel $newModel, array $metaDatas) {
+		$manyToOnes = $metaDatas['#manyToOne'] ?? [];
+		$joinColumns = $metaDatas['#joinColumn'] ?? [];
+		foreach ($manyToOnes as $manyToOne) {
+			$joinColumn = $joinColumns[$manyToOne];
+			$newModel->addManyToOne($manyToOne, $joinColumn['name'], $joinColumn['className']);
 		}
 
-		$oneToManys=$metaDatas['#oneToMany']??[];
-		foreach ($oneToManys as $member=>$oneToMany){
-			$newModel->addOneToMany($member,$oneToMany['mappedBy'],$oneToMany['className']);
+		$oneToManys = $metaDatas['#oneToMany'] ?? [];
+		foreach ($oneToManys as $member => $oneToMany) {
+			$newModel->addOneToMany($member, $oneToMany['mappedBy'], $oneToMany['className']);
 		}
 
-		$manyToManys=$metaDatas['#manyToMany']??[];
-		$joinTables=$metaDatas['#joinTable']??[];
-		foreach ($manyToManys as $member=>$manyToMany){
-			$jointable=$joinTables[$member];
-			$joinColumn = $jointable['joinColumns']??[];
-			$inverseJoinColumn = $jointable['inverseJoinColumns']??[];
-			$newModel->addManyToMany($member,$manyToMany['targetEntity'],$manyToMany['inversedBy'],$jointable['name'],$joinColumn,$jointable['inverseJoinColumns']);
+		$manyToManys = $metaDatas['#manyToMany'] ?? [];
+		$joinTables = $metaDatas['#joinTable'] ?? [];
+		foreach ($manyToManys as $member => $manyToMany) {
+			$jointable = $joinTables[$member];
+			$joinColumn = $jointable['joinColumns'] ?? [];
+			$inverseJoinColumn = $jointable['inverseJoinColumns'] ?? [];
+			$newModel->addManyToMany($member, $manyToMany['targetEntity'], $manyToMany['inversedBy'], $jointable['name'], $joinColumn, $jointable['inverseJoinColumns']);
 		}
 	}
 
@@ -282,16 +282,16 @@ class NewModelCmd extends AbstractCmd {
 		];
 	}
 
-	private static function loadModel(NewModel $newModel,string $modelName,string $namespace): bool{
+	private static function loadModel(NewModel $newModel, string $modelName, string $namespace): bool {
 		$modelCompleteName = $namespace . $modelName;
 
-		if(self::$loadCurrentModels){
+		if (self::$loadCurrentModels) {
 			self::reloadFromExistingClass($modelCompleteName);
 			return false;
 		}
-		$restrict=false;
-		if(!$newModel->isLoaded()) {
-			if (CacheManager::$cache->exists(self::CACHE_KEY . $modelName) && !\class_exists($modelCompleteName)) {
+		$restrict = false;
+		if (! $newModel->isLoaded()) {
+			if (CacheManager::$cache->exists(self::CACHE_KEY . $modelName) && ! \class_exists($modelCompleteName)) {
 				$rep = Console::yesNoQuestion("A model with the name <b>$modelName</b> was already created.\nWould you like to reload it from cache?", [
 					'yes',
 					'no'
@@ -319,27 +319,26 @@ class NewModelCmd extends AbstractCmd {
 			}
 			$newModel->setLoaded(true);
 
-			if(!$newModel->isLoadedFromCache() && isset(self::$defaultPkValue)){
+			if (! $newModel->isLoadedFromCache() && isset(self::$defaultPkValue)) {
 				$newModel->setDefaultPk(self::$defaultPkValue);
 			}
 		}
 
 		return $restrict;
 	}
-	
 
-	private static function firstLoadAllModels(array $models){
-		foreach ($models as $index=>$modelName){
-			self::getNewModel($modelName,$index===0);
+	private static function firstLoadAllModels(array $models) {
+		foreach ($models as $index => $modelName) {
+			self::getNewModel($modelName, $index === 0);
 		}
 	}
 
-	private static function loadModelsFrom(array $config,string $dbOffset='default'): array {
-		$models=CacheManager::getModels($config,true,$dbOffset);
-		if(\count($models)>0){
-			return \array_map(function($model){
+	private static function loadModelsFrom(array $config, string $dbOffset = 'default'): array {
+		$models = CacheManager::getModels($config, true, $dbOffset);
+		if (\count($models) > 0) {
+			return \array_map(function ($model) {
 				return ClassUtils::getClassSimpleName($model);
-			},$models);
+			}, $models);
 		}
 		return [];
 	}
@@ -347,38 +346,40 @@ class NewModelCmd extends AbstractCmd {
 	public static function run(&$config, $options, $what) {
 		$domain = self::updateDomain($options);
 		$dbOffset = self::getOption($options, 'd', 'database', 'default');
-		self::$defaultPkValue=self::getOption($options,'k','autoincPk','id');
+		self::$defaultPkValue = self::getOption($options, 'k', 'autoincPk', 'id');
 		self::checkDbOffset($config, $dbOffset);
 
 		CacheManager::start($config);
 
-		$models= \array_map(function($class){return \ucfirst(\trim($class));},\array_filter( \explode(",", \trim($what)), 'strlen' ));
+		$models = \array_map(function ($class) {
+			return \ucfirst(\trim($class));
+		}, \array_filter(\explode(",", \trim($what)), 'strlen'));
 
-		if(\count($models)===0){
-			$models=self::loadModelsFrom($config,$dbOffset);
-			if(count($models)>0){
-				$rep=Console::yesNoQuestion("Would you like to load the current classes [<b>".\implode(',',$models)."</b>]?");
-				if(Console::isNo($rep)){
-					$models=[];
-				}else{
-					self::$loadCurrentModels=true;
+		if (\count($models) === 0) {
+			$models = self::loadModelsFrom($config, $dbOffset);
+			if (count($models) > 0) {
+				$rep = Console::yesNoQuestion("Would you like to load the current classes [<b>" . \implode(',', $models) . "</b>]?");
+				if (Console::isNo($rep)) {
+					$models = [];
+				} else {
+					self::$loadCurrentModels = true;
 				}
 			}
 		}
-		if(\count($models)>0) {
+		if (\count($models) > 0) {
 			self::firstLoadAllModels($models);
 
 			$modelName = self::$currentModelName;
 			$newModel = self::$currentModel;
-		}else{
-			$modelName=Console::question("Enter a model name: ");
-			$newModel=self::getNewModel($modelName);
+		} else {
+			$modelName = Console::question("Enter a model name: ");
+			$newModel = self::getNewModel($modelName);
 		}
 
 		$fields = '';
 		$checkExisting = [];
 		do {
-			$namespace=self::getModelNamespace($domain, $dbOffset);
+			$namespace = self::getModelNamespace($domain, $dbOffset);
 			$modelCompleteName = $namespace . $modelName;
 			$tableName = $newModel->getTableName() ?? (\lcfirst($modelName));
 			echo ConsoleFormatter::showMessage("Creation: <b>$modelCompleteName</b>", 'info', 'New model');
@@ -387,13 +388,13 @@ class NewModelCmd extends AbstractCmd {
 			$caseChangeActiveDomain = "Change active Domain [<b>$domain</b>]";
 			$caseSwitchModel = "Add/switch to model [" . self::getAllModelsAsString() . "]";
 
-			$restrict=self::loadModel($newModel,$modelName,$namespace);
+			$restrict = self::loadModel($newModel, $modelName, $namespace);
 
 			$fields = \implode(',', $newModel->getFieldNames());
 			$caseAddFields = "Add fields [<b>$fields</b>]";
 			$caseAddDefaultPk = "Add default auto-inc primary key [<b>" . ($newModel->getDefaultPk() ?? '') . "</b>]";
 			$caseChangeTableName = "Change table name [<b>$tableName</b>]";
-			$caseAddRelations="Add relations [<b>".$newModel->getRelationsAsString()."</b>]";
+			$caseAddRelations = "Add relations [<b>" . $newModel->getRelationsAsString() . "</b>]";
 
 			if (! $restrict) {
 				$choices = [
@@ -408,7 +409,7 @@ class NewModelCmd extends AbstractCmd {
 					'Generate classes',
 					'Quit'
 				];
-			}else{
+			} else {
 				$choices = [
 					'Change class name',
 					$caseChangeDbOffset,

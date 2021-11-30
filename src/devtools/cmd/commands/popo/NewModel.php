@@ -23,11 +23,11 @@ class NewModel {
 
 	private array $manyToMany = [];
 
-	private bool $loaded=false;
-	
-	private bool $loadedFromCache=false;
+	private bool $loaded = false;
 
-	private bool $updated=false;
+	private bool $loadedFromCache = false;
+
+	private bool $updated = false;
 
 	public function __construct($modelName) {
 		$this->originalModelName = $modelName;
@@ -253,6 +253,7 @@ class NewModel {
 	}
 
 	/**
+	 *
 	 * @return bool
 	 */
 	public function isLoaded(): bool {
@@ -260,6 +261,7 @@ class NewModel {
 	}
 
 	/**
+	 *
 	 * @param bool $loaded
 	 */
 	public function setLoaded(bool $loaded): void {
@@ -267,6 +269,7 @@ class NewModel {
 	}
 
 	/**
+	 *
 	 * @return bool
 	 */
 	public function isUpdated(): bool {
@@ -274,6 +277,7 @@ class NewModel {
 	}
 
 	/**
+	 *
 	 * @param bool $updated
 	 */
 	public function setUpdated(bool $updated): void {
@@ -281,6 +285,7 @@ class NewModel {
 	}
 
 	/**
+	 *
 	 * @param array $manyToOne
 	 */
 	public function setManyToOne(array $manyToOne): void {
@@ -288,6 +293,7 @@ class NewModel {
 	}
 
 	/**
+	 *
 	 * @param array $oneToMany
 	 */
 	public function setOneToMany(array $oneToMany): void {
@@ -295,27 +301,29 @@ class NewModel {
 	}
 
 	/**
+	 *
 	 * @param array $manyToMany
 	 */
 	public function setManyToMany(array $manyToMany): void {
 		$this->manyToMany = $manyToMany;
 	}
 
-	public function getRelationsAsString(){
-		$result='';
-		if(\count($this->manyToOne)>0){
-			$result.=' (1)=>('.\implode(',',\array_keys($this->manyToOne)).')';
+	public function getRelationsAsString() {
+		$result = '';
+		if (\count($this->manyToOne) > 0) {
+			$result .= ' (1)=>(' . \implode(',', \array_keys($this->manyToOne)) . ')';
 		}
-		if(\count($this->oneToMany)>0) {
+		if (\count($this->oneToMany) > 0) {
 			$result .= ' (1-*)=>(' . \implode(',', \array_keys($this->oneToMany)) . ')';
 		}
-		if(\count($this->manyToMany)>0) {
+		if (\count($this->manyToMany) > 0) {
 			$result .= ' (*-*)=>(' . \implode(',', \array_keys($this->manyToMany)) . ')';
 		}
 		return $result;
 	}
 
 	/**
+	 *
 	 * @return bool
 	 */
 	public function isLoadedFromCache(): bool {
@@ -323,10 +331,10 @@ class NewModel {
 	}
 
 	/**
+	 *
 	 * @param bool $loadedFromCache
 	 */
 	public function setLoadedFromCache(bool $loadedFromCache): void {
 		$this->loadedFromCache = $loadedFromCache;
 	}
-
 }
