@@ -23,6 +23,12 @@ class NewModel {
 
 	private array $manyToMany = [];
 
+	private bool $loaded=false;
+	
+	private bool $loadedFromCache=false;
+
+	private bool $updated=false;
+
 	public function __construct($modelName) {
 		$this->originalModelName = $modelName;
 	}
@@ -245,4 +251,82 @@ class NewModel {
 	public function getManyToMany(): array {
 		return $this->manyToMany;
 	}
+
+	/**
+	 * @return bool
+	 */
+	public function isLoaded(): bool {
+		return $this->loaded;
+	}
+
+	/**
+	 * @param bool $loaded
+	 */
+	public function setLoaded(bool $loaded): void {
+		$this->loaded = $loaded;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isUpdated(): bool {
+		return $this->updated;
+	}
+
+	/**
+	 * @param bool $updated
+	 */
+	public function setUpdated(bool $updated): void {
+		$this->updated = $updated;
+	}
+
+	/**
+	 * @param array $manyToOne
+	 */
+	public function setManyToOne(array $manyToOne): void {
+		$this->manyToOne = $manyToOne;
+	}
+
+	/**
+	 * @param array $oneToMany
+	 */
+	public function setOneToMany(array $oneToMany): void {
+		$this->oneToMany = $oneToMany;
+	}
+
+	/**
+	 * @param array $manyToMany
+	 */
+	public function setManyToMany(array $manyToMany): void {
+		$this->manyToMany = $manyToMany;
+	}
+
+	public function getRelationsAsString(){
+		$result='';
+		if(\count($this->manyToOne)>0){
+			$result.=' (1)=>('.\implode(',',\array_keys($this->manyToOne)).')';
+		}
+		if(\count($this->oneToMany)>0) {
+			$result .= ' (1-*)=>(' . \implode(',', \array_keys($this->oneToMany)) . ')';
+		}
+		if(\count($this->manyToMany)>0) {
+			$result .= ' (*-*)=>(' . \implode(',', \array_keys($this->manyToMany)) . ')';
+		}
+		return $result;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isLoadedFromCache(): bool {
+		return $this->loadedFromCache;
+	}
+
+	/**
+	 * @param bool $loadedFromCache
+	 */
+	public function setLoadedFromCache(bool $loadedFromCache): void {
+		$this->loadedFromCache = $loadedFromCache;
+	}
+
 }
