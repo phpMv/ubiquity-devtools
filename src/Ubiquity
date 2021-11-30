@@ -26,6 +26,7 @@ use Ubiquity\devtools\cmd\commands\InfoMailerCmd;
 use Ubiquity\devtools\cmd\commands\SendMailQueueCmd;
 use Ubiquity\devtools\cmd\commands\NewMailCmd;
 use Ubiquity\devtools\cmd\commands\CreateCommandCmd;
+use Ubiquity\devtools\cmd\commands\NewModelCmd;
 use Ubiquity\devtools\cmd\commands\HelpCmd;
 use Ubiquity\devtools\cmd\traits\CmdTrait;
 use Ubiquity\devtools\utils\FileUtils;
@@ -600,8 +601,7 @@ class Ubiquity {
 				}
 				break;
 
-			case 'model':
-			case 'create_model':
+			case 'gen_model':
 				$config = self::_init();
 				$offset = self::getOption($options, "d", "database", 'default');
 				$what = self::requiredParam($what, 'tableName');
@@ -615,6 +615,13 @@ class Ubiquity {
 				}
 				break;
 
+            case 'model':
+            case 'new_model':
+			case 'create_model':
+                $config=self::_init();
+			    NewModelCmd::run($config, $options,$what);
+
+			break;
 			case 'controller':
 			case 'create_controller':
 				$config = self::_init();
