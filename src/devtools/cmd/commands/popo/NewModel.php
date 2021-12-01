@@ -199,7 +199,7 @@ class NewModel {
 		$class = new Model($engine, \lcfirst($className), $namespace, $memberAccess);
 		$class->setTable($this->getTableName());
 		$class->setDatabase($dbOffset);
-		$fieldsInfos = $this->fields;
+		$fieldsInfos = $this->selectFieldsForGeneration();
 		$class->setSimpleMembers($this->getSimpleMembers());
 		$keys = $this->pks;
 		foreach ($fieldsInfos as $field => $info) {
@@ -214,6 +214,31 @@ class NewModel {
 		}
 		$class->addMainAnnots();
 		return $class;
+	}
+
+	private function selectFieldsForGeneration() {
+		$fieldsInRelation = $this->getFieldsInRelations();
+		$result = [];
+		foreach ($this->fields as $f => $infos) {
+			if (! in_array($f, $fieldsInRelation)) {
+				$result[$f] = $infos;
+			}
+		}
+		return $result;
+	}
+
+	private function getFieldsInRelations() {
+		$result = [];
+		foreach ($this->manyToOne as $f => $_) {
+			$result[] = $f;
+		}
+		foreach ($this->oneToMany as $f => $_) {
+			$result[] = $f;
+		}
+		foreach ($this->manyToMany as $f => $_) {
+			$result[] = $f;
+		}
+		return $result;
 	}
 
 	public function addManyToOne($member, $fkField, $className) {
