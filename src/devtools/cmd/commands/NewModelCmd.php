@@ -102,9 +102,9 @@ class NewModelCmd extends AbstractCmd {
 	}
 
 	private static function addFields($fields, $fieldTypes, $nullables) {
-		$fields = \explode(',', $fields);
-		$fieldTypes = \explode(',', $fieldTypes);
-		$nullables = \explode(',', $nullables);
+		$fields = Console::explodeResponse($fields);
+		$fieldTypes = Console::explodeResponse($fieldTypes);
+		$nullables = Console::explodeResponse($nullables);
 		$newModel = self::$currentModel;
 		foreach ($fields as $index => $field) {
 			$field = \trim($field);
@@ -129,12 +129,14 @@ class NewModelCmd extends AbstractCmd {
 		self::createRelations($classes, $namespace);
 
 		foreach (self::$allModels as $name => $newModel) {
-			$class = $classes[$name];
-			$msg = self::createClass($class, $newModel, $name, $namespace);
-			if ($msg['type'] === 'success') {
-				$messages['success'][] = $msg['message'];
-			} else {
-				$messages['error'][] = $msg['message'];
+			if ($newModel->isUpdated()) {
+				$class = $classes[$name];
+				$msg = self::createClass($class, $newModel, $name, $namespace);
+				if ($msg['type'] === 'success') {
+					$messages['success'][] = $msg['message'];
+				} else {
+					$messages['error'][] = $msg['message'];
+				}
 			}
 		}
 		self::showMessages('success', $messages);
@@ -218,10 +220,9 @@ class NewModelCmd extends AbstractCmd {
 			}
 			$newModel->setFields($fields);
 			$newModel->setTableName($metaDatas['#tableName']);
-
 			self::reloadFromExistingClassRelations($newModel, $metaDatas);
 			$newModel->setLoadedFromCache(true);
-			self::$loadCurrentModels = false;
+			$newModel->setLoaded(true);
 			return true;
 		}
 		return false;
@@ -232,12 +233,12 @@ class NewModelCmd extends AbstractCmd {
 		$joinColumns = $metaDatas['#joinColumn'] ?? [];
 		foreach ($manyToOnes as $manyToOne) {
 			$joinColumn = $joinColumns[$manyToOne];
-			$newModel->addManyToOne($manyToOne, $joinColumn['name'], $joinColumn['className']);
+			$newModel->addManyToOne($manyToOne, $joinColumn['name'], ClassUtils::getClassSimpleName($joinColumn['className']));
 		}
 
 		$oneToManys = $metaDatas['#oneToMany'] ?? [];
 		foreach ($oneToManys as $member => $oneToMany) {
-			$newModel->addOneToMany($member, $oneToMany['mappedBy'], $oneToMany['className']);
+			$newModel->addOneToMany($member, $oneToMany['mappedBy'], ClassUtils::getClassSimpleName($oneToMany['className']));
 		}
 
 		$manyToManys = $metaDatas['#manyToMany'] ?? [];
@@ -246,7 +247,7 @@ class NewModelCmd extends AbstractCmd {
 			$jointable = $joinTables[$member];
 			$joinColumn = $jointable['joinColumns'] ?? [];
 			$inverseJoinColumn = $jointable['inverseJoinColumns'] ?? [];
-			$newModel->addManyToMany($member, $manyToMany['targetEntity'], $manyToMany['inversedBy'], $jointable['name'], $joinColumn, $jointable['inverseJoinColumns']);
+			$newModel->addManyToMany($member, ClassUtils::getClassSimpleName($manyToMany['targetEntity']), $manyToMany['inversedBy'], $jointable['name'], $joinColumn, $jointable['inverseJoinColumns']);
 		}
 	}
 
@@ -285,7 +286,7 @@ class NewModelCmd extends AbstractCmd {
 	private static function loadModel(NewModel $newModel, string $modelName, string $namespace): bool {
 		$modelCompleteName = $namespace . $modelName;
 
-		if (self::$loadCurrentModels) {
+		if (self::$loadCurrentModels && ! $newModel->isLoadedFromCache()) {
 			self::reloadFromExistingClass($modelCompleteName);
 			return false;
 		}
@@ -351,9 +352,9 @@ class NewModelCmd extends AbstractCmd {
 
 		CacheManager::start($config);
 
-		$models = \array_map(function ($class) {
-			return \ucfirst(\trim($class));
-		}, \array_filter(\explode(",", \trim($what)), 'strlen'));
+		$models = Console::explodeResponse($what ?? '', function ($item) {
+			return \ucfirst(\trim($item));
+		});
 
 		if (\count($models) === 0) {
 			$models = self::loadModelsFrom($config, $dbOffset);
@@ -381,14 +382,15 @@ class NewModelCmd extends AbstractCmd {
 		do {
 			$namespace = self::getModelNamespace($domain, $dbOffset);
 			$modelCompleteName = $namespace . $modelName;
-			$tableName = $newModel->getTableName() ?? (\lcfirst($modelName));
-			echo ConsoleFormatter::showMessage("Creation: <b>$modelCompleteName</b>", 'info', 'New model');
+
+			$restrict = self::loadModel($newModel, $modelName, $namespace);
+			$tableName = $newModel->getTableName();
+
+			echo ConsoleFormatter::showMessage("Model: <b>$modelCompleteName</b>", 'info', 'Model add/update');
 
 			$caseChangeDbOffset = "Change dbOffset [<b>$dbOffset</b>]";
 			$caseChangeActiveDomain = "Change active Domain [<b>$domain</b>]";
 			$caseSwitchModel = "Add/switch to model [" . self::getAllModelsAsString() . "]";
-
-			$restrict = self::loadModel($newModel, $modelName, $namespace);
 
 			$fields = \implode(',', $newModel->getFieldNames());
 			$caseAddFields = "Add fields [<b>$fields</b>]";
