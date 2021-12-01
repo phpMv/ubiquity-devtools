@@ -7,6 +7,68 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 - nothing
 
+## [1.3.6] Soon
+
+### Added
+#### Migrations commands:
+
+```
+■ info-migrations [] =>
+        · Returns the migration infos.
+        · Aliases : info_migrations,info:migrations,infoMigrations
+        · Parameters :
+                -d      shortcut of --database
+                        The database offset.
+                        Default : [default]
+
+                -o      shortcut of --domain
+                        The domain in which the database models are.
+
+        × Samples :
+                Display all migrations for the default database
+                  · Ubiquity info:migrations
+```
+
+```
+■ migrations [] =>
+        · Display and execute the database migrations.
+        · Aliases : migrations,migrate
+        · Parameters :
+                -d      shortcut of --database
+                        The database offset.
+                        Default : [default]
+
+                -o      shortcut of --domain
+                        The domain in which the database models are.
+
+        × Samples :
+                Display and execute all migrations for the default database
+                  · Ubiquity migrations
+```
+#### Models creation
+
+```
+■ model [modelName] =>
+        · Generates models from scratch.
+        · Aliases : create_model,create:model,create-model,createModel,new_model,new:model,new-model,newModel
+        · Parameters :
+                -d      shortcut of --database
+                        The database connection to use
+                        Default : [default]
+
+                -o      shortcut of --domain
+                        The domain in which to create the model.
+
+                -k      shortcut of --autoincPk
+                        The default primary key defined as autoinc.
+                        Default : [id]
+
+        × Samples :
+                  · Ubiquity model User
+                  · Ubiquity model Author -d=projects
+                  · Ubiquity model Group,User -o=orga
+```
+
 ## [1.3.5] - 2021-11-01
 
 ### Added
