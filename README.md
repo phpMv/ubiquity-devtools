@@ -436,7 +436,7 @@ Ubiquity devtools (1.3.6)
                   · Ubiquity model Author -d=projects
                   · Ubiquity model Group,User -o=orga
 
-■ model [tableName] =>
+■ genModel [tableName] =>
         · Generates a new model from an existing table.
         · Aliases : gen_model,gen:model,gen-model,genModel
         · Parameters :
