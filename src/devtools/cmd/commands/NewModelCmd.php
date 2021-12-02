@@ -247,7 +247,7 @@ class NewModelCmd extends AbstractCmd {
 			$jointable = $joinTables[$member];
 			$joinColumn = $jointable['joinColumns'] ?? [];
 			$inverseJoinColumn = $jointable['inverseJoinColumns'] ?? [];
-			$newModel->addManyToMany($member, ClassUtils::getClassSimpleName($manyToMany['targetEntity']), $manyToMany['inversedBy'], $jointable['name'], $joinColumn, $jointable['inverseJoinColumns']);
+			$newModel->addManyToMany($member, ClassUtils::getClassSimpleName($manyToMany['targetEntity']), $manyToMany['inversedBy'], $jointable['name'], $joinColumn, $inverseJoinColumn);
 		}
 	}
 
