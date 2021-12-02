@@ -147,9 +147,10 @@ class NewModelCmd extends AbstractCmd {
 		]);
 		if (Console::isYes($rep)) {
 			$config = Startup::$config;
-			CacheManager::initModelsCache($config, false, true);
-			echo ConsoleFormatter::showMessage('Models cache updated', 'succes', 'Cache reinitialization');
+			CacheManager::initCache($config, 'models', true);
+			echo ConsoleFormatter::showMessage('Models cache updated', 'success', 'Cache reinitialization');
 		}
+		self::saveModelsInCache();
 		die();
 	}
 
@@ -270,7 +271,6 @@ class NewModelCmd extends AbstractCmd {
 		$modelsDir = UFileSystem::getDirFromNamespace($namespace);
 		echo ConsoleFormatter::showInfo("Creating the {$className} class");
 		$classContent = $model->__toString();
-		self::store($modelName, $newModel);
 		if (UFileSystem::save($modelsDir . \DS . $model->getSimpleName() . '.php', $classContent)) {
 			return [
 				'type' => 'success',
@@ -494,9 +494,23 @@ class NewModelCmd extends AbstractCmd {
 					break;
 
 				default:
+					self::saveModelsInCache();
 					echo ConsoleFormatter::showInfo('Operation terminated, Bye!');
 			}
 		} while ($rep !== 'Quit');
+	}
+
+	private static function saveModelsInCache() {
+		$cached = [];
+		foreach (self::$allModels as $modelName => $newModel) {
+			if ($newModel->isUpdated()) {
+				self::store($modelName, $newModel);
+				$cached[] = $modelName;
+			}
+		}
+		if (\count($cached) > 0) {
+			echo ConsoleFormatter::showInfo("Data caching for the models: " . \implode(',', $cached));
+		}
 	}
 
 	private static function addRelation(string $rType, NewModel $newModel) {
@@ -550,14 +564,14 @@ class NewModelCmd extends AbstractCmd {
 					'default' => \lcfirst($modelName) . '_' . \lcfirst($otherModelName) . 's'
 				]);
 
-				$joinColumn = [
+				$joinColumn = ($associatedFk !== $newModel->getDefaultFk()) ? [
 					'name' => $associatedFk,
 					'referencedColumnName' => $newModel->getFirstPk()
-				];
-				$otherJoinColumn = [
+				] : [];
+				$otherJoinColumn = ($otherAssociatedFk !== $otherModel->getDefaultFk()) ? [
 					'name' => $otherAssociatedFk,
 					'referencedColumnName' => $otherModel->getFirstPk()
-				];
+				] : [];
 
 				$newModel->addManyToMany($member, $otherModelName, $otherMember, $jointable, $joinColumn, $otherJoinColumn);
 				$otherModel->addManyToMany($otherMember, $modelName, $member, $jointable, $otherJoinColumn, $joinColumn);

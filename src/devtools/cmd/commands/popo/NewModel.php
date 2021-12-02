@@ -73,6 +73,10 @@ class NewModel {
 		return $this->defaultPk;
 	}
 
+	public function getDefaultFk(): string {
+		return 'id' . \ucfirst($this->originalModelName);
+	}
+
 	public function hasDefaultPk(): bool {
 		return isset($this->defaultPk) && $this->defaultPk != '';
 	}
