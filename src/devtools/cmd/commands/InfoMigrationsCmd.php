@@ -12,6 +12,8 @@ class InfoMigrationsCmd extends AbstractCmd {
 
 	public static function run(&$config, $options, $what) {
 		$domain = self::updateDomain($options);
+		CacheManager::start($config);
+		self::checkModelsCache($config);
 		$dbOffset = self::getOption($options, 'd', 'database', 'default');
 		self::checkDbOffset($config, $dbOffset);
 		$domainStr = '';
@@ -19,7 +21,6 @@ class InfoMigrationsCmd extends AbstractCmd {
 			$domainStr = " in the domain <b>$domain</b>";
 		}
 
-		CacheManager::start($config);
 		$checker = new DatabaseChecker($dbOffset);
 		$checker->checkAll();
 

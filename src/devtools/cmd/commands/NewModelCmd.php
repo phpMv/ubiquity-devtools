@@ -6,6 +6,7 @@ use Ubiquity\cache\ClassUtils;
 use Ubiquity\contents\validation\ValidatorsManager;
 use Ubiquity\controllers\Startup;
 use Ubiquity\db\utils\DbTypes;
+use Ubiquity\devtools\cmd\Command;
 use Ubiquity\devtools\cmd\commands\popo\NewModel;
 use Ubiquity\devtools\cmd\commands\traits\DbCheckTrait;
 use Ubiquity\devtools\cmd\Console;
@@ -146,9 +147,7 @@ class NewModelCmd extends AbstractCmd {
 			'no'
 		]);
 		if (Console::isYes($rep)) {
-			$config = Startup::$config;
-			CacheManager::initCache($config, 'models', true);
-			echo ConsoleFormatter::showMessage('Models cache updated', 'success', 'Cache reinitialization');
+			echo shell_exec('Ubiquity init-cache -t=models');
 		}
 		self::saveModelsInCache();
 		die();
@@ -466,7 +465,7 @@ class NewModelCmd extends AbstractCmd {
 						'oneToMany',
 						'manyToMany'
 					]);
-					self::addRelation($rType, $newModel);
+					self::addRelation($rType, $newModel, $namespace);
 					break;
 
 				case $caseAddDefaultPk:
@@ -513,7 +512,7 @@ class NewModelCmd extends AbstractCmd {
 		}
 	}
 
-	private static function addRelation(string $rType, NewModel $newModel) {
+	private static function addRelation(string $rType, NewModel $newModel, string $namepsace) {
 		$modelName = $newModel->getOriginalModelName();
 
 		switch ($rType) {
@@ -535,6 +534,9 @@ class NewModelCmd extends AbstractCmd {
 				]);
 
 				$newModel->addManyToOne($member, $fkField, $otherModelName);
+				if (! $otherModel->isLoaded()) {
+					self::loadModel($otherModel, $otherModelName, $namespace);
+				}
 				$otherModel->addOneToMany($manyMember, $member, $modelName);
 
 				$newModel->setUpdated(true);
@@ -574,6 +576,9 @@ class NewModelCmd extends AbstractCmd {
 				] : [];
 
 				$newModel->addManyToMany($member, $otherModelName, $otherMember, $jointable, $joinColumn, $otherJoinColumn);
+				if (! $otherModel->isLoaded()) {
+					self::loadModel($otherModel, $otherModelName, $namespace);
+				}
 				$otherModel->addManyToMany($otherMember, $modelName, $member, $jointable, $otherJoinColumn, $joinColumn);
 				$newModel->setUpdated(true);
 				$otherModel->setUpdated(true);
@@ -597,6 +602,9 @@ class NewModelCmd extends AbstractCmd {
 				]);
 
 				$newModel->addOneToMany($member, $mappedBy, $otherModelName);
+				if (! $otherModel->isLoaded()) {
+					self::loadModel($otherModel, $otherModelName, $namespace);
+				}
 				$otherModel->addManyToOne($mappedBy, $fkField, $modelName);
 				$newModel->setUpdated(true);
 				$otherModel->setUpdated(true);

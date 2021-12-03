@@ -20,6 +20,8 @@ class MigrationsCmd extends AbstractCmd {
 
 	public static function run(&$config, $options, $what) {
 		$domain = self::updateDomain($options);
+		CacheManager::start($config);
+		self::checkModelsCache($config);
 		$dbOffset = self::getOption($options, 'd', 'database', 'default');
 		self::checkDbOffset($config, $dbOffset);
 		$domainStr = '';
@@ -27,7 +29,6 @@ class MigrationsCmd extends AbstractCmd {
 			$domainStr = " in the domain <b>$domain</b>";
 		}
 
-		CacheManager::start($config);
 		$generator = new DatabaseReversor(new DbGenerator(), $dbOffset);
 		$generator->migrate();
 		$script = $generator->getScript();
