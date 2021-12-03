@@ -512,7 +512,7 @@ class NewModelCmd extends AbstractCmd {
 		}
 	}
 
-	private static function addRelation(string $rType, NewModel $newModel, string $namepsace) {
+	private static function addRelation(string $rType, NewModel $newModel, string $namespace) {
 		$modelName = $newModel->getOriginalModelName();
 
 		switch ($rType) {
