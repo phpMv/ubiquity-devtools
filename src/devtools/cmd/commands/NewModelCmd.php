@@ -147,7 +147,8 @@ class NewModelCmd extends AbstractCmd {
 			'no'
 		]);
 		if (Console::isYes($rep)) {
-			echo shell_exec('Ubiquity init-cache -t=models');
+			global $argv;
+			echo shell_exec($argv[0] . ' init-cache -t=models');
 		}
 		self::saveModelsInCache();
 		die();
