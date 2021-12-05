@@ -441,8 +441,8 @@ class NewModelCmd extends AbstractCmd {
 				case $caseAddFields:
 					$field = Console::question("Enter field names: ");
 					if ($field != '') {
-						$fieldTypes = Console::question("Enter field types : ");
-						$nullables = Console::question("Nullable fields : ");
+						$fieldTypes = Console::question("Enter field types: ");
+						$nullables = Console::question("Nullable fields:   ");
 						self::addFields($field, $fieldTypes, $nullables);
 						$newModel->setUpdated(true);
 					}
@@ -524,13 +524,16 @@ class NewModelCmd extends AbstractCmd {
 				$otherModel = self::getNewModel($fkClass, false);
 				$otherModelName = $otherModel->getOriginalModelName();
 
-				$fkField = Console::question('Foreign key name:', null, [
+				$padmax = \strlen("OneToMany member name in $otherModelName:");
+
+				$fkField = Console::question(\str_pad('Foreign key name:', $padmax), null, [
 					'default' => 'id' . \ucfirst($otherModelName)
 				]);
-				$member = Console::question('Member name:', null, [
+				$member = Console::question(\str_pad('Member name:', $padmax), null, [
 					'default' => \lcfirst($otherModelName)
 				]);
-				$manyMember = Console::question("OneToMany member name in $otherModelName:", null, [
+
+				$manyMember = Console::question(\str_pad("OneToMany member name in $otherModelName:", $padmax), null, [
 					'default' => \lcfirst($modelName) . 's'
 				]);
 
@@ -544,26 +547,27 @@ class NewModelCmd extends AbstractCmd {
 				$otherModel->setUpdated(true);
 				break;
 			case 'manyToMany':
-				$fkClass = Console::question('Associated className:', \array_keys(self::$allModels), [
+				$padmax = 45;
+				$fkClass = Console::question(\str_pad('Associated className:', $padmax), \array_keys(self::$allModels), [
 					'ignoreCase' => true
 				]);
 				$otherModel = self::getNewModel($fkClass, false);
 				$otherModelName = $otherModel->getOriginalModelName();
 
-				$member = Console::question("Associated member name in $modelName:", null, [
+				$member = Console::question(\str_pad("Associated member name in $modelName:", $padmax), null, [
 					'default' => \lcfirst($otherModelName) . 's'
 				]);
-				$otherAssociatedFk = Console::question("Associated fk name for $otherModelName:", null, [
+				$otherAssociatedFk = Console::question(\str_pad("Associated fk name for $otherModelName:", $padmax), null, [
 					'default' => 'id' . \ucfirst($otherModelName)
 				]);
 
-				$otherMember = Console::question("Associated member name in $otherModelName:", null, [
+				$otherMember = Console::question(\str_pad("Associated member name in $otherModelName:", $padmax), null, [
 					'default' => \lcfirst($modelName) . 's'
 				]);
-				$associatedFk = Console::question("Associated fk name for $modelName:", null, [
+				$associatedFk = Console::question(\str_pad("Associated fk name for $modelName:", $padmax), null, [
 					'default' => 'id' . \ucfirst($modelName)
 				]);
-				$jointable = Console::question('Jointable:', null, [
+				$jointable = Console::question(\str_pad('Jointable:', $padmax), null, [
 					'default' => \lcfirst($modelName) . '_' . \lcfirst($otherModelName) . 's'
 				]);
 
@@ -586,19 +590,20 @@ class NewModelCmd extends AbstractCmd {
 
 				break;
 			case 'oneToMany':
-				$fkClass = Console::question('Associated member className:', \array_keys(self::$allModels), [
+				$padmax = 45;
+				$fkClass = Console::question(\str_pad('Associated member className:', $padmax), \array_keys(self::$allModels), [
 					'ignoreCase' => true
 				]);
 				$otherModel = self::getNewModel($fkClass, false);
 				$otherModelName = $otherModel->getOriginalModelName();
 
-				$fkField = Console::question('Foreign key name:', null, [
+				$fkField = Console::question(\str_pad('Foreign key name:', $padmax), null, [
 					'default' => 'id' . \ucfirst($modelName)
 				]);
-				$member = Console::question('Member name:', null, [
+				$member = Console::question(\str_pad('Member name:', $padmax), null, [
 					'default' => \lcfirst($otherModelName) . 's'
 				]);
-				$mappedBy = Console::question("MappedBy member name in $otherModelName:", null, [
+				$mappedBy = Console::question(\str_pad("MappedBy member name in $otherModelName:", $padmax), null, [
 					'default' => \lcfirst($modelName)
 				]);
 
