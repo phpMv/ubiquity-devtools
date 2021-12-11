@@ -151,7 +151,7 @@ class NewModel {
 	public function updateFirstPk() {
 		if ($this->hasDefaultPk()) {
 			$this->addField($this->defaultPk, [
-				'Type' => 'int(11)',
+				'Type' => 'int',
 				'Nullable' => 'false'
 			]);
 			$this->addPk($this->defaultPk);
