@@ -47,7 +47,7 @@ class Ubiquity {
 
 	use CmdTrait;
 
-	private static $version = '1.3.7';
+	private static $version = '1.3.7+';
 
 	private static $appName = 'Ubiquity devtools';
 
@@ -320,7 +320,7 @@ class Ubiquity {
 					$vendorCopies[$theme] = InstallThemeCmd::addTheme($theme, $theme, $themesConfig[$theme], self::$activeDir, false, self::$toolsConfig["composer"]);
 					$hasThemes = true;
 				} else {
-					echo ConsoleFormatter::showMessage('The theme <b>' . $theme . '</b> does not exists!', 'warning', 'Themes installation');
+					echo ConsoleFormatter::showMessage('The theme <b>' . $theme . '</b> does not exist!', 'warning', 'Themes installation');
 				}
 			}
 			if (! $hasThemes) {
@@ -488,7 +488,7 @@ class Ubiquity {
 	private static function checkDatabase($part, $config, $dbOffset = 'default') {
 		$offsets = DAO::getDatabases();
 		if (! \in_array($dbOffset, $offsets)) {
-			echo ConsoleFormatter::showMessage('The connection ' . $dbOffset . ' does not exists in config file!', 'error', $part);
+			echo ConsoleFormatter::showMessage('The connection ' . $dbOffset . ' does not exist in config file!', 'error', $part);
 			return false;
 		}
 		$dbConfig = DAO::getDbOffset($config, $dbOffset);
@@ -741,7 +741,7 @@ class Ubiquity {
 					}
 					self::startServer($host, $port, $type, $noLr, $lrPort);
 				} else {
-					echo ConsoleFormatter::showMessage(sprintf('The server %s does not exists!', $type), 'error', 'Server starting');
+					echo ConsoleFormatter::showMessage(sprintf('The server %s does not exist!', $type), 'error', 'Server starting');
 				}
 				break;
 			case 'live_reload':
@@ -858,7 +858,7 @@ class Ubiquity {
 				}
 
 				$commands = Command::getInfo($command);
-				echo ConsoleFormatter::showMessage("The command {$command} does not exists!", 'warning');
+				echo ConsoleFormatter::showMessage("The command {$command} does not exist!", 'warning');
 				if (\count($commands) > 0) {
 					$cmd = \current($commands)["cmd"];
 					$answer = Console::question("Did you mean {$cmd->getName()}?", [
@@ -1055,10 +1055,10 @@ class Ubiquity {
 					}
 				}
 			} else {
-				echo ConsoleFormatter::showMessage("Function {$function_name} does not exists!", 'error', 'Bootstrap');
+				echo ConsoleFormatter::showMessage("Function {$function_name} does not exist!", 'error', 'Bootstrap');
 			}
 		} else {
-			echo ConsoleFormatter::showMessage("File {$file} does not exists!", 'error', 'Bootstrap');
+			echo ConsoleFormatter::showMessage("File {$file} does not exist!", 'error', 'Bootstrap');
 		}
 	}
 
