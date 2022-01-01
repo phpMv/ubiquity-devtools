@@ -412,11 +412,11 @@ class Ubiquity {
 	}
 
 	private static function includeCss($filename) {
-		return "{{ css('" . $filename . "') }}";
+		return "{{ css('" . $filename . "',{nonce: nonce}) }}";
 	}
 
 	private static function includeJs($filename) {
-		return "{{ js('" . $filename . "') }}";
+		return "{{ js('" . $filename . "',{nonce: nonce}) }}";
 	}
 
 	private static function showConfigOptions() {
@@ -615,13 +615,13 @@ class Ubiquity {
 				}
 				break;
 
-            case 'model':
-            case 'new_model':
+			case 'model':
+			case 'new_model':
 			case 'create_model':
-                $config=self::_init();
-			    NewModelCmd::run($config, $options,$what);
+				$config = self::_init();
+				NewModelCmd::run($config, $options, $what);
 
-			break;
+				break;
 			case 'controller':
 			case 'create_controller':
 				$config = self::_init();

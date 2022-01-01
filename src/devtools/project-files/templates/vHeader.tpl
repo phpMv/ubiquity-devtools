@@ -9,7 +9,7 @@
 {% endblock %}
 {% block css %}
 	%cssFiles%
-	{{css('css/style.css')}}
+	{{css('css/style.css', {nonce: nonce})}}
 {% endblock %}
 </head>
 <body>
