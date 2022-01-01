@@ -7,8 +7,8 @@
 	<title>ubi-projects semantic-UI</title>
 {% endblock %}
 {% block css %}
-	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
-	{{css('@activeTheme/css/style.css') | raw}}
+	<link nonce="{{nonce}}" rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+	{{css('@activeTheme/css/style.css',{nonce:nonce}) | raw}}
 {% endblock %}
 </head>
 <body>

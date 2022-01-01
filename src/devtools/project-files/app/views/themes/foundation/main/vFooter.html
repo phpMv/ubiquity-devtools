@@ -2,9 +2,9 @@
 
 {% endblock %}
 {% block scripts %}
-{{js('https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js')}}
-{{js('https://cdn.jsdelivr.net/npm/foundation-sites@6.5.3/dist/js/foundation.min.js')}}
-    <script>
+{{js('https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js',{nonce: nonce})}}
+{{js('https://cdn.jsdelivr.net/npm/foundation-sites@6.5.3/dist/js/foundation.min.js',{nonce: nonce})}}
+    <script nonce="{{nonce}}">
       $(document).foundation();
     </script>
 {% endblock %}
