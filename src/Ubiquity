@@ -47,7 +47,7 @@ class Ubiquity {
 
 	use CmdTrait;
 
-	private static $version = '1.3.7+';
+	private static $version = '1.3.8';
 
 	private static $appName = 'Ubiquity devtools';
 
