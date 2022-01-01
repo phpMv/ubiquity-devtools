@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 - nothing
 
+## [1.3.8] - 2022-01-01
+### Fixed
+- cache initialization pb with `new-model` command
+
+### Changed
+- `str_pad` usage for questions in commands
+- relocate livereload starting (after nonce creation)
+- add nonce in template files
+- add default nonce
+
+## [1.3.7] - 2021-12-02
+### Fixed
+- Other models loading +cache re-init in `new-model` command
+- Re-init cache before migrations commands
+- typo in `addRelation`: `$namepsace`
+
 ## [1.3.6] - 2021-12-01
 
 ### Added
