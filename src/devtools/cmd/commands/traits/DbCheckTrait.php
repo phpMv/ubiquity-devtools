@@ -17,7 +17,7 @@ trait DbCheckTrait {
 	}
 
 	protected static function checkModelsCache(&$config) {
-		if (CacheManager::modelsCacheUpdated($config) !== false) {
+		if (\count(CacheManager::modelsCacheUpdated($config))>0) {
 			ob_start();
 			CacheManager::initCache($config, 'models');
 			$res = ob_get_clean();
