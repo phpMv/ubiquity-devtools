@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 - nothing
+## [1.3.9] - 2022-02-13
+### Updated
+- Default vHeader and vFooter templates
+
 
 ## [1.3.8] - 2022-01-01
 ### Fixed
