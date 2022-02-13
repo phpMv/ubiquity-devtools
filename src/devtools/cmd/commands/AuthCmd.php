@@ -10,7 +10,7 @@ class AuthCmd extends AbstractCmd {
 		$what = self::requiredParam($what, 'controllerName');
 		$scaffold = new ConsoleScaffoldController();
 		$baseClass = self::getOption($options, 'e', 'extends', "\\Ubiquity\\controllers\\auth\\AuthController");
-		$authView = self::getOption($options, 't', 'templates', 'index,info,noAccess,disconnected,message,baseTemplate');
+		$authView = self::getOption($options, 't', 'templates', 'index,info,noAccess,disconnected,message,stepTwo,create,badTwoFACode,baseTemplate');
 		$routePath = self::getOption($options, 'p', 'path', '');
 		$scaffold->addAuthController($what, $baseClass, $authView, $routePath);
 	}
