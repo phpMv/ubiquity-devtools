@@ -1,9 +1,18 @@
 body{
+	background: #e6e1c5;
+}
+.head, header{
+	background-color: #333333;
+}
+
+header::after{
+	content:' ';
 	background: rgb(79,160,174);
 	background: linear-gradient(45deg, rgba(79,160,174,1) 0%, rgba(210,157,56,1) 100%);
-}
-.head{
-	background-color: #1f1f1f;
+	height: 5px;
+	width: 100%;
+	position: absolute;
+	top: 60px;
 }
 
 .menu.links{
@@ -18,4 +27,33 @@ body{
 
 .segment.container {
 	background-color: #4d4d4d;
+}
+
+.main-container {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+main {
+	flex: 1;
+	display: flex;
+}
+
+header {
+	padding: 10px 0;
+}
+
+footer{
+	min-height: 200px;
+	background-color: #434343;
+}
+
+header, footer {
+	color: #f5f5dc;
+	padding-top: 10px;
+}
+
+main .ui.container{
+	padding: 10px;
 }
