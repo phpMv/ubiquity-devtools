@@ -11,12 +11,12 @@ class InstallThemeCmd extends AbstractThemeCmd {
 	public static function run(&$config, $options, $what, $activeDir) {
 		$what = self::requiredParam($what, 'themeName');
 		$domain = self::updateDomain($options);
-		$themesConfig = include ($activeDir . "/devtools/core/themesConfig.php");
+		$themesConfig = include ($activeDir . '/devtools/core/themesConfig.php');
 		if (isset($themesConfig[$what])) {
 			self::addTheme($what, $what, $themesConfig[$what], $activeDir, true);
 		} else {
 			echo ConsoleFormatter::showMessage('The theme <b>' . $what . '</b> does not exists!', 'warning', 'Themes installation');
-			$answer = Console::question("Would-you like to create a new one ?", [
+			$answer = Console::question('Would-you like to create a new one ?', [
 				'y',
 				'n'
 			]);
@@ -35,10 +35,10 @@ class InstallThemeCmd extends AbstractThemeCmd {
 			$source = $activeDir . '/devtools/project-files/public/themes/' . $baseTheme;
 			FileUtils::xcopy($source, $dest);
 
-			if (class_exists(\Ubiquity\domains\DDDManager::class)) {
-				$dest = DDDManager::getActiveViewFolder() . "themes/" . $name;
+			if (\class_exists(\Ubiquity\domains\DDDManager::class)) {
+				$dest = DDDManager::getActiveViewFolder() . 'themes/' . $name;
 			} else {
-				$dest = $baseDir . "/app/views/themes/" . $name;
+				$dest = $baseDir . '/app/views/themes/' . $name;
 			}
 			FileUtils::safeMkdir($dest);
 			$source = $activeDir . '/devtools/project-files/app/views/themes/' . $baseTheme;
@@ -47,7 +47,7 @@ class InstallThemeCmd extends AbstractThemeCmd {
 			$composerRequires = $themeConfig['composer'];
 			foreach ($composerRequires as $composerRequire => $version) {
 				if ($standalone) {
-					system("composer require " . $composerRequire);
+					system('composer require ' . $composerRequire);
 				} else {
 					$composer['require'][$composerRequire] = $version;
 				}
@@ -60,7 +60,7 @@ class InstallThemeCmd extends AbstractThemeCmd {
 			return $vendorCopies;
 		}
 
-		echo ConsoleFormatter::showMessage(sprintf('This theme seems to be already installed in %s!', $dest), 'warning', 'Theme installation');
+		echo ConsoleFormatter::showMessage(\sprintf('This theme seems to be already installed in %s!', $dest), 'warning', 'Theme installation');
 		return [];
 	}
 
