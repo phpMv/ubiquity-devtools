@@ -35,7 +35,11 @@ class InstallThemeCmd extends AbstractThemeCmd {
 			$source = $activeDir . '/devtools/project-files/public/themes/' . $baseTheme;
 			FileUtils::xcopy($source, $dest);
 
-			$dest = DDDManager::getActiveViewFolder() . "themes/" . $name;
+			if (class_exists(\Ubiquity\domains\DDDManager::class)) {
+				$dest = DDDManager::getActiveViewFolder() . "themes/" . $name;
+			} else {
+				$dest = $baseDir . "/app/views/themes/" . $name;
+			}
 			FileUtils::safeMkdir($dest);
 			$source = $activeDir . '/devtools/project-files/app/views/themes/' . $baseTheme;
 			FileUtils::xcopy($source, $dest);
