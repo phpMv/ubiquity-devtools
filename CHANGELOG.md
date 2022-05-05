@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 - nothing
 
+## [1.3.11] - 2022-05-06
+### Updated
+- Change root directory to `public` for async platforms
+
 ## [1.3.10] - 2022-02-15
 ### Fixed
 - `InstallThemeCmd` pb with `DDDManager`
