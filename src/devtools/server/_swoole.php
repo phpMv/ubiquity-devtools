@@ -13,6 +13,6 @@ $address=$sConfig['host'].':'.$sConfig['port'];
 $config ["siteUrl"] = 'http://'.$address;
 require ROOT . './../vendor/autoload.php';
 $swooleServer=new \Ubiquity\servers\swoole\SwooleServer();
-$swooleServer->init($config, __DIR__);
+$swooleServer->init($config, realpath(__DIR__.\DS.'..'.\DS.'public'.\DS));
 require ROOT.'config/services.php';
 $swooleServer->run($sConfig['host'],$sConfig['port'],$sConfig['options']??[]);

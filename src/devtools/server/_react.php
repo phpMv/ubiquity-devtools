@@ -13,6 +13,6 @@ $address=$sConfig['host'].':'.$sConfig['port'];
 $config ["siteUrl"] = 'http://'.$address.'/';
 require ROOT . './../vendor/autoload.php';
 $reactServer=new \Ubiquity\servers\react\ReactServer();
-$reactServer->init($config, __DIR__);
+$reactServer->init($config, realpath(__DIR__.\DS.'..'.\DS.'public'.\DS));
 require ROOT.'config/services.php';
 $reactServer->run($address);
