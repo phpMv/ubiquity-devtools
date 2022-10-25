@@ -47,7 +47,7 @@ class Ubiquity {
 
 	use CmdTrait;
 
-	private static $version = '1.3.11';
+	private static $version = '1.3.11+';
 
 	private static $appName = 'Ubiquity devtools';
 
@@ -798,7 +798,7 @@ class Ubiquity {
 				break;
 
 			case 'config_set':
-				$config = self::_init();
+				$config = self::_init(false,true);
 				ConfigSetCmd::run($config, $options);
 				break;
 
@@ -1062,7 +1062,7 @@ class Ubiquity {
 		}
 	}
 
-	private static function _init($silent = false) {
+	private static function _init($silent = false,$noEval=false) {
 		self::$activeDir = dirname(__FILE__);
 		if (! self::setDir(getcwd())) {
 			if ($silent) {
@@ -1082,6 +1082,9 @@ class Ubiquity {
 		} else {
 			$config = require_once 'app/config/config.php';
 			\Ubiquity\controllers\Startup::setConfig($config);
+			if($noEval){
+			    $config=\Ubiquity\config\ConfigCache::loadConfigWithoutEval();
+            }
 		}
 		return $config;
 	}
