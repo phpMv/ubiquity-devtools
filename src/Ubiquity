@@ -389,6 +389,7 @@ class Ubiquity {
 			} else
 				die();
 		}
+
 	}
 
 	private static function includeDefaultStyles() {
@@ -1080,14 +1081,22 @@ class Ubiquity {
 		if (isset(\Ubiquity\controllers\Startup::$config)) {
 			$config = \Ubiquity\controllers\Startup::$config;
 		} else {
-			$config = require_once 'app/cache/config/config.cache.php';
+			$config=self::getConfigArrayFromFile();
 			\Ubiquity\controllers\Startup::setConfig($config);
 			if($noEval){
-			    $config=\Ubiquity\config\ConfigCache::loadConfigWithoutEval();
-            }
+				$config=\Ubiquity\config\ConfigCache::loadConfigWithoutEval();
+			}
 		}
 		return $config;
 	}
+
+    private static function getConfigArrayFromFile(){
+		$configFile='app/cache/config/config.cache.php';
+		if(\file_exists($configFile)){
+			return require_once 'app/cache/config/config.cache.php';
+		}
+        return require_once 'app/config/config.php';
+    }
 
 	private static function isBooleanTrue($s) {
 		return $s === true || $s === "true" || $s === 1 || $s === "1";
