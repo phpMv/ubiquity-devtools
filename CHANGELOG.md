@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 - nothing
 
+## [1.4.0] - 2022-12-18
+### Updated
+- Compatibility with Ubiquity 2.5.0
+### Added
+- env vars support
 ## [1.3.11] - 2022-05-06
 ### Updated
 - Change root directory to `public` for async platforms
