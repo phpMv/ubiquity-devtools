@@ -47,7 +47,7 @@ class Ubiquity {
 
 	use CmdTrait;
 
-	private static $version = '1.3.11';
+	private static $version = '1.4.0';
 
 	private static $appName = 'Ubiquity devtools';
 
@@ -761,9 +761,9 @@ class Ubiquity {
 				$config = self::_init(true);
 				if (\is_array($config)) {
 					if (\class_exists("\\Ubiquity\\controllers\\admin\\UbiquityMyAdminBaseController")) {
-						$v .= 'Ubiquity webtools (' . \Ubiquity\controllers\admin\UbiquityMyAdminBaseController::version . ")\n";
+						$v .= 'Ubiquity webtools (' . \Ubiquity\controllers\admin\UbiquityMyAdminBaseController::VERSION . ")\n";
 					}
-					$v .= 'Ubiquity ' . Framework::version . "\n";
+					$v .= 'Ubiquity ' . Framework::getVersion() . "\n";
 				}
 				$v .= 'OS: ' . \php_uname() . "\n";
 				echo ConsoleFormatter::showInfo($v);
@@ -798,7 +798,7 @@ class Ubiquity {
 				break;
 
 			case 'config_set':
-				$config = self::_init();
+				$config = self::_init(false,true);
 				ConfigSetCmd::run($config, $options);
 				break;
 
@@ -1062,7 +1062,7 @@ class Ubiquity {
 		}
 	}
 
-	private static function _init($silent = false) {
+	private static function _init($silent = false,$noEval=false) {
 		self::$activeDir = dirname(__FILE__);
 		if (! self::setDir(getcwd())) {
 			if ($silent) {
@@ -1080,8 +1080,11 @@ class Ubiquity {
 		if (isset(\Ubiquity\controllers\Startup::$config)) {
 			$config = \Ubiquity\controllers\Startup::$config;
 		} else {
-			$config = require_once 'app/config/config.php';
+			$config = require_once 'app/cache/config/config.cache.php';
 			\Ubiquity\controllers\Startup::setConfig($config);
+			if($noEval){
+			    $config=\Ubiquity\config\ConfigCache::loadConfigWithoutEval();
+            }
 		}
 		return $config;
 	}
