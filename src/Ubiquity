@@ -47,7 +47,7 @@ class Ubiquity {
 
 	use CmdTrait;
 
-	private static $version = '1.3.11+';
+	private static $version = '1.4.0';
 
 	private static $appName = 'Ubiquity devtools';
 
@@ -761,9 +761,9 @@ class Ubiquity {
 				$config = self::_init(true);
 				if (\is_array($config)) {
 					if (\class_exists("\\Ubiquity\\controllers\\admin\\UbiquityMyAdminBaseController")) {
-						$v .= 'Ubiquity webtools (' . \Ubiquity\controllers\admin\UbiquityMyAdminBaseController::version . ")\n";
+						$v .= 'Ubiquity webtools (' . \Ubiquity\controllers\admin\UbiquityMyAdminBaseController::VERSION . ")\n";
 					}
-					$v .= 'Ubiquity ' . Framework::version . "\n";
+					$v .= 'Ubiquity ' . Framework::getVersion() . "\n";
 				}
 				$v .= 'OS: ' . \php_uname() . "\n";
 				echo ConsoleFormatter::showInfo($v);
@@ -1080,7 +1080,7 @@ class Ubiquity {
 		if (isset(\Ubiquity\controllers\Startup::$config)) {
 			$config = \Ubiquity\controllers\Startup::$config;
 		} else {
-			$config = require_once 'app/config/config.php';
+			$config = require_once 'app/cache/config/config.cache.php';
 			\Ubiquity\controllers\Startup::setConfig($config);
 			if($noEval){
 			    $config=\Ubiquity\config\ConfigCache::loadConfigWithoutEval();
