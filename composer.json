@@ -9,7 +9,8 @@
 	"require": {
 		"php": ">=7.4",
 		"phpmv/ubiquity-commands":"^0.0",
-		"symfony/process": "^5.2"
+		"symfony/process": "^5.2",
+		"vlucas/phpdotenv": "^5.5"
 	},
 	"license": "Apache-2.0",
 	"authors": [
