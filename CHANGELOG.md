@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 - nothing
 
+## [1.4.3] - 2022-12-31
+### Updated
+- `aclInit` command (add table and models creation)
+- `new project` (add init-cache after creation)
+
+## [1.4.2] - 2022-12-19
+### Fixed
+- add `vlucas/phpdotenv` in composer.json
+
+## [1.4.1] - 2022-12-18
+### Fixed
+- config cache first initialization
+
 ## [1.4.0] - 2022-12-18
 ### Updated
 - Compatibility with Ubiquity 2.5.0
