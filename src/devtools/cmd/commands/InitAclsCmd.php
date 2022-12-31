@@ -48,9 +48,9 @@ class InitAclsCmd extends AbstractCmd {
 				$tbl=new ConsoleTable();
 				$tbl->setIndent(5);
 				$rArray=new ClassicArray($classes);
-				$rArray->setFields(\array_keys($classes));
 				$tbl->setDatas($rArray->parse());
 				echo $tbl->getTable();
+				ob_start();
 				CacheManager::initCache($config, 'models');
 				$res = ob_get_clean();
 				echo ConsoleFormatter::showMessage($res, 'success', 'init-cache: models');
