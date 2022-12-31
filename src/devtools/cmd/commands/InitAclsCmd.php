@@ -63,9 +63,10 @@ class InitAclsCmd extends AbstractCmd {
 		AclManager::initFromProviders([
 			new AclCacheProvider()
 		]);
-
+		ob_start();
 		AclManager::initCache($config);
-		echo ConsoleFormatter::showMessage('ACLs cache initialized!', 'success', 'init-acls');
+		$res = ob_get_clean();
+		echo ConsoleFormatter::showMessage($res, 'success', 'init-acls');
 	}
 }
 
