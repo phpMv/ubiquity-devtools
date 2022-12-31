@@ -1,7 +1,6 @@
 <?php
 namespace Ubiquity\devtools\cmd\commands;
 
-use Ubiquity\devtools\cmd\Command;
 use Ubiquity\devtools\cmd\ConsoleFormatter;
 use Ubiquity\devtools\cmd\Console;
 use Ubiquity\security\acl\AclManager;
@@ -18,7 +17,7 @@ use Ubiquity\cache\CacheManager;
  */
 class InitAclsCmd extends AbstractCmd {
 
-	public static function run(&$config) {
+	public static function run(&$config, $options) {
 		if (! \class_exists(\Ubiquity\security\acl\AclManager::class, true)) {
 			$answer = Console::question("\n\tUbiquity-acl is not available. Would you like to install it now with composer?", [
 				"y",
@@ -31,6 +30,20 @@ class InitAclsCmd extends AbstractCmd {
 				die();
 			}
 		}
+		$providers = self::getOptionArray($options, 'p', 'providers', '');
+		if (\is_array($providers) && \in_array('dao',$providers)) {
+			$dbOffset = self::getOption($options, 'd', 'database', 'default');
+			if ($dbOffset!=null) {
+				\Ubiquity\security\acl\AclManager::initializeDAOProvider($config, $dbOffset);
+			}
+			$hasModels=self::hasOption($options, 'm', 'models');
+			if ($hasModels) {
+				$dao=new \Ubiquity\security\acl\persistence\AclDAOProvider($config);
+				$dao->createModels();
+			}
+		}
+
+
 		CacheManager::start($config);
 		AclManager::start();
 		AclManager::initFromProviders([
