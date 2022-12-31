@@ -1081,7 +1081,7 @@ class Ubiquity {
 			$config=self::getConfigArrayFromFile();
 			\Ubiquity\controllers\Startup::setConfig($config);
 			if($noEval){
-				$config=\Ubiquity\config\ConfigCache::loadConfigWithoutEval();
+				$config=\Ubiquity\config\Configuration::loadConfigWithoutEval();
 			}
 		}
 		return $config;
