@@ -42,12 +42,13 @@ use Ubiquity\devtools\core\ConsoleScaffoldController;
 use Ubiquity\devtools\cmd\commands\NewDomainCmd;
 use Ubiquity\devtools\cmd\commands\InfoMigrationsCmd;
 use Ubiquity\devtools\cmd\commands\MigrationsCmd;
+use Ubiquity\devtools\cmd\commands\InitCacheCmd;
 
 class Ubiquity {
 
 	use CmdTrait;
 
-	private static $version = '1.4.0';
+	private static $version = '1.4.3';
 
 	private static $appName = 'Ubiquity devtools';
 
@@ -366,7 +367,7 @@ class Ubiquity {
 						echo ConsoleFormatter::showMessage($res, 'success', 'models generation');
 					}
 					ob_start();
-					\Ubiquity\cache\CacheManager::checkCache($config);
+					\Ubiquity\cache\CacheManager::initCache($config);
 					$res = ob_get_clean();
 					echo ConsoleFormatter::showMessage($res, 'info', 'cache initialization');
 					echo ConsoleFormatter::showMessage("project <b>{$projectName}</b> successfully created.", 'success', 'new-project');
@@ -669,12 +670,8 @@ class Ubiquity {
 				break;
 
 			case 'init_cache':
-				$type = self::getOption($options, "t", "type", "all");
 				$config = self::_init();
-				ob_start();
-				CacheManager::initCache($config, $type);
-				$res = ob_get_clean();
-				echo ConsoleFormatter::showMessage($res, 'success', 'init-cache:' . $type);
+				InitCacheCmd::run($config, $options);
 				break;
 
 			case 'acl_init':
