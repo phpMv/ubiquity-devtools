@@ -3,6 +3,8 @@ namespace Ubiquity\devtools\cmd\commands;
 
 use Ubiquity\devtools\cmd\ConsoleFormatter;
 use Ubiquity\devtools\cmd\Console;
+use Ubiquity\devtools\cmd\ConsoleTable;
+use Ubiquity\devtools\utils\arrays\ClassicArray;
 use Ubiquity\security\acl\AclManager;
 use Ubiquity\security\acl\persistence\AclCacheProvider;
 use Ubiquity\cache\CacheManager;
@@ -35,11 +37,23 @@ class InitAclsCmd extends AbstractCmd {
 			$dbOffset = self::getOption($options, 'd', 'database', 'default');
 			if ($dbOffset!=null) {
 				\Ubiquity\security\acl\AclManager::initializeDAOProvider($config, $dbOffset);
+				echo ConsoleFormatter::showMessage("ACLs tables created in $dbOffset", 'success', 'ACLs DB tables creation');
 			}
 			$hasModels=self::hasOption($options, 'm', 'models');
 			if ($hasModels) {
 				$dao=new \Ubiquity\security\acl\persistence\AclDAOProvider($config);
 				$dao->createModels();
+				$classes=$dao->getModelClasses();
+				echo ConsoleFormatter::showMessage("ACLs models created", 'success', 'init-cache: models');
+				$tbl=new ConsoleTable();
+				$tbl->setIndent(5);
+				$rArray=new ClassicArray($classes);
+				$rArray->setFields(\array_keys($classes));
+				$tbl->setDatas($rArray->parse());
+				echo $tbl->getTable();
+				CacheManager::initCache($config, 'models');
+				$res = ob_get_clean();
+				echo ConsoleFormatter::showMessage($res, 'success', 'init-cache: models');
 			}
 		}
 
