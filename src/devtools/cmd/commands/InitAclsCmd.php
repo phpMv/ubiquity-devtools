@@ -1,6 +1,7 @@
 <?php
 namespace Ubiquity\devtools\cmd\commands;
 
+use Ubiquity\controllers\Startup;
 use Ubiquity\devtools\cmd\ConsoleFormatter;
 use Ubiquity\devtools\cmd\Console;
 use Ubiquity\devtools\cmd\ConsoleTable;
@@ -27,6 +28,7 @@ class InitAclsCmd extends AbstractCmd {
 			]);
 			if (Console::isYes($answer)) {
 				\system('composer require phpmv/ubiquity-acl');
+				Console::reExecute();
 			} else {
 				echo ConsoleFormatter::showMessage('aborted operation!', 'warning', 'init-acls');
 				die();
