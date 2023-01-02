@@ -48,7 +48,7 @@ class Ubiquity {
 
 	use CmdTrait;
 
-	private static $version = '1.4.4';
+	private static $version = '1.4.6';
 
 	private static $appName = 'Ubiquity devtools';
 
@@ -355,8 +355,9 @@ class Ubiquity {
 				]);
 				if (Console::isYes($answer)) {
 					system("composer install");
-					$config=self::getConfigArrayFromFile();
 					require_once ROOT . './../vendor/autoload.php';
+					$config=self::getConfigArrayFromFile();
+					\Ubiquity\controllers\Startup::setConfig($config);
 					$dir = getcwd();
 					// -------------Add themes----------------
 					foreach ($vendorCopies as $theme => $vCopies) {
