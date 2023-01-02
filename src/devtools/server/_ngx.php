@@ -4,7 +4,7 @@ if (! defined('DS')) {
 	define('DS', DIRECTORY_SEPARATOR);
 	define('ROOT', __DIR__ . \DS . '..' . \DS . 'app' . \DS);
 }
-$config = include ROOT . 'config/config.php';
+$config = include ROOT . 'cache/config/config.cache.php';
 $sConfig = include __DIR__ . \DS . 'ngx-config.php';
 $config["sessionName"] = $sConfig["sessionName"];
 $address = $sConfig['host'] . ':' . $sConfig['port'];
