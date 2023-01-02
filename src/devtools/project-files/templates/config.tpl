@@ -3,6 +3,7 @@ return array(
 		"siteUrl"=>"%siteUrl%",
 		"database"=>[
 				"type"=>"%dbType%",
+				"wrapper"=>"%dbWrapper%",
 				"dbName"=>"%dbName%",
 				"serverName"=>"%serverName%",
 				"port"=>"%port%",

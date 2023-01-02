@@ -199,6 +199,11 @@ class Ubiquity {
 				"mysql"
 			],
 			[
+				"r",
+				"dbWrapper",
+				"Ubiquity\\db\\providers\\pdo\\PDOWrapper"
+			],
+			[
 				"s",
 				"serverName",
 				"127.0.0.1"
