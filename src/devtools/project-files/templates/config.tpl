@@ -4,11 +4,11 @@ return array(
 		"database"=>[
 				"type"=>"%dbType%",
 				"wrapper"=>"%dbWrapper%",
-				"dbName"=>"%dbName%",
+				"dbName"=>getenv('DB_NAME'),
 				"serverName"=>"%serverName%",
 				"port"=>"%port%",
-				"user"=>"%user%",
-				"password"=>"%password%",
+				"user"=>getenv('DB_USER'),
+				"password"=>getenv('DB_PASS'),
 				"options"=>[],
 				"cache"=>false
 		],

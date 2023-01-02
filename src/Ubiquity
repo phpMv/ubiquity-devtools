@@ -48,7 +48,7 @@ class Ubiquity {
 
 	use CmdTrait;
 
-	private static $version = '1.4.3';
+	private static $version = '1.4.4';
 
 	private static $appName = 'Ubiquity devtools';
 
@@ -343,8 +343,7 @@ class Ubiquity {
 			}
 			FileUtils::xcopy(self::$activeDir . "/devtools/project-files/app/controllers/IndexController.php", "app/controllers/IndexController.php");
 
-			// -------------Add themes----------------
-
+			self::openReplaceWrite(self::$activeDir . "/devtools/project-files/templates/.env.tpl", getcwd()."/.env", self::$configOptions);
 			self::openReplaceWrite(self::$activeDir . "/devtools/project-files/templates/config.tpl", "app/config/config.php", self::$configOptions);
 			self::openReplaceWrite(self::$activeDir . "/devtools/project-files/README.md", getcwd() . "/README.md", self::$configOptions);
 
@@ -358,10 +357,17 @@ class Ubiquity {
 					system("composer install");
 					require_once ROOT . './../vendor/autoload.php';
 					$dir = getcwd();
+					// -------------Add themes----------------
 					foreach ($vendorCopies as $theme => $vCopies) {
 						InstallThemeCmd::copyVendorFiles($theme, $vCopies, $dir);
 					}
-					$config = require_once 'app/config/config.php';
+
+					ob_start();
+					\Ubiquity\cache\CacheManager::initCache($config);
+					$res = ob_get_clean();
+					echo ConsoleFormatter::showMessage($res, 'info', 'cache initialization');
+
+					$config = require_once 'app/cache/config/config.cache.php';
 					\Ubiquity\controllers\Startup::setConfig($config);
 
 					if (self::isBooleanTrue(self::$configOptions["%all-models%"])) {
@@ -371,10 +377,7 @@ class Ubiquity {
 						$res = ob_get_clean();
 						echo ConsoleFormatter::showMessage($res, 'success', 'models generation');
 					}
-					ob_start();
-					\Ubiquity\cache\CacheManager::initCache($config);
-					$res = ob_get_clean();
-					echo ConsoleFormatter::showMessage($res, 'info', 'cache initialization');
+
 					echo ConsoleFormatter::showMessage("project <b>{$projectName}</b> successfully created.", 'success', 'new-project');
 				} else {
 					echo ConsoleFormatter::showMessage("Project <b>{$projectName}</b> is partialy created.\nYou will need to run `composer install` in the root folder of the project.\nThen `Ubiquity init-cache` to initialize the cache folders.\n", 'info');
