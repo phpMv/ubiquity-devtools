@@ -355,6 +355,7 @@ class Ubiquity {
 				]);
 				if (Console::isYes($answer)) {
 					system("composer install");
+					$config=self::getConfigArrayFromFile();
 					require_once ROOT . './../vendor/autoload.php';
 					$dir = getcwd();
 					// -------------Add themes----------------
