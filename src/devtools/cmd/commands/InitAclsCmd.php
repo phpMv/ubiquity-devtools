@@ -15,7 +15,7 @@ use Ubiquity\cache\CacheManager;
  * Ubiquity\devtools\cmd\commands$InitAclsCmd
  *
  * @author jc
- * @version 1.0.0
+ * @version 1.0.1
  *
  */
 class InitAclsCmd extends AbstractCmd {
@@ -44,7 +44,7 @@ class InitAclsCmd extends AbstractCmd {
 			$hasModels=self::hasOption($options, 'm', 'models');
 			if ($hasModels) {
 				$dao=new \Ubiquity\security\acl\persistence\AclDAOProvider($config);
-				$dao->createModels();
+				$dao->createModels(null, $dbOffset);
 				$classes=$dao->getModelClasses();
 				echo ConsoleFormatter::showMessage("ACLs models created", 'success', 'init-cache: models');
 				$tbl=new ConsoleTable();
