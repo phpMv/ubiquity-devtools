@@ -44,7 +44,7 @@ class InitAclsCmd extends AbstractCmd {
 			$hasModels=self::hasOption($options, 'm', 'models');
 			if ($hasModels) {
 				$dao=new \Ubiquity\security\acl\persistence\AclDAOProvider($config);
-				$dao->createModels(null, $dbOffset);
+				$dao->createModels($dbOffset);
 				$classes=$dao->getModelClasses();
 				echo ConsoleFormatter::showMessage("ACLs models created", 'success', 'init-cache: models');
 				$tbl=new ConsoleTable();
