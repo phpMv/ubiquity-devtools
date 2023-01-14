@@ -419,9 +419,9 @@ class Ubiquity {
 				self::includeDefaultStyles($templateEngine);
 				self::openReplaceWrite(self::$activeDir . "/devtools/project-files/templates/vHeader.tpl", "app/views/main/vHeader.html", self::$configOptions, $templateEngine);
 				self::openReplaceWrite(self::$activeDir . "/devtools/project-files/templates/vFooter.tpl", "app/views/main/vFooter.html", self::$configOptions, $templateEngine);
-				FileUtils::xcopy(self::$activeDir . "/devtools/project-files/app/views/themes/semantic/main/vMenu.html", "app/views/main/vMenu.html", $templateEngine);
+				self::openReplaceWrite(self::$activeDir . "/devtools/project-files/app/views/themes/semantic/main/vMenu.html", "app/views/main/vMenu.html", self::$configOptions, $templateEngine);
 			} else {
-				FileUtils::xcopy(self::$activeDir . "/devtools/project-files/templates/indexThemes.tpl", "app/views/index.html");
+				self::openReplaceWrite(self::$activeDir . "/devtools/project-files/templates/indexThemes.tpl", "app/views/index.html", self::$configOptions, $templateEngine);
 			}
 
 		} else {
