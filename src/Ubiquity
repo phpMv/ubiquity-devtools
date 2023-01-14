@@ -460,14 +460,14 @@ class Ubiquity {
 
 	private static function includeCss(string $filename, \Ubiquity\views\engine\TemplateEngine $engine): string {
 		if (!($engine instanceof \Ubiquity\views\engine\Twig)) {
-			return $engine->getGenerator()->insertCSS($filename, ['nonce' => 'nonce']);
+			return $engine->getGenerator()->insertCSS($filename);
 		}
 		return "{{ css('" . $filename . "',{nonce: nonce}) }}";
 	}
 
 	private static function includeJs($filename, \Ubiquity\views\engine\TemplateEngine $engine): string {
 		if (!($engine instanceof \Ubiquity\views\engine\Twig)) {
-			return $engine->getGenerator()->insertJS($filename, ['nonce' => 'nonce']);
+			return $engine->getGenerator()->insertJS($filename);
 		}
 		return "{{ js('" . $filename . "',{nonce: nonce}) }}";
 	}
