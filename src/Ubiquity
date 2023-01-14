@@ -198,14 +198,8 @@ class Ubiquity {
 		return FileUtils::writeFile($destination, $str);
 	}
 
-	protected static function getTemplateEngineInstance(string $key): \Ubiquity\views\engine\TemplateEngine {
-		if (isset(self::$templateEngines[$key])) {
-			$engine = self::$templateEngines[$key]['class'];
-			$instance = new $engine();
-		} else {
-			$instance = new \Ubiquity\views\engine\Twig();
-		}
-		return $instance;
+	protected static function getTemplateEngineInstance(string $class): \Ubiquity\views\engine\TemplateEngine {
+		return new $class();
 	}
 
 	public static function create($projectName, $options, $force = false, $composerCreateProject = false) {
