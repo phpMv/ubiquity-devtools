@@ -462,26 +462,26 @@ class Ubiquity {
 		self::$toolsConfig["composer"]["require"]["phpmv/php-mv-ui"] = "^2.4";
 	}
 
-	private static function includeCss(string $filename, \Ubiquity\views\engine\TemplateEngine $engine) {
-		if (!($engine instanceof \Ubiquity\views\engine\Twig::class)) {
+	private static function includeCss(string $filename, \Ubiquity\views\engine\TemplateEngine $engine): string {
+		if (!($engine instanceof \Ubiquity\views\engine\Twig)) {
 			return $engine->getGenerator()->insertCSS($filename, ['nonce' => 'nonce']);
 		}
 		return "{{ css('" . $filename . "',{nonce: nonce}) }}";
 	}
 
-	private static function includeJs($filename, \Ubiquity\views\engine\TemplateEngine $engine) {
-		if (!($engine instanceof \Ubiquity\views\engine\Twig::class)) {
+	private static function includeJs($filename, \Ubiquity\views\engine\TemplateEngine $engine): string {
+		if (!($engine instanceof \Ubiquity\views\engine\Twig)) {
 			return $engine->getGenerator()->insertJS($filename, ['nonce' => 'nonce']);
 		}
 		return "{{ js('" . $filename . "',{nonce: nonce}) }}";
 	}
 
 	private static function showConfigOptions() {
-		$output = implode("\n", array_map(function ($v, $k) {
+		$output = \implode("\n", array_map(function ($v, $k) {
 			if (\is_array($v))
 				$v = \implode(",", $v);
 			return \sprintf("%s='%s'", str_ireplace("%", "", $k), $v);
-		}, self::$configOptions, array_keys(self::$configOptions)));
+		}, self::$configOptions, \array_keys(self::$configOptions)));
 		echo ConsoleFormatter::showMessage($output . "\n", 'info', 'Command line arguments');
 	}
 
