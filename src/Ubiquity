@@ -73,11 +73,11 @@ class Ubiquity {
 	private static $templateEngines = [
 		'twig' => [
 			'class' => \Ubiquity\views\engine\Twig::class,
-			'composer' => ['twig/twig' => '^3.0']
+			'composer' => ['require' => ['twig/twig' => '^3.0']]
 		],
 		'latte' => [
 			'class' => \Ubiquity\views\engine\latte\Latte::class,
-			'composer' => ['latte/latte' => '^3.0']
+			'composer' => ['require' => ['latte/latte' => '^3.0'], 'require-dev' => ['latte/tools' => '^0.1']]
 		]
 	];
 
@@ -321,7 +321,7 @@ class Ubiquity {
 
 			if (isset(self::$templateEngines[$te])) {
 				self::$configOptions["%templateEngine%"] = self::$templateEngines[$te]['class'];
-				self::$toolsConfig['composer']['require'] = \array_merge(self::$toolsConfig['composer']['require'], self::$templateEngines[$te]['composer']);
+				self::$toolsConfig['composer'] = \array_merge(self::$toolsConfig['composer'], self::$templateEngines[$te]['composer']);
 			} else {
 				self::$configOptions["%templateEngine%"] = 'Ubiquity\\views\\engine\\Twig';
 			}
