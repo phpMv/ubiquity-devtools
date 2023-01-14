@@ -275,7 +275,7 @@ class Ubiquity {
 			],
 			[
 				"t",
-				"templateEngine",
+				"template",
 				"twig"
 			]
 		];
@@ -324,10 +324,13 @@ class Ubiquity {
 			foreach ($arguments as $argument) {
 				self::$configOptions["%" . $argument[1] . "%"] = self::getOption($options, $argument[0], $argument[1], $argument[2]);
 			}
-			$te = self::$configOptions['%templateEngine%'];
+			$te = self::$configOptions['%template%'] ?? 'twig';
 
 			if (isset(self::$templateEngines[$te])) {
-				self::$toolsConfig['composer'] = \array_merge(self::$toolsConfig['composer'], self::$templateEngines[$te]['composer']);
+				self::$configOptions["%templateEngine%"] = self::$templateEngines[$te]['class'];
+				self::$toolsConfig['composer']['require'] = \array_merge(self::$toolsConfig['composer']['require'], self::$templateEngines[$te]['composer']);
+			} else {
+				self::$configOptions["%templateEngine%"] = 'Ubiquity\\views\\engine\\Twig';
 			}
 			self::showConfigOptions();
 			self::openReplaceWrite(self::$activeDir . "/devtools/project-files/.htaccess", getcwd() . "/public/.htaccess", array(
