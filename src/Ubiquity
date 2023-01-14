@@ -73,12 +73,11 @@ class Ubiquity {
 	private static $templateEngines = [
 		'twig' => [
 			'class' => \Ubiquity\views\engine\Twig::class,
-			'composer' => ['twig/twig' => '^3.0'
-			],
-			'latte' => [
-				'class' => \Ubiquity\views\engine\latte\Latte::class,
-				'composer' => ['latte/latte' => '^3.0']
-			]
+			'composer' => ['twig/twig' => '^3.0']
+		],
+		'latte' => [
+			'class' => \Ubiquity\views\engine\latte\Latte::class,
+			'composer' => ['latte/latte' => '^3.0']
 		]
 	];
 
@@ -274,8 +273,8 @@ class Ubiquity {
 				$projectName
 			],
 			[
-				"t",
-				"template",
+				"v",
+				"views",
 				"twig"
 			]
 		];
@@ -324,7 +323,7 @@ class Ubiquity {
 			foreach ($arguments as $argument) {
 				self::$configOptions["%" . $argument[1] . "%"] = self::getOption($options, $argument[0], $argument[1], $argument[2]);
 			}
-			$te = self::$configOptions['%template%'] ?? 'twig';
+			$te = self::$configOptions['%views%'] ?? 'twig';
 
 			if (isset(self::$templateEngines[$te])) {
 				self::$configOptions["%templateEngine%"] = self::$templateEngines[$te]['class'];
