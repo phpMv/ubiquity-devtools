@@ -18,7 +18,7 @@ return [
 		"require" => [
 			"php" => ">=7.4",
 			"twig/twig" => "^3.0",
-			"phpmv/ubiquity" => "^2.3"
+			"phpmv/ubiquity" => "dev-204-rfc-nette-latte-templates-compatibility"
 		],
 		"require-dev" => [
 			"monolog/monolog" => "^2.2",
