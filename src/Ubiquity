@@ -366,6 +366,7 @@ class Ubiquity {
 			}
 			if (!$hasThemes) {
 				self::$configOptions['%activeTheme%'] = '';
+				FileUtils::xcopy(self::$activeDir . "/devtools/project-files/public/themes/semantic/", getcwd() . "/public/assets/");
 			} else {
 				$activeTheme = end($themes);
 				self::$configOptions['%activeTheme%'] = ',"activeTheme"=>"' . $activeTheme . '"';
