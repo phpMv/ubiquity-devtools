@@ -77,7 +77,7 @@ class Ubiquity {
 		],
 		'latte' => [
 			'class' => \Ubiquity\views\engine\latte\Latte::class,
-			'composer' => ['require' => ['latte/latte' => '^3.0'], 'require-dev' => ['latte/tools' => '^0.1']]
+			'composer' => ['require' => ['phpmv/ubiquity-latte' => 'dev-main']]
 		]
 	];
 
