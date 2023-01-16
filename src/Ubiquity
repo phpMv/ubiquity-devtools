@@ -80,7 +80,8 @@ class Ubiquity {
 			'composer' => [
 				'require' => ['phpmv/ubiquity-latte' => 'dev-main'],
 				'require-dev' => ['latte/tools' => 'dev-ubiquity-fixes'],
-				'repositories' => ['type' => 'vcs', 'url' => 'https://github.com/phpMv/latte-tools']]
+				'repositories' => [['type' => 'vcs', 'url' => 'https://github.com/phpMv/latte-tools']]
+			]
 		]
 	];
 
