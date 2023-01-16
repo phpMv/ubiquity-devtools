@@ -77,7 +77,10 @@ class Ubiquity {
 		],
 		'latte' => [
 			'class' => \Ubiquity\views\engine\latte\Latte::class,
-			'composer' => ['require' => ['phpmv/ubiquity-latte' => 'dev-main'], 'require-dev' => ['latte/tools' => '^0.1']]
+			'composer' => [
+				'require' => ['phpmv/ubiquity-latte' => 'dev-main'],
+				'require-dev' => ['latte/tools' => 'dev-ubiquity-fixes'],
+				'repositories' => ['type' => 'vcs', 'url' => 'https://github.com/phpMv/latte-tools']]
 		]
 	];
 
@@ -324,6 +327,9 @@ class Ubiquity {
 				self::$toolsConfig['composer']['require'] = \array_merge(self::$toolsConfig['composer']['require'], self::$templateEngines[$te]['composer']['require']);
 				if (isset(self::$templateEngines[$te]['composer']['require-dev'])) {
 					self::$toolsConfig['composer']['require-dev'] = \array_merge(self::$toolsConfig['composer']['require-dev'], self::$templateEngines[$te]['composer']['require-dev']);
+				}
+				if (isset(self::$templateEngines[$te]['composer']['repositories'])) {
+					self::$toolsConfig['composer']['repositories'] = \array_merge(self::$toolsConfig['composer']['repositories'] ?? [], self::$templateEngines[$te]['composer']['repositories']);
 				}
 
 			} else {
