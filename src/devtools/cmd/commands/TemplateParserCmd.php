@@ -37,17 +37,22 @@ class TemplateParserCmd extends AbstractCmd {
 		if (isset($commands['repositories'])) {
 			$repositories = $commands['repositories'];
 			foreach ($repositories as $index => $repository) {
-				$json = \json_encode($repository);
-				\system("composer config repositories.{$name}{$index} '$json'");
+				$type = $repository['type'];
+				$url = $repository['url'];
+				\system("composer config repositories.{$name}{$index} $type $url");
 			}
 		}
 		if (isset($commands['require'])) {
-			$require = $commands['require'];
-			\system('composer require ' . $require);
+			$requires = $commands['require'];
+			foreach ($requires as $require => $version) {
+				\system('composer require ' . $require . ':' . $version);
+			}
 		}
 		if (isset($commands['require-dev'])) {
-			$require = $commands['require-dev'];
-			\system('composer require ' . $require . ' --dev');
+			$requires = $commands['require-dev'];
+			foreach ($requires as $require => $version) {
+				\system('composer require ' . $require . ':' . $version . ' --dev');
+			}
 		}
 	}
 }
