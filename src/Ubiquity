@@ -73,11 +73,11 @@ class Ubiquity {
 
 	private static $templateEngines = [
 		'twig' => [
-			'class' => \Ubiquity\views\engine\Twig::class,
+			'class' => '\Ubiquity\views\engine\Twig',
 			'composer' => ['require' => ['twig/twig' => '^3.0']]
 		],
 		'latte' => [
-			'class' => \Ubiquity\views\engine\latte\Latte::class,
+			'class' => '\Ubiquity\views\engine\latte\Latte',
 			'composer' => [
 				'require' => ['phpmv/ubiquity-latte' => 'dev-main'],
 				'require-dev' => ['latte/tools' => 'dev-ubiquity-fixes'],
