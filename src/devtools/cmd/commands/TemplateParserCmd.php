@@ -20,7 +20,7 @@ class TemplateParserCmd extends AbstractCmd {
 			}
 			$teEngine = new $strTeEngine();
 			$originals = UFileSystem::glob_recursive($origin . '/*.html');
-			UFileSystem::safeMkdir($origin . 'back');
+
 			foreach ($originals as $oTemplate) {
 				$filename = basename($oTemplate);
 				$oDir = dirname($oTemplate);
