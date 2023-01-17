@@ -43,6 +43,7 @@ use Ubiquity\devtools\cmd\commands\NewDomainCmd;
 use Ubiquity\devtools\cmd\commands\InfoMigrationsCmd;
 use Ubiquity\devtools\cmd\commands\MigrationsCmd;
 use Ubiquity\devtools\cmd\commands\InitCacheCmd;
+use Ubiquity\devtools\cmd\commands\TemplateParserCmd;
 
 class Ubiquity {
 
@@ -897,6 +898,11 @@ class Ubiquity {
 			case 'migrate':
 				$config = self::_init();
 				MigrationsCmd::run($config, $options, $what);
+				break;
+			case 'parse_template':
+			case 'template_parse':
+				$config = self::_init();
+				TemplateParserCmd::run($config, $options);
 				break;
 
 			default:
