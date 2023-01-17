@@ -902,7 +902,7 @@ class Ubiquity {
 			case 'parse_template':
 			case 'template_parse':
 				$config = self::_init();
-				TemplateParserCmd::run($config, $options);
+				TemplateParserCmd::run($config, $options, self::$templateEngines);
 				break;
 
 			default:

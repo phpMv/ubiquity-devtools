@@ -7,14 +7,16 @@ use Ubiquity\utils\base\UFileSystem;
 
 class TemplateParserCmd extends AbstractCmd {
 
-	private static array $engines = ['latte' => '\Ubiquity\views\engine\latte\Latte'];
-
-	public static function run(&$config, $options, $what) {
+	public static function run(&$config, $options, $templateEngines) {
 		$origin = self::getOption($options, 'o', 'origin', \ROOT . \DIRECTORY_SEPARATOR . 'views' . \DIRECTORY_SEPARATOR);
 		$destination = self::getOption($options, 'd', 'destination', \ROOT . \DIRECTORY_SEPARATOR . 'views' . \DIRECTORY_SEPARATOR);
 		$destEngine = self::getOption($options, 'e', 'engine', 'latte');
-		if (isset(self::$engines[$destEngine])) {
-			$strTeEngine = self::$engines[$destEngine];
+		if (isset($templateEngines[$destEngine])) {
+			$strTeEngine = $templateEngines[$destEngine]['class'];
+			if (!\class_exists($strTeEngine)) {
+				self::runComposer($templateEngines[$destEngine]['composer'], $destEngine);
+				require_once ROOT . './../vendor/autoload.php';
+			}
 			$teEngine = new $strTeEngine();
 			$originals = UFileSystem::glob_recursive($origin . '*.html');
 			UFileSystem::safeMkdir($origin . 'back');
@@ -28,6 +30,24 @@ class TemplateParserCmd extends AbstractCmd {
 			}
 		} else {
 			echo ConsoleFormatter::showMessage("Invalid template $destEngine", 'error', 'Template parser');
+		}
+	}
+
+	private static function runComposer(array $commands, string $name) {
+		if (isset($commands['repositories'])) {
+			$repositories = $commands['repositories'];
+			foreach ($repositories as $index => $repository) {
+				$json = \json_encode($repository);
+				\system("composer config repositories.{$name}{$index} '$json'");
+			}
+		}
+		if (isset($commands['require'])) {
+			$require = $commands['require'];
+			\system('composer require ' . $require);
+		}
+		if (isset($commands['require-dev'])) {
+			$require = $commands['require-dev'];
+			\system('composer require ' . $require . ' --dev');
 		}
 	}
 }
