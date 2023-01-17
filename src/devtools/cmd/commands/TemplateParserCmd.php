@@ -8,8 +8,9 @@ use Ubiquity\utils\base\UFileSystem;
 class TemplateParserCmd extends AbstractCmd {
 
 	public static function run(&$config, $options, $templateEngines) {
-		$origin = realpath(self::getOption($options, 'o', 'origin', \ROOT . \DIRECTORY_SEPARATOR . 'views' . \DIRECTORY_SEPARATOR));
-		$destination = realpath(self::getOption($options, 'd', 'destination', \ROOT . \DIRECTORY_SEPARATOR . 'views' . \DIRECTORY_SEPARATOR));
+		$ds = \DIRECTORY_SEPARATOR;
+		$origin = realpath(self::getOption($options, 'o', 'origin', \ROOT . $ds . 'views' . $ds));
+		$destination = realpath(self::getOption($options, 'd', 'destination', \ROOT . $ds . 'views' . $ds));
 		$destEngine = self::getOption($options, 'e', 'engine', 'latte');
 		if (isset($templateEngines[$destEngine])) {
 			$strTeEngine = $templateEngines[$destEngine]['class'];
@@ -18,16 +19,20 @@ class TemplateParserCmd extends AbstractCmd {
 				require_once ROOT . './../vendor/autoload.php';
 			}
 			$teEngine = new $strTeEngine();
-			$originals = UFileSystem::glob_recursive($origin . '*.html');
+			$originals = UFileSystem::glob_recursive($origin . '/*.html');
 			UFileSystem::safeMkdir($origin . 'back');
 			foreach ($originals as $oTemplate) {
 				$filename = basename($oTemplate);
 				$oDir = dirname($oTemplate);
 				$realPath = \str_replace($origin, '', $oDir);
-				$fileContent = file_get_contents($oTemplate);
-				\file_put_contents($oDir . \DIRECTORY_SEPARATOR . 'back' . \DIRECTORY_SEPARATOR . $filename, $fileContent);
+				$fileContent = \file_get_contents($oTemplate);
+				$oDest = $origin . $ds . 'back' . $ds . $realPath . $ds;
+				UFileSystem::safeMkdir($oDest);
+				rename($oTemplate, $oDest . $filename);
 				$code = $teEngine->generateTemplateSource($fileContent);
-				\file_put_contents($destination . \DIRECTORY_SEPARATOR . $realPath . \DIRECTORY_SEPARATOR . $filename, $code);
+				$dDest = $destination . $ds . $realPath . $ds;
+				UFileSystem::safeMkdir($dDest);
+				\file_put_contents($dDest . $filename, $code);
 				echo ConsoleFormatter::showInfo("$filename parsed to $destEngine in $destination");
 			}
 		} else {
