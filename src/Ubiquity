@@ -429,7 +429,7 @@ class Ubiquity {
 			}
 			$templateEngine = self::getTemplateEngineInstance(self::$configOptions['%templateEngine%']);
 			if (!$hasThemes) {
-				self::includeDefaultStyles();
+				self::includeDefaultStyles($templateEngine);
 				self::openReplaceWrite(self::$activeDir . "/devtools/project-files/templates/vHeader.tpl", "app/views/main/vHeader.html", self::$configOptions, $templateEngine);
 				self::openReplaceWrite(self::$activeDir . "/devtools/project-files/templates/vFooter.tpl", "app/views/main/vFooter.html", self::$configOptions, $templateEngine);
 				self::openReplaceWrite(self::$activeDir . "/devtools/project-files/app/views/themes/semantic/main/vMenu.html", "app/views/main/vMenu.html", self::$configOptions, $templateEngine);
@@ -451,13 +451,13 @@ class Ubiquity {
 
 	}
 
-	private static function includeDefaultStyles() {
+	private static function includeDefaultStyles(\Ubiquity\views\engine\TemplateEngine $templateEngine) {
 		self::$configOptions["%injections%"] = "\"@exec\"=>[\"jquery\"=>function(\$controller){
 				\t\treturn \\Ajax\\php\\ubiquity\\JsUtils::diSemantic(\$controller);
 				\t}]";
-		self::$configOptions["%cssFiles%"][] = self::includeCss(self::$toolsConfig["cdn"]["semantic"]["css"]);
-		self::$configOptions["%jsFiles%"][] = self::includeJs(self::$toolsConfig["cdn"]["jquery"]);
-		self::$configOptions["%jsFiles%"][] = self::includeJs(self::$toolsConfig["cdn"]["semantic"]["js"]);
+		self::$configOptions["%cssFiles%"][] = self::includeCss(self::$toolsConfig["cdn"]["semantic"]["css"], $templateEngine);
+		self::$configOptions["%jsFiles%"][] = self::includeJs(self::$toolsConfig["cdn"]["jquery"], $templateEngine);
+		self::$configOptions["%jsFiles%"][] = self::includeJs(self::$toolsConfig["cdn"]["semantic"]["js"], $templateEngine);
 		self::$toolsConfig["composer"]["require"]["phpmv/php-mv-ui"] = "^2.4";
 	}
 
@@ -471,11 +471,17 @@ class Ubiquity {
 		self::$toolsConfig["composer"]["require"]["phpmv/php-mv-ui"] = "^2.4";
 	}
 
-	private static function includeCss(string $filename): string {
+	private static function includeCss(string $filename, \Ubiquity\views\engine\TemplateEngine $engine): string {
+		if (!($engine instanceof \Ubiquity\views\engine\Twig)) {
+			return $engine->getGenerator()->insertCSS($filename);
+		}
 		return "{{ css('" . $filename . "',{nonce: nonce}) }}";
 	}
 
-	private static function includeJs($filename): string {
+	private static function includeJs($filename, \Ubiquity\views\engine\TemplateEngine $engine): string {
+		if (!($engine instanceof \Ubiquity\views\engine\Twig)) {
+			return $engine->getGenerator()->insertJS($filename);
+		}
 		return "{{ js('" . $filename . "',{nonce: nonce}) }}";
 	}
 
