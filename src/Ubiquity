@@ -83,6 +83,10 @@ class Ubiquity {
 				'require-dev' => ['latte/tools' => 'dev-ubiquity-fixes'],
 				'repositories' => [['type' => 'vcs', 'url' => 'https://github.com/phpMv/latte-tools']]
 			]
+		],
+		'plates' => [
+			'class' => '\Ubiquity\views\engine\Plates',
+			'composer' => ['require' => ['league/plates' => '^3.4']]
 		]
 	];
 
