@@ -86,7 +86,7 @@ class Ubiquity {
 		],
 		'plates' => [
 			'class' => '\Ubiquity\views\engine\Plates',
-			'composer' => ['require' => ['league/plates' => '^3.4']]
+			'composer' => ['require' => ['phpmv/ubiquity-plates' => 'dev-main']]
 		]
 	];
 
