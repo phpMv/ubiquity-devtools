@@ -73,7 +73,7 @@ class Ubiquity {
 
 	private static $templateEngines = [
 		'twig' => [
-			'class' => '\Ubiquity\views\engine\Twig',
+			'class' => '\Ubiquity\views\engine\twig\Twig',
 			'composer' => ['require' => ['twig/twig' => '^3.0']]
 		],
 		'latte' => [
@@ -339,7 +339,7 @@ class Ubiquity {
 				}
 
 			} else {
-				self::$configOptions["%templateEngine%"] = 'Ubiquity\\views\\engine\\Twig';
+				self::$configOptions["%templateEngine%"] = 'Ubiquity\\views\\engine\\twig\\Twig';
 			}
 			self::showConfigOptions();
 			self::openReplaceWrite(self::$activeDir . "/devtools/project-files/.htaccess", getcwd() . "/public/.htaccess", array(
