@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 - nothing
 
-## [1.4.7] - 2023-02-05
+## [1.4.8] - 2023-02-05
 ### Added
 - **v(view)** option with **create-project(new)** command
 
