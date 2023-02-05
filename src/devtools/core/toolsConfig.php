@@ -18,7 +18,7 @@ return [
 		"require" => [
 			"php" => ">=7.4",
 			"twig/twig" => "^3.0",
-			"phpmv/ubiquity" => "dev-master"
+			"phpmv/ubiquity" => "^2.5"
 		],
 		"require-dev" => [
 			"monolog/monolog" => "^2.2",
