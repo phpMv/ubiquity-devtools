@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 - nothing
 
+## [1.4.7] - 2023-02-05
+### Added
+- **v(view)** option with **create-project(new)** command
+
 ## [1.4.3] - 2022-12-31
 ### Updated
 - `aclInit` command (add table and models creation)
