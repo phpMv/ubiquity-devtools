@@ -49,7 +49,7 @@ class Ubiquity {
 
 	use CmdTrait;
 
-	private static $version = '1.4.8';
+	private static $version = '1.4.9';
 
 	private static $appName = 'Ubiquity devtools';
 
@@ -126,6 +126,15 @@ class Ubiquity {
 			'require' => 'phpmv/ubiquity-workerman',
 			'start' => '_workerman.php start'
 		],
+        'swow' => [
+            'files' => [
+                '/devtools/server/_swow.php' => '.ubiquity/_swow.php'
+            ],
+            'config' => 'swow-config.php',
+            'checkClass' => '\\Ubiquity\\servers\\swow\\SwowServer',
+            'require' => 'phpmv/ubiquity-swow',
+            'start' => '_swow.php start'
+        ],
 		'roadrunner' => [
 			'files' => [],
 			'config' => 'config.php',
