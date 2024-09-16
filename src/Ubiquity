@@ -1042,6 +1042,7 @@ class Ubiquity {
 					break;
 				case 'swoole':
 				case 'workerman':
+                case 'swow':
 					echo ConsoleFormatter::showMessage($msg . "Use <b>Ubiquity serve:stop</b> {$type} to stop it!\n");
 					system('php .ubiquity' . \DS . $serverInfos['start']);
 					break;
