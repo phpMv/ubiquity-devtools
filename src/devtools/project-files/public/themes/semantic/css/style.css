@@ -1,59 +1,285 @@
-body{
-	background: #e6e1c5;
-}
-.head, header{
-	background-color: #333333;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap');
+
+:root {
+    --primary: #4fa0ae;
+    --primary-dark: rgba(79,160,174,1);
+    --secondary: #d29d38;
+    --dark: #1a202c;
+    --darker: #0f1419;
+    --light: #f7fafc;
+    --gradient: linear-gradient(135deg, rgba(79,160,174,1) 0%, rgba(210,157,56,1) 100%);
 }
 
-header::after{
-	content:' ';
-	background: rgb(79,160,174);
-	background: linear-gradient(45deg, rgba(79,160,174,1) 0%, rgba(210,157,56,1) 100%);
-	height: 5px;
-	width: 100%;
-	position: absolute;
-	top: 60px;
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(180deg, #0f1419 0%, #1a202c 100%);
+    min-height: 100vh;
 }
 
-.menu.links{
-	background-color: #f8f9fa!important;
-	padding: 10px 0;
-}
-
-.version{
-	background-color: #D39D38!important;
-	color: white!important;
-}
-
-.segment.container {
-	background-color: #4d4d4d;
-}
-
+/* Header & Footer styles */
 .main-container {
-	display: flex;
-	flex-direction: column;
-	min-height: 100vh;
-}
-
-main {
-	flex: 1;
-	display: flex;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 header {
-	padding: 10px 0;
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 1rem 0;
 }
 
-footer{
-	min-height: 200px;
-	background-color: #434343;
+header .ui.menu {
+    background: transparent;
+    border: none;
+    box-shadow: none;
 }
 
-header, footer {
-	color: #f5f5dc;
-	padding-top: 10px;
+header .ui.menu .item {
+    color: white;
+    transition: all 0.3s;
 }
 
-main .ui.container{
-	padding: 10px;
+header .ui.menu .item:hover,
+header .ui.menu .item.active {
+    background: var(--gradient);
+    color: white;
+}
+
+main {
+    flex: 1;
+}
+
+main > .ui.container {
+    max-width: 1200px;
+    padding: 1.5rem 1rem;
+}
+
+footer {
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding: 2rem 0;
+    margin-top: 2rem;
+    color: rgba(255,255,255,0.7);
+    text-align: center;
+}
+
+footer a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+footer a:hover {
+    color: white;
+}
+
+/* Styles existants pour la page d'accueil */
+.modern-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+}
+
+.hero-section {
+    background: var(--gradient);
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 20px 60px rgba(0, 212, 170, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.3;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.hero-logo {
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 20px;
+    padding: 0.8rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    flex-shrink: 0;
+}
+
+.hero-text h1 {
+    color: white;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.version-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    padding: 0.4rem 0.9rem;
+    border-radius: 50px;
+    color: white;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.status-card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 1.2rem;
+    margin-bottom: 1.5rem;
+    color: white;
+}
+
+.status-card.success {
+    border-left: 4px solid var(--primary);
+}
+
+.status-card h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 1rem 0;
+    color: var(--primary);
+}
+
+.status-card p {
+    margin: 0;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+.status-card a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.status-card a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+.info-card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 1.2rem;
+    transition: all 0.3s;
+}
+
+.info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 212, 170, 0.2);
+    border-color: var(--primary);
+}
+
+.info-item {
+    margin-bottom: 1rem;
+}
+
+.info-item:last-child {
+    margin-bottom: 0;
+}
+
+.info-label {
+    color: var(--primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.3rem;
+}
+
+.info-value {
+    color: white;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+    word-break: break-all;
+}
+
+.links-section {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+}
+
+.links-section h3 {
+    color: white;
+    margin: 0 0 1.5rem 0;
+    font-size: 1.2rem;
+}
+
+.links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.link-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 0.8rem 1.2rem;
+    text-align: center;
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.link-card:hover {
+    background: var(--gradient);
+    border-color: transparent;
+    transform: scale(1.05);
+    box-shadow: 0 5px 20px rgba(0, 212, 170, 0.3);
+}
+
+@media (max-width: 768px) {
+    .hero-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .hero-text h1 {
+        font-size: 2rem;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
 }
